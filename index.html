@@ -260,8 +260,9 @@ h2 .kr{display:block;font-family:var(--kr);font-weight:700;font-size:.5em;color:
 
 /* ---- TEAM ---- */
 .team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.team-grid.is-collapsed{display:none}
 @media(max-width:880px){.team-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:560px){.team-grid{grid-template-columns:1fr}}
+@media(max-width:560px){.team-grid{grid-template-columns:1fr;gap:14px}}
 .member{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px 24px;transition:.3s;position:relative;overflow:hidden;display:flex;flex-direction:column}
 .member.lead{grid-column:span 1;border-color:var(--line-strong)}
 .member:hover{transform:translateY(-5px);background:var(--bg-soft);border-color:var(--neon-2)}
@@ -273,6 +274,58 @@ h2 .kr{display:block;font-family:var(--kr);font-weight:700;font-size:.5em;color:
 .member ul{list-style:none;display:flex;flex-direction:column;gap:9px;flex:1 1 auto;justify-content:flex-start}
 .member li{font-size:.86rem;color:var(--ink-dim);padding-left:15px;position:relative}
 .member li::before{content:"";position:absolute;left:0;top:9px;width:5px;height:5px;border-radius:50%;background:var(--bone);opacity:.7}
+@media(max-width:560px){
+  .member{padding:22px 20px;border-radius:16px}
+  .member .avatar{width:46px;height:46px;margin-bottom:14px;font-size:1.1rem}
+  .member .m-name{font-size:1.05rem}
+  .member li{font-size:.84rem}
+}
+@media(hover:none){
+  .member:hover{transform:none;background:var(--panel);border-color:var(--line)}
+}
+
+/* ---- TEAM REVEAL BAR ---- */
+.team-reveal{margin:64px 0 0;display:flex;flex-direction:column;align-items:center;gap:26px;transition:margin-bottom .4s ease}
+.team-reveal.is-open{margin-bottom:40px}
+.team-reveal .tr-line{width:100%;max-width:760px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--line-strong) 20%,var(--line-strong) 80%,transparent)}
+.tr-btn{position:relative;display:flex;align-items:center;gap:22px;cursor:pointer;
+  background:transparent;border:none;padding:14px 8px;color:var(--ink);
+  font-family:var(--kr);transition:.35s cubic-bezier(.2,.7,.2,1)}
+.tr-btn:hover{transform:translateY(-2px)}
+.tr-label{display:flex;flex-direction:column;text-align:left;line-height:1.35}
+.tr-kr{font-weight:700;font-size:clamp(1.05rem,2.6vw,1.4rem);letter-spacing:-.01em;
+  background:linear-gradient(100deg,var(--ink),var(--ink));
+  -webkit-background-clip:text;background-clip:text;transition:.35s}
+.tr-btn:hover .tr-kr{background:linear-gradient(100deg,var(--neon),var(--neon-2));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.tr-en{font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-faint);margin-top:6px}
+.tr-icon{display:flex;align-items:center;justify-content:center;width:48px;height:48px;flex:none;
+  border-radius:50%;border:1px solid var(--line-strong);color:var(--ink-dim);
+  transition:.4s cubic-bezier(.2,.7,.2,1)}
+.tr-btn:hover .tr-icon{border-color:var(--neon);color:var(--neon);box-shadow:var(--glow)}
+.tr-btn[aria-expanded="true"] .tr-icon{transform:rotate(180deg);border-color:var(--neon-2);color:var(--neon-2)}
+.tr-btn[aria-expanded="true"] .tr-kr{background:linear-gradient(100deg,var(--neon-2),var(--neon-3));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+@media(max-width:640px){
+  .team-reveal{margin:44px 0 0;gap:18px}
+  .team-reveal.is-open{margin-bottom:30px}
+  .tr-btn{width:100%;justify-content:space-between;gap:14px;padding:16px 4px}
+  .tr-label{flex:1 1 auto}
+  .tr-kr{font-size:1.08rem}
+  .tr-en{font-size:.64rem;letter-spacing:.12em;margin-top:5px}
+  .tr-icon{width:44px;height:44px}
+  /* on touch devices the neon reveal shows via active/expanded instead of hover */
+  .tr-btn:active .tr-kr{background:linear-gradient(100deg,var(--neon),var(--neon-2));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .tr-btn:active .tr-icon{border-color:var(--neon);color:var(--neon);box-shadow:var(--glow)}
+}
+@media(max-width:380px){
+  .tr-kr{font-size:1rem}
+  .tr-en{font-size:.6rem;letter-spacing:.08em}
+  .tr-icon{width:40px;height:40px}
+}
 
 /* ---- CAREER TIMELINE ---- */
 .timeline{position:relative;max-width:760px;margin:0 auto;padding-left:34px}
@@ -333,7 +386,6 @@ footer p{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);letter-
   <div class="logo"><span class="dot"></span>JY&nbsp;STUDIO</div>
   <div class="nav-links">
     <a href="#services" data-i18n="nav.services">Services</a>
-    <a href="#team" data-i18n="nav.team">Team</a>
     <a href="#career" data-i18n="nav.career">Career</a>
     <a href="#work" data-i18n="nav.work">Work</a>
     <a href="#process" data-i18n="nav.process">Process</a>
@@ -351,7 +403,6 @@ footer p{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);letter-
 </nav>
 <div class="mobile-menu" id="mobileMenu">
   <a href="#services" data-i18n="nav.services">Services</a>
-  <a href="#team" data-i18n="nav.team">Team</a>
   <a href="#career" data-i18n="nav.career">Career</a>
   <a href="#work" data-i18n="nav.work">Work</a>
   <a href="#process" data-i18n="nav.process">Process</a>
@@ -446,104 +497,11 @@ footer p{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);letter-
   </div>
 </section>
 
-<section id="team" style="padding-top:0">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <div>
-        <div class="sec-tag"><span class="num">02</span> / <span data-i18n="tag.team">WHO WE ARE</span></div>
-        <h2>Team<span class="kr" data-i18n="h2.team">팀원 소개</span></h2>
-      </div>
-    </div>
-    <div class="team-grid">
-      <div class="member lead reveal">
-        <div class="avatar">P</div>
-        <div class="m-name">PARK TAE HYUONG</div>
-        <div class="m-role">2D Animator &amp; Leader</div>
-        <ul>
-          <li>시프트업 Spine 2D 애니메이터</li>
-          <li>믹스포션 Spine 2D 애니메이터</li>
-          <li>스튜디오 묘 Spine 2D 애니메이터</li>
-          <li>PUBG Spine 2D 애니메이터</li>
-          <li>LuminaryTech Limited 애니메이션 리드</li>
-        </ul>
-      </div>
-      <div class="member c2 reveal">
-        <div class="avatar">L</div>
-        <div class="m-name">LEE EUN HYE</div>
-        <div class="m-role">Senior 2D Animator</div>
-        <ul>
-          <li>홍익대학교 조형대학 애니메이션</li>
-          <li>&lt;캣독런&gt; 아트 (UI 제외 전반)</li>
-          <li>인디팀 코코아게임즈 AD</li>
-          <li>시나몬 게임즈 Spine 2D 애니메이터</li>
-          <li>앤유 Spine 2D 애니메이터</li>
-          <li>네오위즈 Spine 2D 애니메이터</li>
-          <li>에픽세븐 Spine 2D 애니메이터</li>
-        </ul>
-      </div>
-      <div class="member c3 reveal">
-        <div class="avatar">L</div>
-        <div class="m-name">LEE SO HEE</div>
-        <div class="m-role">Senior 2D Animator</div>
-        <ul>
-          <li>애프터타임 Spine 2D 애니메이터</li>
-          <li>노바코어 Spine 2D 애니메이터</li>
-          <li>캐논크래커 Spine 2D 애니메이터</li>
-          <li>마프게임즈 원화 및 Spine 2D 외주</li>
-        </ul>
-      </div>
-      <div class="member reveal">
-        <div class="avatar">L</div>
-        <div class="m-name">LEE DONG YOUNG</div>
-        <div class="m-role">Senior 2D Animator</div>
-        <ul>
-          <li>한서항공전문대학교 항공기체정비과</li>
-          <li>믹스포션 '별의 여행자 라라' 기획</li>
-          <li>JY 스튜디오 Project Manager</li>
-        </ul>
-      </div>
-      <div class="member c2 reveal">
-        <div class="avatar">J</div>
-        <div class="m-name">JEON SU BIN</div>
-        <div class="m-role">2D Art Designer</div>
-        <ul>
-          <li>상명대학교 컴퓨터과학과 / 미디어 아트</li>
-          <li>경기콘텐츠진흥원 경기게임 아카데미 16기</li>
-          <li>디패스트 임팩트 아트</li>
-          <li>스튜디오 묘 공동대표</li>
-        </ul>
-      </div>
-      <div class="member c3 reveal">
-        <div class="avatar">R</div>
-        <div class="m-name">RYU JI MIN</div>
-        <div class="m-role">Spine 2D Animator</div>
-        <ul>
-          <li>동서울대학교 게임컨텐츠과</li>
-          <li>JY 스튜디오 Spine 2D 애니메이터</li>
-        </ul>
-      </div>
-      <div class="member reveal">
-        <div class="avatar">B</div>
-        <div class="m-name">BAE GI MIN</div>
-        <div class="m-role">2D Art Designer</div>
-        <ul>
-          <li>가천대학교 시각디자인학과</li>
-          <li>KBS 드라마센터 무대연출</li>
-          <li>바람의나라 게임풍 관리자</li>
-          <li>CJ 홈쇼핑 연출</li>
-          <li>경기도 새마크 디자이너</li>
-          <li>스튜디오 묘 '디패스트 임팩트' 총괄</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
 <section id="career" style="padding-top:0">
   <div class="wrap">
     <div class="sec-head reveal">
       <div>
-        <div class="sec-tag"><span class="num">03</span> / <span data-i18n="tag.career">LEAD'S TRACK RECORD</span></div>
+        <div class="sec-tag"><span class="num">02</span> / <span data-i18n="tag.career">LEAD'S TRACK RECORD</span></div>
         <h2>Career<span class="kr" data-i18n="h2.career">대표 박태형 경력</span></h2>
       </div>
     </div>
@@ -579,6 +537,150 @@ footer p{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);letter-
         </div>
       </div>
     </div>
+    <div class="team-reveal reveal" id="teamReveal">
+      <div class="tr-line"></div>
+      <button class="tr-btn" id="teamMoreBtn" aria-expanded="false">
+        <span class="tr-label">
+          <span class="tr-kr">JY 스튜디오를 함께 만드는 팀</span>
+          <span class="tr-en">The people behind JY Studio</span>
+        </span>
+        <span class="tr-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </span>
+      </button>
+    </div>
+    <div class="team-grid is-collapsed" id="teamGrid">
+      <div class="member c2 reveal more" hidden>
+        <div class="avatar">L</div>
+        <div class="m-name">LEE EUN HYE</div>
+        <div class="m-role">Senior 2D Animator</div>
+        <ul>
+          <li>홍익대학교 조형대학 애니메이션</li>
+          <li>&lt;캣독런&gt; 아트 (UI 제외 전반)</li>
+          <li>인디팀 코코아게임즈 AD</li>
+          <li>시나몬 게임즈 Spine 2D 애니메이터</li>
+          <li>앤유 Spine 2D 애니메이터</li>
+          <li>네오위즈 Spine 2D 애니메이터</li>
+          <li>에픽세븐 Spine 2D 애니메이터</li>
+        </ul>
+      </div>
+      <div class="member c3 reveal more" hidden>
+        <div class="avatar">L</div>
+        <div class="m-name">LEE SO HEE</div>
+        <div class="m-role">Senior 2D Animator</div>
+        <ul>
+          <li>애프터타임 Spine 2D 애니메이터</li>
+          <li>노바코어 Spine 2D 애니메이터</li>
+          <li>캐논크래커 Spine 2D 애니메이터</li>
+          <li>마프게임즈 원화 및 Spine 2D 외주</li>
+        </ul>
+      </div>
+      <div class="member reveal more" hidden>
+        <div class="avatar">L</div>
+        <div class="m-name">LEE DONG YOUNG</div>
+        <div class="m-role">Senior 2D Animator</div>
+        <ul>
+          <li>한서항공전문대학교 항공기체정비과</li>
+          <li>믹스포션 '별의 여행자 라라' 기획</li>
+          <li>JY 스튜디오 Project Manager</li>
+        </ul>
+      </div>
+      <div class="member c2 reveal more" hidden>
+        <div class="avatar">J</div>
+        <div class="m-name">JEON SU BIN</div>
+        <div class="m-role">2D Art Designer</div>
+        <ul>
+          <li>상명대학교 컴퓨터과학과 / 미디어 아트</li>
+          <li>경기콘텐츠진흥원 경기게임 아카데미 16기</li>
+          <li>디패스트 임팩트 아트</li>
+          <li>스튜디오 묘 공동대표</li>
+        </ul>
+      </div>
+      <div class="member c3 reveal more" hidden>
+        <div class="avatar">R</div>
+        <div class="m-name">RYU JI MIN</div>
+        <div class="m-role">Spine 2D Animator</div>
+        <ul>
+          <li>동서울대학교 게임컨텐츠과</li>
+          <li>JY 스튜디오 Spine 2D 애니메이터</li>
+        </ul>
+      </div>
+      <div class="member reveal more" hidden>
+        <div class="avatar">B</div>
+        <div class="m-name">BAE GI MIN</div>
+        <div class="m-role">2D Art Designer</div>
+        <ul>
+          <li>가천대학교 시각디자인학과</li>
+          <li>KBS 드라마센터 무대연출</li>
+          <li>바람의나라 게임풍 관리자</li>
+          <li>CJ 홈쇼핑 연출</li>
+          <li>경기도 새마크 디자이너</li>
+          <li>스튜디오 묘 '디패스트 임팩트' 총괄</li>
+        </ul>
+      </div>
+      <div class="member c2 reveal more" hidden>
+        <div class="avatar">C</div>
+        <div class="m-name">CHOI YOUNG EUN</div>
+        <div class="m-role">Spine 2D Animator</div>
+        <ul>
+          <li>스카이피플 Spine 2D 애니메이터</li>
+          <li>스튜디오비사이드 Spine 2D 애니메이터</li>
+          <li>에피드게임즈 Spine 2D 애니메이터</li>
+          <li>PUBG Spine 2D 애니메이터</li>
+        </ul>
+      </div>
+      <div class="member c3 reveal more" hidden>
+        <div class="avatar">K</div>
+        <div class="m-name">KIM MI RA</div>
+        <div class="m-role">2D Art Designer</div>
+        <ul>
+          <li>건국대학교 사회과학대학 융합인재학과</li>
+          <li>엔퓨전 캐릭터 및 배경 아트 제작</li>
+        </ul>
+      </div>
+      <div class="member reveal more" hidden>
+        <div class="avatar">A</div>
+        <div class="m-name">AN CHAE WON</div>
+        <div class="m-role">2D Artist</div>
+        <ul>
+          <li>울산애니고 애니과</li>
+          <li>서울 호서대학교 게임그래픽과</li>
+        </ul>
+      </div>
+      <div class="member c2 reveal more" hidden>
+        <div class="avatar">C</div>
+        <div class="m-name">CHEON YE WON</div>
+        <div class="m-role">2D Artist</div>
+        <ul>
+          <li>인덕대학교 웹툰만화학과</li>
+        </ul>
+      </div>
+      <div class="member c3 reveal more" hidden>
+        <div class="avatar">K</div>
+        <div class="m-name">KIM EUN JI</div>
+        <div class="m-role">Spine 2D Animator</div>
+        <ul>
+          <li>청강문화산업대학교 패션디자인 전공</li>
+          <li>불혹 소프트 아트 (UI, 배경 제외)</li>
+          <li>I&amp;V Games Spine 2D 애니메이터</li>
+          <li>스노우 파이프 Spine 2D 애니메이터</li>
+          <li>이모티브 Spine 2D 애니메이터</li>
+          <li>스카이워크 Spine 2D 애니메이터</li>
+        </ul>
+      </div>
+      <div class="member reveal more" hidden>
+        <div class="avatar">K</div>
+        <div class="m-name">KIM YE WON</div>
+        <div class="m-role">Spine 2D Animator</div>
+        <ul>
+          <li>경민대학교 게임콘텐츠과</li>
+          <li>더재미 2D 디자이너</li>
+          <li>크라운드터틀 Spine 2D 애니메이터</li>
+          <li>프리티비지 Spine 2D 애니메이터</li>
+          <li>클로버게임즈 Spine 2D 애니메이터</li>
+        </ul>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -586,7 +688,7 @@ footer p{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);letter-
   <div class="wrap">
     <div class="sec-head reveal">
       <div>
-        <div class="sec-tag"><span class="num">04</span> / <span data-i18n="tag.work">SELECTED WORK</span></div>
+        <div class="sec-tag"><span class="num">03</span> / <span data-i18n="tag.work">SELECTED WORK</span></div>
         <h2>Portfolio<span class="kr" data-i18n="h2.work">작업물 / 포트폴리오</span></h2>
       </div>
     </div>
@@ -814,7 +916,7 @@ footer p{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);letter-
   <div class="wrap">
     <div class="sec-head reveal">
       <div>
-        <div class="sec-tag"><span class="num">05</span> / <span data-i18n="tag.process">HOW IT WORKS</span></div>
+        <div class="sec-tag"><span class="num">04</span> / <span data-i18n="tag.process">HOW IT WORKS</span></div>
         <h2>Process<span class="kr" data-i18n="h2.process">작업 진행 방식</span></h2>
       </div>
     </div>
@@ -831,7 +933,7 @@ footer p{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);letter-
   <div class="wrap">
     <div class="contact-box reveal">
       <div>
-        <div class="sec-tag"><span class="num">06</span> / <span data-i18n="tag.contact">LET'S TALK</span></div>
+        <div class="sec-tag"><span class="num">05</span> / <span data-i18n="tag.contact">LET'S TALK</span></div>
         <h2 style="margin-top:14px">Get a Quote<span class="kr" data-i18n="h2.contact">프로젝트 문의하기</span></h2>
         <p class="lead" data-i18n="contact.lead">프로젝트 규모, 캐릭터 수, 희망 납기를 적어주세요. 영업일 기준 48시간 내 회신드립니다.</p>
         <div class="contact-meta">
@@ -880,7 +982,6 @@ footer p{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);letter-
 /* ===== i18n ===== */
 const I18N={
   "nav.services":{ko:"Services",en:"Services",ja:"サービス"},
-  "nav.team":{ko:"Team",en:"Team",ja:"チーム"},
   "nav.career":{ko:"Career",en:"Career",ja:"経歴"},
   "nav.work":{ko:"Work",en:"Work",ja:"作品"},
   "nav.process":{ko:"Process",en:"Process",ja:"進行"},
@@ -911,13 +1012,12 @@ const I18N={
   "svc3.d":{ko:"스토리 컷신, 스킬 연출, UI 모션까지. 메시 디포메이션으로 입체감 있는 장면을 만듭니다.",
     en:"Story cutscenes, skill effects, UI motion — mesh deformation brings depth and dimension to every scene.",
     ja:"ストーリーカットシーン、スキル演出、UIモーションまで。メッシュ変形で立体感のあるシーンを作ります。"},
-  "tag.team":{ko:"WHO WE ARE",en:"WHO WE ARE",ja:"私たちについて"},
-  "h2.team":{ko:"팀원 소개",en:"Meet the team",ja:"チーム紹介"},
   "tag.career":{ko:"LEAD'S TRACK RECORD",en:"LEAD'S TRACK RECORD",ja:"代表の経歴"},
   "h2.career":{ko:"대표 박태형 경력",en:"Lead — Park Tae Hyuong",ja:"代表 パク・テヒョン 経歴"},
   "tag.work":{ko:"SELECTED WORK",en:"SELECTED WORK",ja:"作品集"},
   "h2.work":{ko:"작업물 / 포트폴리오",en:"Portfolio",ja:"ポートフォリオ"},
   "more":{ko:"더 많은 포트폴리오 보기 / View More",en:"View More",ja:"もっと見る"},
+  "team.more":{ko:"더보기",en:"View More",ja:"もっと見る"},
   "tag.process":{ko:"HOW IT WORKS",en:"HOW IT WORKS",ja:"進行方法"},
   "h2.process":{ko:"작업 진행 방식",en:"How we work",ja:"作業の進め方"},
   "proc1":{ko:"요구사항 / 레퍼런스 정리",en:"Brief & references",ja:"要件・参考資料の整理"},
@@ -944,6 +1044,7 @@ function setLang(lang){
   });
   document.querySelectorAll('#langSwitch button').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));
   if(window.hsRefreshCaption) window.hsRefreshCaption();
+  if(window.teamBtnRefreshLabel) window.teamBtnRefreshLabel();
 }
 document.getElementById('langSwitch').addEventListener('click',e=>{
   const b=e.target.closest('button'); if(!b)return; setLang(b.dataset.lang);
@@ -1070,6 +1171,49 @@ document.getElementById('moreBtn').addEventListener('click',function(){
     this.parentElement.style.display='none';
   }
 });
+
+/* show team member careers, one after another (cascade), toggle open/close */
+(function(){
+  const btn=document.getElementById('teamMoreBtn');
+  const reveal=document.getElementById('teamReveal');
+  const grid=document.getElementById('teamGrid');
+  const krEl=btn.querySelector('.tr-kr');
+  const hiddenMembers=[...grid.querySelectorAll('.member.more')];
+  let open=false;
+  const TXT={
+    ko:{show:'JY 스튜디오를 함께 만드는 팀',hide:'팀원 경력 접기'},
+    en:{show:'The people behind JY Studio',hide:'Collapse'},
+    ja:{show:'JY スタジオを支えるチーム',hide:'閉じる'}
+  };
+  window.teamBtnRefreshLabel=function(){
+    const lang=document.documentElement.lang||'ko';
+    krEl.textContent=(TXT[lang]||TXT.ko)[open?'hide':'show'];
+  };
+  btn.addEventListener('click',()=>{
+    open=!open;
+    btn.setAttribute('aria-expanded',open?'true':'false');
+    if(open){
+      grid.classList.remove('is-collapsed');
+      reveal.classList.add('is-open');
+      hiddenMembers.forEach((el,i)=>{
+        el.hidden=false;
+        el.style.transitionDelay=(i*80)+'ms';
+        io.observe(el);
+      });
+    }else{
+      hiddenMembers.forEach(el=>{
+        el.classList.remove('in');
+        el.style.transitionDelay='0ms';
+        el.hidden=true;
+      });
+      grid.classList.add('is-collapsed');
+      reveal.classList.remove('is-open');
+      btn.scrollIntoView({behavior:'smooth',block:'center'});
+    }
+    teamBtnRefreshLabel();
+  });
+  teamBtnRefreshLabel();
+})();
 
 /* portfolio: click thumbnail → load YouTube iframe */
 document.querySelectorAll('.port.yt').forEach(p=>{

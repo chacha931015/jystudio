@@ -392,6 +392,7 @@ footer p{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);letter-
       <button data-lang="ko" class="active">KO</button>
       <button data-lang="en">EN</button>
       <button data-lang="ja">JA</button>
+      <button data-lang="zh">ZH</button>
     </div>
     <a href="#contact" class="nav-cta" data-i18n="nav.cta">문의하기 →</a>
     <button class="nav-burger" id="navBurger" aria-label="menu"><span></span><span></span><span></span></button>
@@ -939,60 +940,65 @@ footer p{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);letter-
 <script>
 /* ===== i18n ===== */
 const I18N={
-  "nav.services":{ko:"Services",en:"Services",ja:"サービス"},
-  "nav.career":{ko:"Career",en:"Career",ja:"経歴"},
-  "nav.work":{ko:"Work",en:"Work",ja:"作品"},
-  "nav.process":{ko:"Process",en:"Process",ja:"進行"},
-  "nav.contact":{ko:"Contact",en:"Contact",ja:"お問い合わせ"},
-  "nav.cta":{ko:"문의하기 →",en:"Get in touch →",ja:"お問い合わせ →"},
-  "hero.eyebrow":{ko:"Spine 2D Animation Studio",en:"Spine 2D Animation Studio",ja:"Spine 2D アニメーションスタジオ"},
-  "hero.kr":{ko:"살아 숨 쉬는 2D 캐릭터 애니메이션",en:"2D character animation that breathes",ja:"生き生きと動く2Dキャラクターアニメーション"},
+  "nav.services":{ko:"Services",en:"Services",ja:"サービス",zh:"服务"},
+  "nav.career":{ko:"Career",en:"Career",ja:"経歴",zh:"团队经历"},
+  "nav.work":{ko:"Work",en:"Work",ja:"作品",zh:"作品"},
+  "nav.process":{ko:"Process",en:"Process",ja:"進行",zh:"流程"},
+  "nav.contact":{ko:"Contact",en:"Contact",ja:"お問い合わせ",zh:"联系我们"},
+  "nav.cta":{ko:"문의하기 →",en:"Get in touch →",ja:"お問い合わせ →",zh:"联系我们 →"},
+  "hero.eyebrow":{ko:"Spine 2D Animation Studio",en:"Spine 2D Animation Studio",ja:"Spine 2D アニメーションスタジオ",zh:"Spine 2D 动画工作室"},
+  "hero.kr":{ko:"살아 숨 쉬는 2D 캐릭터 애니메이션",en:"2D character animation that breathes",ja:"生き生きと動く2Dキャラクターアニメーション",zh:"栩栩如生的 2D 角色动画"},
   "hero.sub":{ko:"게임·캐릭터·모션그래픽을 위한 Spine 전문 외주 스튜디오. 리깅부터 스킨, 메시 디포메이션까지 — 한 컷의 망설임 없이 움직입니다.",
     en:"A Spine specialist studio for games, characters, and motion graphics. From rigging to skins and mesh deformation — every frame moves without hesitation.",
-    ja:"ゲーム・キャラクター・モーショングラフィックスのためのSpine専門スタジオ。リギングからスキン、メッシュ変形まで — 一コマも迷いなく動かします。"},
-  "hero.cta1":{ko:"작업물 보기 / View Work",en:"View Work",ja:"作品を見る"},
-  "hero.cta2":{ko:"견적 문의 / Get a Quote",en:"Get a Quote",ja:"お見積もり"},
-  "clients.label":{ko:"함께한 파트너 / Trusted by",en:"Trusted by",ja:"取引実績 / Trusted by"},
-  "tag.services":{ko:"WHAT WE DO",en:"WHAT WE DO",ja:"事業内容"},
-  "h2.services":{ko:"외주 서비스 항목",en:"Outsourcing services",ja:"外注サービス"},
-  "svc1.t":{ko:"Character Rigging",en:"Character Rigging",ja:"キャラクターリギング"},
-  "svc1.s":{ko:"캐릭터 리깅 / 본 셋업",en:"Rigging / bone setup",ja:"リギング / ボーン設定"},
+    ja:"ゲーム・キャラクター・モーショングラフィックスのためのSpine専門スタジオ。リギングからスキン、メッシュ変形まで — 一コマも迷いなく動かします。",
+    zh:"专注于游戏、角色与动态图形的 Spine 外包工作室。从绑定到蒙皮、网格变形 — 每一帧都毫不犹豫地动起来。"},
+  "hero.cta1":{ko:"작업물 보기 / View Work",en:"View Work",ja:"作品を見る",zh:"查看作品"},
+  "hero.cta2":{ko:"견적 문의 / Get a Quote",en:"Get a Quote",ja:"お見積もり",zh:"获取报价"},
+  "clients.label":{ko:"함께한 파트너 / Trusted by",en:"Trusted by",ja:"取引実績 / Trusted by",zh:"合作伙伴 / Trusted by"},
+  "tag.services":{ko:"WHAT WE DO",en:"WHAT WE DO",ja:"事業内容",zh:"业务内容"},
+  "h2.services":{ko:"외주 서비스 항목",en:"Outsourcing services",ja:"外注サービス",zh:"外包服务项目"},
+  "svc1.t":{ko:"Character Rigging",en:"Character Rigging",ja:"キャラクターリギング",zh:"角色绑定"},
+  "svc1.s":{ko:"캐릭터 리깅 / 본 셋업",en:"Rigging / bone setup",ja:"リギング / ボーン設定",zh:"绑定 / 骨骼设置"},
   "svc1.d":{ko:"일러스트를 본·메시 구조로 분해하고, 게임 엔진에서 바로 쓸 수 있는 깔끔한 스켈레톤을 설계합니다.",
     en:"We break illustrations into bone and mesh structures, designing clean skeletons ready to drop into any game engine.",
-    ja:"イラストをボーン・メッシュ構造に分解し、ゲームエンジンですぐに使えるクリーンなスケルトンを設計します。"},
-  "svc2.t":{ko:"Animation Loops",en:"Animation Loops",ja:"アニメーションループ"},
-  "svc2.s":{ko:"인게임 애니메이션 / 루프",en:"In-game animation / loops",ja:"インゲームアニメーション / ループ"},
+    ja:"イラストをボーン・メッシュ構造に分解し、ゲームエンジンですぐに使えるクリーンなスケルトンを設計します。",
+    zh:"我们将插画分解为骨骼与网格结构，设计出可直接用于游戏引擎的整洁骨架。"},
+  "svc2.t":{ko:"Animation Loops",en:"Animation Loops",ja:"アニメーションループ",zh:"动画循环"},
+  "svc2.s":{ko:"인게임 애니메이션 / 루프",en:"In-game animation / loops",ja:"インゲームアニメーション / ループ",zh:"游戏内动画 / 循环"},
   "svc2.d":{ko:"Idle, Walk, Attack, Skill — 캐릭터의 성격이 드러나는 모션을 프레임 단위로 다듬습니다.",
     en:"Idle, Walk, Attack, Skill — we refine motion frame by frame so each character's personality shines through.",
-    ja:"Idle・Walk・Attack・Skill — キャラクターの個性が伝わるモーションをフレーム単位で仕上げます。"},
-  "svc3.t":{ko:"Cutscene & FX",en:"Cutscene & FX",ja:"カットシーン & FX"},
-  "svc3.s":{ko:"컷신 / 연출 / 이펙트",en:"Cutscene / direction / FX",ja:"カットシーン / 演出 / エフェクト"},
+    ja:"Idle・Walk・Attack・Skill — キャラクターの個性が伝わるモーションをフレーム単位で仕上げます。",
+    zh:"Idle、Walk、Attack、Skill — 逐帧打磨动作，让每个角色的个性尽显无遗。"},
+  "svc3.t":{ko:"Cutscene & FX",en:"Cutscene & FX",ja:"カットシーン & FX",zh:"过场动画 & 特效"},
+  "svc3.s":{ko:"컷신 / 연출 / 이펙트",en:"Cutscene / direction / FX",ja:"カットシーン / 演出 / エフェクト",zh:"过场 / 演出 / 特效"},
   "svc3.d":{ko:"스토리 컷신, 스킬 연출, UI 모션까지. 메시 디포메이션으로 입체감 있는 장면을 만듭니다.",
     en:"Story cutscenes, skill effects, UI motion — mesh deformation brings depth and dimension to every scene.",
-    ja:"ストーリーカットシーン、スキル演出、UIモーションまで。メッシュ変形で立体感のあるシーンを作ります。"},
-  "tag.career":{ko:"TEAM TRACK RECORD",en:"TEAM TRACK RECORD",ja:"チームの経歴"},
-  "h2.career":{ko:"팀 경력",en:"Team Track Record",ja:"チーム経歴"},
-  "tag.work":{ko:"SELECTED WORK",en:"SELECTED WORK",ja:"作品集"},
-  "h2.work":{ko:"작업물 / 포트폴리오",en:"Portfolio",ja:"ポートフォリオ"},
-  "more":{ko:"더 많은 포트폴리오 보기 / View More",en:"View More",ja:"もっと見る"},
-  "team.more":{ko:"더보기",en:"View More",ja:"もっと見る"},
-  "tag.process":{ko:"HOW IT WORKS",en:"HOW IT WORKS",ja:"進行方法"},
-  "h2.process":{ko:"작업 진행 방식",en:"How we work",ja:"作業の進め方"},
-  "proc1":{ko:"요구사항 / 레퍼런스 정리",en:"Brief & references",ja:"要件・参考資料の整理"},
-  "proc2":{ko:"견적 · 일정 확정",en:"Quote & schedule",ja:"見積もり・日程確定"},
-  "proc3":{ko:"리깅 → 애니메이션 작업",en:"Rigging → animation",ja:"リギング → アニメーション"},
-  "proc4":{ko:"JSON · Atlas 파일 전달",en:"Deliver JSON & Atlas",ja:"JSON・Atlasファイル納品"},
-  "tag.contact":{ko:"LET'S TALK",en:"LET'S TALK",ja:"お問い合わせ"},
-  "h2.contact":{ko:"프로젝트 문의하기",en:"Start a project",ja:"プロジェクトのご相談"},
+    ja:"ストーリーカットシーン、スキル演出、UIモーションまで。メッシュ変形で立体感のあるシーンを作ります。",
+    zh:"从剧情过场、技能演出到 UI 动效，用网格变形打造富有立体感的画面。"},
+  "tag.career":{ko:"TEAM TRACK RECORD",en:"TEAM TRACK RECORD",ja:"チームの経歴",zh:"团队履历"},
+  "h2.career":{ko:"팀 경력",en:"Team Track Record",ja:"チーム経歴",zh:"团队经历"},
+  "tag.work":{ko:"SELECTED WORK",en:"SELECTED WORK",ja:"作品集",zh:"精选作品"},
+  "h2.work":{ko:"작업물 / 포트폴리오",en:"Portfolio",ja:"ポートフォリオ",zh:"作品集"},
+  "more":{ko:"더 많은 포트폴리오 보기 / View More",en:"View More",ja:"もっと見る",zh:"查看更多"},
+  "team.more":{ko:"더보기",en:"View More",ja:"もっと見る",zh:"查看更多"},
+  "tag.process":{ko:"HOW IT WORKS",en:"HOW IT WORKS",ja:"進行方法",zh:"合作流程"},
+  "h2.process":{ko:"작업 진행 방식",en:"How we work",ja:"作業の進め方",zh:"工作流程"},
+  "proc1":{ko:"요구사항 / 레퍼런스 정리",en:"Brief & references",ja:"要件・参考資料の整理",zh:"需求 / 参考资料整理"},
+  "proc2":{ko:"견적 · 일정 확정",en:"Quote & schedule",ja:"見積もり・日程確定",zh:"报价 · 确定排期"},
+  "proc3":{ko:"리깅 → 애니메이션 작업",en:"Rigging → animation",ja:"リギング → アニメーション",zh:"绑定 → 动画制作"},
+  "proc4":{ko:"JSON · Atlas 파일 전달",en:"Deliver JSON & Atlas",ja:"JSON・Atlasファイル納品",zh:"交付 JSON · Atlas 文件"},
+  "tag.contact":{ko:"LET'S TALK",en:"LET'S TALK",ja:"お問い合わせ",zh:"联系洽谈"},
+  "h2.contact":{ko:"프로젝트 문의하기",en:"Start a project",ja:"プロジェクトのご相談",zh:"项目咨询"},
   "contact.lead":{ko:"프로젝트 규모, 캐릭터 수, 희망 납기를 적어주세요. 영업일 기준 48시간 내 회신드립니다.",
     en:"Tell us your project scope, number of characters, and target deadline. We reply within 48 business hours.",
-    ja:"プロジェクトの規模、キャラクター数、希望納期をお書きください。営業日48時間以内に返信します。"},
-  "f.name":{ko:"Name / 이름",en:"Name",ja:"お名前"},
-  "f.email":{ko:"Email / 이메일",en:"Email",ja:"メール"},
-  "f.type":{ko:"Project Type / 작업 종류",en:"Project Type",ja:"プロジェクト種別"},
-  "f.details":{ko:"Details / 상세 내용",en:"Details",ja:"詳細"},
-  "f.send":{ko:"문의 보내기 / Send →",en:"Send →",ja:"送信 →"},
-  "partner.label":{ko:"협력사",en:"Partner",ja:"協力会社"}
+    ja:"プロジェクトの規模、キャラクター数、希望納期をお書きください。営業日48時間以内に返信します。",
+    zh:"请告诉我们项目规模、角色数量和期望交付日期。我们将在 48 个工作小时内回复。"},
+  "f.name":{ko:"Name / 이름",en:"Name",ja:"お名前",zh:"姓名"},
+  "f.email":{ko:"Email / 이메일",en:"Email",ja:"メール",zh:"邮箱"},
+  "f.type":{ko:"Project Type / 작업 종류",en:"Project Type",ja:"プロジェクト種別",zh:"项目类型"},
+  "f.details":{ko:"Details / 상세 내용",en:"Details",ja:"詳細",zh:"详细内容"},
+  "f.send":{ko:"문의 보내기 / Send →",en:"Send →",ja:"送信 →",zh:"发送咨询 →"},
+  "partner.label":{ko:"협력사",en:"Partner",ja:"協力会社",zh:"合作公司"}
 };
 function setLang(lang){
   document.documentElement.lang=lang;
@@ -1091,7 +1097,8 @@ document.getElementById('langSwitch').addEventListener('click',e=>{
 const HS_TITLES={
   ko:['별의 여행자 라라','디패스트 임팩트','승리의 여신: 니케'],
   en:['Lara, Star Traveler','Dpast Impact','GODDESS OF VICTORY: NIKKE'],
-  ja:['星の旅人ララ','ディパスト インパクト','勝利の女神：NIKKE']
+  ja:['星の旅人ララ','ディパスト インパクト','勝利の女神：NIKKE'],
+  zh:['星之旅人 拉拉','Dpast Impact','胜利女神：NIKKE']
 };
 let hsIndex=0;
 (function(){
@@ -1141,7 +1148,8 @@ document.getElementById('moreBtn').addEventListener('click',function(){
   const TXT={
     ko:{show:'JY 스튜디오를 함께 만드는 팀',hide:'팀원 경력 접기'},
     en:{show:'The people behind JY Studio',hide:'Collapse'},
-    ja:{show:'JY スタジオを支えるチーム',hide:'閉じる'}
+    ja:{show:'JY スタジオを支えるチーム',hide:'閉じる'},
+    zh:{show:'组成 JY 工作室的团队',hide:'收起团队履历'}
   };
   window.teamBtnRefreshLabel=function(){
     const lang=document.documentElement.lang||'ko';

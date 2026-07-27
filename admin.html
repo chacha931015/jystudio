@@ -21,6 +21,7 @@
   --mono:ui-monospace,"SF Mono","Cascadia Code",Consolas,monospace;
   --sat:env(safe-area-inset-top,0px); --sab:env(safe-area-inset-bottom,0px);
   --radius:12px;
+  color-scheme:dark;   /* 드롭다운 목록·달력 등 기본 컨트롤을 다크로 */
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%}
@@ -51,6 +52,7 @@ button{font-family:inherit}
 input,textarea,select{width:100%;font-family:var(--sf);font-size:.92rem;padding:10px 12px;background:rgba(118,118,128,.16);border:1px solid transparent;border-radius:9px;color:var(--ink);transition:.15s}
 input::placeholder,textarea::placeholder{color:var(--dim2)}
 input:focus,textarea:focus,select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3.5px rgba(10,132,255,.28);background:rgba(118,118,128,.2)}
+select option{background-color:#2c2c2e;color:var(--ink)}
 textarea{min-height:90px;resize:vertical;line-height:1.55}
 .err{color:var(--red);font-size:.82rem;margin-top:10px;min-height:1.2em}
 .hint{font-size:.7rem;color:var(--dim2);margin-top:5px}
@@ -717,7 +719,7 @@ html.tauri .center{margin-top:14vh}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
-const APP_VERSION = '1.6.3';
+const APP_VERSION = '1.6.4';
 
 /* 데스크톱 앱 자동 배포: 사이트에 새 버전이 올라가 있으면 그걸 사용 */
 if(window.__TAURI__ && location.protocol !== 'https:'){

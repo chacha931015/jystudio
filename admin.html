@@ -664,8 +664,8 @@ html.tauri .center{margin-top:14vh}
   <div class="box">
     <h3>계정 설정</h3>
     <div class="field"><label>로그인 계정</label><div class="mono" id="acctEmail" style="font-size:.85rem;color:var(--dim)"></div></div>
-    <div class="field"><label>로그인 이력 (모든 기기, 최근 20건)</label>
-      <div id="acctHist" class="tbl-scroll" style="max-height:180px;overflow-y:auto"></div>
+    <div class="field"><label>로그인 이력 (모든 기기, 최근 1년)</label>
+      <div id="acctHist" class="tbl-scroll" style="max-height:240px;overflow-y:auto"></div>
     </div>
     <div class="field" style="margin-top:16px"><label>새 비밀번호 (6자 이상)</label><input id="pw1" type="password" autocomplete="new-password" placeholder="••••••••"></div>
     <div class="field"><label>새 비밀번호 확인</label><input id="pw2" type="password" autocomplete="new-password" placeholder="••••••••"></div>
@@ -774,7 +774,7 @@ html.tauri .center{margin-top:14vh}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
-const APP_VERSION = '1.9.0';
+const APP_VERSION = '1.9.1';
 
 /* 데스크톱 앱 자동 배포: 사이트에 새 버전이 올라가 있으면 그걸 사용 */
 if(window.__TAURI__ && location.protocol !== 'https:'){
@@ -881,7 +881,11 @@ async function login(){
   saveLoginMeta(email);
   enterApp(data.session, false);
 }
-$('logoutBtn').addEventListener('click', async ()=>{ await sb.auth.signOut(); location.reload(); });
+async function doLogout(){
+  try{ await recordLogin('logout', $('who').textContent || $('loginEmail').value); }catch(e){}
+  await sb.auth.signOut(); location.reload();
+}
+$('logoutBtn').addEventListener('click', doLogout);
 
 /* ---- 계정 설정 (비밀번호 변경) ---- */
 function openAcct(){
@@ -889,12 +893,13 @@ function openAcct(){
   $('acctEmail').textContent = $('who').textContent || '';
   $('acctHist').innerHTML = '<div class="hint">불러오는 중…</div>';
   $('acctModal').classList.add('open');
-  sb.from('login_history').select('*').order('created_at',{ascending:false}).limit(20).then(({data, error})=>{
+  const yearAgo = new Date(Date.now() - 365*864e5).toISOString();
+  sb.from('login_history').select('*').gte('created_at', yearAgo).order('created_at',{ascending:false}).limit(2000).then(({data, error})=>{
     if(error){ $('acctHist').innerHTML = '<div class="hint">이력을 불러올 수 없습니다: '+esc(error.message)+' (supabase-update-6.sql 실행 여부 확인)</div>'; return; }
     if(!data || !data.length){ $('acctHist').innerHTML = '<div class="hint">아직 기록이 없습니다. 다음 로그인부터 기록됩니다.</div>'; return; }
-    $('acctHist').innerHTML = `<table class="tbl"><tbody>${data.map(h=>`<tr>
+    $('acctHist').innerHTML = `<div class="hint" style="margin-bottom:4px">총 ${data.length}건</div><table class="tbl"><tbody>${data.map(h=>`<tr>
       <td class="mono">${esc(fmtFull(h.created_at))}</td>
-      <td>${h.kind==='auto'?'<span class="badge gray">자동</span>':'<span class="badge">로그인</span>'}</td>
+      <td>${h.kind==='auto'?'<span class="badge gray">자동</span>':h.kind==='logout'?'<span class="badge amber">로그아웃</span>':'<span class="badge">로그인</span>'}</td>
       <td>${esc(h.device||'—')}</td>
       <td>${esc([h.city,h.country].filter(Boolean).join(', ')||'—')}</td>
     </tr>`).join('')}</tbody></table>`;
@@ -902,7 +907,7 @@ function openAcct(){
 }
 $('acctBtn').addEventListener('click', openAcct);
 $('acctBtnM').addEventListener('click', openAcct);
-$('acctLogout').addEventListener('click', async ()=>{ await sb.auth.signOut(); location.reload(); });
+$('acctLogout').addEventListener('click', doLogout);
 $('pwSave').addEventListener('click', async ()=>{
   $('acctErr').textContent='';
   const p1=$('pw1').value, p2=$('pw2').value;
@@ -921,12 +926,16 @@ async function recordLogin(kind, email){
     const device = (/Mobi|Android|iPhone/i.test(navigator.userAgent) ? 'mobile' : 'desktop')
                  + (window.__TAURI__ ? ' · 앱' : ' · 웹');
     const row = { email, kind, device, ua: navigator.userAgent.slice(0,200), city:'', country:'' };
-    try{
-      const ctl = new AbortController(); const tm = setTimeout(()=>ctl.abort(), 3000);
-      const g = await fetch('https://get.geojs.io/v1/ip/geo.json', { signal: ctl.signal }).then(r=>r.json());
-      clearTimeout(tm); row.city = g.city||''; row.country = g.country||'';
-    }catch(e){}
+    if(kind !== 'logout'){   // 로그아웃은 빨리 처리되도록 위치 조회 생략
+      try{
+        const ctl = new AbortController(); const tm = setTimeout(()=>ctl.abort(), 3000);
+        const g = await fetch('https://get.geojs.io/v1/ip/geo.json', { signal: ctl.signal }).then(r=>r.json());
+        clearTimeout(tm); row.city = g.city||''; row.country = g.country||'';
+      }catch(e){}
+    }
     await sb.from('login_history').insert(row);
+    // 1년 지난 기록은 자동 정리
+    sb.from('login_history').delete().lt('created_at', new Date(Date.now() - 365*864e5).toISOString()).then(()=>{},()=>{});
   }catch(e){}
 }
 

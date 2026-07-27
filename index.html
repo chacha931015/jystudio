@@ -893,28 +893,18 @@ footer p{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);letter-
     <div class="contact-box reveal">
       <div>
         <div class="sec-tag"><span class="num">05</span> / <span data-i18n="tag.contact">LET'S TALK</span></div>
-        <h2 style="margin-top:14px">Get a Quote<span class="kr" data-i18n="h2.contact">프로젝트 문의하기</span></h2>
-        <p class="lead" data-i18n="contact.lead">프로젝트 규모, 캐릭터 수, 희망 납기를 적어주세요. 영업일 기준 48시간 내 회신드립니다.</p>
+        <h2 style="margin-top:14px">Live Chat<span class="kr" data-i18n="h2.contact">실시간 상담</span></h2>
+        <p class="lead" data-i18n="contact.lead">오른쪽 아래 실시간 상담 버튼으로 문의주시면 가장 빠르게 답변드립니다. 부재 시 이메일로 회신드립니다.</p>
         <div class="contact-meta">
           <div class="row"><span>EMAIL</span><a href="mailto:labkanata@naver.com">labkanata@naver.com</a></div>
           <div class="row"><span>TEL</span><a href="tel:01033304414">010-3330-4414</a></div>
           <div class="row"><span>HOURS</span>Mon–Fri · 10:00–19:00 KST</div>
         </div>
       </div>
-      <div>
-        <div class="field"><label data-i18n="f.name">Name / 이름</label><input id="f-name" type="text" placeholder="홍길동"></div>
-        <div class="field"><label data-i18n="f.email">Email / 이메일</label><input id="f-email" type="email" placeholder="you@studio.com"></div>
-        <div class="field"><label data-i18n="f.type">Project Type / 작업 종류</label>
-          <select id="f-type">
-            <option>Character Rigging / 리깅</option>
-            <option>In-game Animation / 인게임 애니메이션</option>
-            <option>Cutscene &amp; FX / 컷신 · 이펙트</option>
-            <option>Other / 기타</option>
-          </select>
-        </div>
-        <div class="field"><label data-i18n="f.details">Details / 상세 내용</label><textarea id="f-msg" placeholder="캐릭터 수, 모션 목록, 희망 납기 등을 적어주세요."></textarea></div>
-        <button class="btn btn-primary" style="width:100%;justify-content:center" id="f-send" data-i18n="f.send">문의 보내기 / Send →</button>
-        <div class="form-msg" id="f-status"></div>
+      <div style="display:flex;flex-direction:column;justify-content:center;gap:16px">
+        <p style="color:var(--ink-dim);font-size:.95rem;line-height:1.75">채팅으로 프로젝트 내용을 남겨주시면<br>보통 몇 분 안에 바로 답변드립니다.<br>견적 양식도 채팅창에 준비되어 있어요.</p>
+        <button class="btn btn-primary" style="width:100%;justify-content:center" id="openChatCta">실시간 상담 시작하기 →</button>
+        <p style="color:var(--ink-faint);font-size:.78rem">Mon–Fri · 10:00–19:00 KST · 부재 시 이메일로 회신드립니다</p>
       </div>
     </div>
   </div>
@@ -988,11 +978,11 @@ const I18N={
   "proc3":{ko:"리깅 → 애니메이션 작업",en:"Rigging → animation",ja:"リギング → アニメーション",zh:"绑定 → 动画制作"},
   "proc4":{ko:"JSON · Atlas 파일 전달",en:"Deliver JSON & Atlas",ja:"JSON・Atlasファイル納品",zh:"交付 JSON · Atlas 文件"},
   "tag.contact":{ko:"LET'S TALK",en:"LET'S TALK",ja:"お問い合わせ",zh:"联系洽谈"},
-  "h2.contact":{ko:"프로젝트 문의하기",en:"Start a project",ja:"プロジェクトのご相談",zh:"项目咨询"},
-  "contact.lead":{ko:"프로젝트 규모, 캐릭터 수, 희망 납기를 적어주세요. 영업일 기준 48시간 내 회신드립니다.",
-    en:"Tell us your project scope, number of characters, and target deadline. We reply within 48 business hours.",
-    ja:"プロジェクトの規模、キャラクター数、希望納期をお書きください。営業日48時間以内に返信します。",
-    zh:"请告诉我们项目规模、角色数量和期望交付日期。我们将在 48 个工作小时内回复。"},
+  "h2.contact":{ko:"실시간 상담",en:"Live Chat",ja:"リアルタイム相談",zh:"在线咨询"},
+  "contact.lead":{ko:"오른쪽 아래 실시간 상담 버튼으로 문의주시면 가장 빠르게 답변드립니다. 부재 시 이메일로 회신드립니다.",
+    en:"Use the live chat button at the bottom right for the fastest reply. If we are away, we will reply by email.",
+    ja:"右下のライブチャットからお問い合わせいただくと、最も早くご返信できます。不在時はメールでご返信します。",
+    zh:"点击右下角的在线咨询按钮可最快获得回复。若不在线，我们将通过邮件回复。"},
   "f.name":{ko:"Name / 이름",en:"Name",ja:"お名前",zh:"姓名"},
   "f.email":{ko:"Email / 이메일",en:"Email",ja:"メール",zh:"邮箱"},
   "f.type":{ko:"Project Type / 작업 종류",en:"Project Type",ja:"プロジェクト種別",zh:"项目类型"},
@@ -1196,18 +1186,11 @@ document.querySelectorAll('.port.yt').forEach(p=>{
   });
 });
 
-/* contact form (front-end demo) */
-document.getElementById('f-send').addEventListener('click',()=>{
-  const n=document.getElementById('f-name').value.trim();
-  const e=document.getElementById('f-email').value.trim();
-  const s=document.getElementById('f-status');
-  if(!n||!e){s.style.color='#ff5fa2';s.textContent='이름과 이메일을 입력해주세요 / Name & email required';return;}
-  s.style.color='#7afcff';s.textContent='✓ 메일 앱을 엽니다. 잠시만 기다려주세요 / Opening mail app…';
-  const t=document.getElementById('f-type').value;
-  const m=document.getElementById('f-msg').value.trim();
-  const subject=encodeURIComponent('[문의] '+t+' — '+n);
-  const body=encodeURIComponent('이름: '+n+'\n이메일: '+e+'\n작업 종류: '+t+'\n\n'+m);
-  window.location.href='mailto:labkanata@naver.com?subject='+subject+'&body='+body;
+/* 실시간 상담 열기 버튼 */
+document.getElementById('openChatCta').addEventListener('click',()=>{
+  const b=document.getElementById('jyChatBtn');
+  if(b && b.style.display!=='none'){ b.click(); }
+  else{ location.href='mailto:labkanata@naver.com'; }   // 채팅 미설정 시 이메일로
 });
 </script>
 
@@ -1217,16 +1200,18 @@ document.getElementById('f-send').addEventListener('click',()=>{
      ============================================================ -->
 <style>
 /* ---- 채팅 위젯 ---- */
-#jyChatBtn{position:fixed;right:18px;bottom:18px;z-index:900;width:56px;height:56px;border-radius:50%;
-  border:1px solid var(--line-strong);cursor:pointer;display:none;align-items:center;justify-content:center;
-  background:linear-gradient(135deg,#12141f,#0e1018);box-shadow:0 8px 30px rgba(0,0,0,.55),0 0 18px rgba(122,252,255,.25);
-  transition:transform .15s}
-#jyChatBtn:hover{transform:scale(1.06)}
-#jyChatBtn svg{width:26px;height:26px;stroke:var(--neon)}
-#jyChatBtn .jy-dot{position:absolute;top:2px;right:2px;min-width:18px;height:18px;border-radius:9px;background:var(--neon-3);
-  color:#fff;font-size:.66rem;font-weight:700;font-family:var(--mono);display:none;align-items:center;justify-content:center;padding:0 5px}
+#jyChatBtn{position:fixed;right:18px;bottom:18px;z-index:900;height:62px;padding:0 24px 0 18px;border-radius:34px;
+  border:1.5px solid var(--line-strong);cursor:pointer;display:none;align-items:center;gap:11px;
+  background:linear-gradient(135deg,#12141f,#0e1018);box-shadow:0 10px 34px rgba(0,0,0,.6),0 0 22px rgba(122,252,255,.3);
+  transition:transform .15s, box-shadow .15s}
+#jyChatBtn:hover{transform:scale(1.04);box-shadow:0 12px 38px rgba(0,0,0,.65),0 0 30px rgba(122,252,255,.45)}
+#jyChatBtn svg{width:30px;height:30px;stroke:var(--neon);flex:0 0 auto}
+#jyChatBtn .jy-cb-txt{font-family:var(--kr);font-weight:700;font-size:1.02rem;color:var(--ink);letter-spacing:.01em;white-space:nowrap}
+#jyChatBtn .jy-dot{position:absolute;top:-5px;right:2px;min-width:20px;height:20px;border-radius:10px;background:var(--neon-3);
+  color:#fff;font-size:.7rem;font-weight:700;font-family:var(--mono);display:none;align-items:center;justify-content:center;padding:0 6px}
 #jyChatBtn .jy-dot.show{display:inline-flex}
-#jyChatPanel{position:fixed;right:18px;bottom:86px;z-index:901;width:min(360px,calc(100vw - 36px));height:min(520px,calc(100dvh - 120px));
+@media(max-width:480px){#jyChatBtn{height:56px;padding:0 18px 0 15px}#jyChatBtn .jy-cb-txt{font-size:.92rem}}
+#jyChatPanel{position:fixed;right:18px;bottom:92px;z-index:901;width:min(360px,calc(100vw - 36px));height:min(560px,calc(100dvh - 126px));
   background:#0e1018;border:1px solid var(--line-strong);border-radius:18px;display:none;flex-direction:column;overflow:hidden;
   box-shadow:0 20px 60px rgba(0,0,0,.6)}
 #jyChatPanel.open{display:flex}
@@ -1241,6 +1226,10 @@ document.getElementById('f-send').addEventListener('click',()=>{
 .jy-msg .tm{display:block;font-family:var(--mono);font-size:.55rem;opacity:.6;margin-top:3px}
 .jy-msg .jy-tr{margin-top:5px;padding-top:5px;border-top:1px dashed var(--line-strong);font-size:.82em;opacity:.85}
 .jy-ch-note{font-size:.72rem;color:var(--ink-dim);text-align:center;padding:4px 10px}
+.jy-ch-tpl{display:flex;gap:6px;padding:8px 11px 2px;flex-wrap:wrap}
+.jy-ch-tpl button{background:#12141f;border:1px solid var(--line-strong);color:var(--ink-dim);border-radius:16px;
+  padding:6px 12px;font-size:.75rem;cursor:pointer;font-family:var(--kr);transition:.12s}
+.jy-ch-tpl button:hover{border-color:var(--neon);color:var(--neon)}
 .jy-ch-input{display:flex;gap:8px;padding:11px;border-top:1px solid var(--line);background:#0b0d13}
 .jy-ch-input textarea{flex:1;min-height:40px;max-height:100px;resize:none;background:#12141f;border:1px solid var(--line);
   border-radius:10px;color:var(--ink);font-family:var(--kr);font-size:.85rem;padding:9px 12px;line-height:1.4}
@@ -1251,10 +1240,11 @@ document.getElementById('f-send').addEventListener('click',()=>{
 @media(max-width:480px){#jyChatPanel{right:10px;bottom:80px}}
 </style>
 
-<button id="jyChatBtn" aria-label="실시간 문의 채팅 열기">
+<button id="jyChatBtn" aria-label="실시간 상담 열기">
   <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
     <path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.6 8.6 0 0 1-3.5-.7L3 21l1.7-5A8.38 8.38 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z"/>
   </svg>
+  <span class="jy-cb-txt">실시간 상담</span>
   <span class="jy-dot" id="jyChatDot">1</span>
 </button>
 <div id="jyChatPanel" role="dialog" aria-label="실시간 문의">
@@ -1267,6 +1257,11 @@ document.getElementById('f-send').addEventListener('click',()=>{
 프로젝트 문의, 견적, 일정 등 무엇이든 편하게 남겨주세요.</div>
   </div>
   <div class="jy-ch-note" id="jyChNote"></div>
+  <div class="jy-ch-tpl" id="jyChTpl">
+    <button data-tpl="quote">견적 문의 양식</button>
+    <button data-tpl="schedule">일정 문의</button>
+    <button data-tpl="free">자유 문의</button>
+  </div>
   <div class="jy-ch-input">
     <textarea id="jyChInput" placeholder="메시지 입력…" maxlength="2000"></textarea>
     <button id="jyChSend">전송</button>
@@ -1359,6 +1354,16 @@ document.getElementById('f-send').addEventListener('click',()=>{
     sessionId = localStorage.getItem('jy_chat_sid');
     if(!sessionId){ sessionId = uuid(); localStorage.setItem('jy_chat_sid', sessionId); }
 
+    /* 기본 문의 양식 */
+    var TPL = {
+      quote: '안녕하세요, 견적 문의드립니다.\n\n· 성함/소속: \n· 이메일: \n· 작업 종류: (리깅 / 인게임 애니메이션 / 컷신·이펙트)\n· 캐릭터 수 / 모션 수: \n· 희망 납기: \n· 참고 자료 링크: ',
+      schedule: '안녕하세요, 일정 문의드립니다.\n\n· 프로젝트 개요: \n· 시작 희망 시기: \n· 마감 기한: \n· 회신 받을 이메일: ',
+      free: '안녕하세요, 문의드립니다.\n\n· 내용: \n· 회신 받을 이메일: '
+    };
+    document.querySelectorAll('#jyChTpl button').forEach(function(b){
+      b.addEventListener('click', function(){ input.value = TPL[b.dataset.tpl] || ''; input.focus(); });
+    });
+
     function addMsg(sender, text, iso){
       var d=document.createElement('div');
       d.className='jy-msg '+(sender==='visitor'?'me':'admin');
@@ -1392,9 +1397,12 @@ document.getElementById('f-send').addEventListener('click',()=>{
           });
         }
       }
-      // 이전 대화 불러오기
+      // 이전 대화 불러오기 (첫 문의라면 견적 양식을 미리 채워줌)
       sb.rpc('chat_history',{ p_session: sessionId }).then(function(res){
-        if(res.error || !res.data || !res.data.length) return;
+        if(res.error || !res.data || !res.data.length){
+          if(!input.value) input.value = TPL.quote;
+          return;
+        }
         res.data.forEach(function(m){ addMsg(m.sender, m.body, m.created_at); });
       });
       // 관리자 답장 실시간 수신

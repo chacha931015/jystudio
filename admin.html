@@ -319,6 +319,7 @@ html.tauri .center{margin-top:14vh}
       <button class="nav-item" data-tab="chat"><span class="ico"><svg viewBox="0 0 24 24"><path d="M4 5.5h16v11H9L4 20.5z" stroke-linejoin="round"/></svg></span>문의<span class="bdg" data-bdg="chat">0</span></button>
       <button class="nav-item" data-tab="portfolio"><span class="ico"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2.5"/><circle cx="9" cy="10" r="1.5"/><path d="M5 17l4.5-4.2 3.2 3 3-2.6 3.8 3.8"/></svg></span>포트폴리오</button>
       <button class="nav-item" data-tab="team"><span class="ico"><svg viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c.6-3 2.8-4.7 5.5-4.7s4.9 1.7 5.5 4.7M17 11.8a2.6 2.6 0 1 0-1.5-4.9M16 14.3c2.4.2 4 1.8 4.5 4.4"/></svg></span>팀 경력</button>
+      <button class="nav-item" data-tab="svc"><span class="ico"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7.5" height="7.5" rx="2"/><rect x="13" y="3.5" width="7.5" height="7.5" rx="2"/><rect x="3.5" y="13" width="7.5" height="7.5" rx="2"/><rect x="13" y="13" width="7.5" height="7.5" rx="2"/></svg></span>서비스 항목</button>
       <button class="nav-item" data-tab="notices"><span class="ico"><svg viewBox="0 0 24 24"><path d="M4 10v4h3l7 4.5v-13L7 10H4z" stroke-linejoin="round"/><path d="M17.5 9.5a4.2 4.2 0 0 1 0 5"/></svg></span>공지</button>
       <div class="nav-group">내부 관리</div>
       <button class="nav-item" data-tab="jobs"><span class="ico"><svg viewBox="0 0 24 24"><rect x="3.5" y="8" width="17" height="11" rx="2.5"/><path d="M9 8V6.5A2.5 2.5 0 0 1 11.5 4h1A2.5 2.5 0 0 1 15 6.5V8M3.5 12.5h17"/></svg></span>외주공고<span class="bdg" data-bdg="jobs">0</span></button>
@@ -420,6 +421,17 @@ html.tauri .center{margin-top:14vh}
       <div id="tmList"></div>
     </div>
 
+    <!-- ========== 서비스 항목 ========== -->
+    <div id="tab-svc" style="display:none">
+      <div class="large-title">서비스 항목</div>
+      <div class="sub-title">홈페이지 "외주 서비스 항목" 섹션의 카드들입니다. 손잡이(⠿)로 순서를 바꿀 수 있습니다.</div>
+      <div class="section-head">
+        <span class="muted" id="svCount" style="font-size:.8rem"></span>
+        <button class="btn primary sm" id="addSv">＋ 서비스 추가</button>
+      </div>
+      <div id="svList"></div>
+    </div>
+
     <!-- ========== 직원 관리 ========== -->
     <div id="tab-staff" style="display:none">
       <div class="large-title">직원 관리</div>
@@ -516,6 +528,7 @@ html.tauri .center{margin-top:14vh}
   <button data-tab="chat"><span class="ico"><svg viewBox="0 0 24 24"><path d="M4 5.5h16v11H9L4 20.5z" stroke-linejoin="round"/></svg></span>문의<span class="bdg" data-bdg="chat">0</span></button>
   <button data-tab="portfolio"><span class="ico"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2.5"/><circle cx="9" cy="10" r="1.5"/><path d="M5 17l4.5-4.2 3.2 3 3-2.6 3.8 3.8"/></svg></span>포트폴리오</button>
   <button data-tab="team"><span class="ico"><svg viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c.6-3 2.8-4.7 5.5-4.7s4.9 1.7 5.5 4.7M17 11.8a2.6 2.6 0 1 0-1.5-4.9M16 14.3c2.4.2 4 1.8 4.5 4.4"/></svg></span>팀</button>
+  <button data-tab="svc"><span class="ico"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7.5" height="7.5" rx="2"/><rect x="13" y="3.5" width="7.5" height="7.5" rx="2"/><rect x="3.5" y="13" width="7.5" height="7.5" rx="2"/><rect x="13" y="13" width="7.5" height="7.5" rx="2"/></svg></span>서비스</button>
   <button data-tab="staff"><span class="ico"><svg viewBox="0 0 24 24"><rect x="4" y="4.5" width="16" height="15" rx="2.5"/><path d="M4 9.5h16M9.5 9.5v10"/></svg></span>직원</button>
   <button data-tab="ledger"><span class="ico"><svg viewBox="0 0 24 24"><rect x="4" y="3.5" width="16" height="17" rx="2.5"/><path d="M8 8.5h8M8 12.5h8M8 16.5h4.5"/></svg></span>장부</button>
   <button data-tab="docs"><span class="ico"><svg viewBox="0 0 24 24"><path d="M6.5 3.5h6.5L18.5 9v10.5a1.5 1.5 0 0 1-1.5 1.5H7a1.5 1.5 0 0 1-1.5-1.5v-14a1.5 1.5 0 0 1 1.5-1.5z" stroke-linejoin="round"/><path d="M13 3.5V9h5.5M9 13.5h6M9 17h6"/></svg></span>계약서</button>
@@ -620,6 +633,28 @@ html.tauri .center{margin-top:14vh}
     <div class="actions">
       <button class="btn" onclick="closeModal('emModal')">취소</button>
       <button class="btn primary" id="emSave">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 서비스 편집 모달 -->
+<div class="modal" id="svModal">
+  <div class="box">
+    <h3 id="svModalTitle">서비스 추가</h3>
+    <input type="hidden" id="sv-id">
+    <div class="grid2">
+      <div class="field"><label>라벨 (짧은 영문)</label><input id="sv-badge" placeholder="예: RIG" maxlength="6"></div>
+      <div class="field"><label>정렬 순서</label><input id="sv-sort_order" type="number" value="0"></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>영문 제목</label><input id="sv-title" placeholder="예: Character Rigging"></div>
+      <div class="field"><label>한글 부제</label><input id="sv-subtitle" placeholder="예: 캐릭터 리깅 / 본 셋업"></div>
+    </div>
+    <div class="field"><label>설명</label><textarea id="sv-description" style="min-height:90px" placeholder="서비스 설명"></textarea></div>
+    <div class="err" id="svErr"></div>
+    <div class="actions">
+      <button class="btn" onclick="closeModal('svModal')">취소</button>
+      <button class="btn primary" id="svSave">저장</button>
     </div>
   </div>
 </div>
@@ -736,7 +771,7 @@ html.tauri .center{margin-top:14vh}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
-const APP_VERSION = '1.7.0';
+const APP_VERSION = '1.8.0';
 
 /* 데스크톱 앱 자동 배포: 사이트에 새 버전이 올라가 있으면 그걸 사용 */
 if(window.__TAURI__ && location.protocol !== 'https:'){
@@ -876,7 +911,7 @@ function enterApp(session, isAuto){
   try{ localStorage.setItem('jy_admin','1'); }catch(e){}
   const h = new Date().getHours();
   $('dashGreet').textContent = (h<6?'늦은 시간까지 고생 많으십니다':h<12?'좋은 아침입니다':h<18?'오늘도 좋은 하루 되세요':'오늘 하루도 수고하셨습니다') + ', 대표님. 최근 30일 방문 현황입니다.';
-  loadDashboard(); loadSessions(); loadPortfolio(); loadTeam(); loadStaff(); loadLedger(); loadDocs(); loadNotices(); loadJobs();
+  loadDashboard(); loadSessions(); loadPortfolio(); loadTeam(); loadSvc(); loadStaff(); loadLedger(); loadDocs(); loadNotices(); loadJobs();
   startRealtime();
   setupNotifButton();
 }
@@ -887,7 +922,7 @@ function enterApp(session, isAuto){
 document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click', ()=>{
   const tab = b.dataset.tab;
   document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('on', x.dataset.tab===tab));
-  ['dash','chat','portfolio','team','staff','ledger','docs','notices','jobs'].forEach(t=>$('tab-'+t).style.display = tab===t ? 'block':'none');
+  ['dash','chat','portfolio','team','svc','staff','ledger','docs','notices','jobs'].forEach(t=>$('tab-'+t).style.display = tab===t ? 'block':'none');
 }));
 function gotoTab(name){ document.querySelector(`.side-nav [data-tab="${name}"]`)?.click(); }
 
@@ -1308,6 +1343,63 @@ $('pfSave').addEventListener('click', async ()=>{
 async function delPf(id){ if(!confirm('이 작업물을 삭제할까요?'))return;
   const { error } = await sb.from('portfolio').delete().eq('id', id);
   if(error){ toast('삭제 실패: '+error.message); return; } loadPortfolio();
+}
+
+/* ============================================================
+   서비스 항목 (홈페이지 Services 섹션)
+   ============================================================ */
+async function loadSvc(){
+  const { data, error } = await sb.from('services').select('*').order('sort_order',{ascending:true}).order('created_at',{ascending:true});
+  if(error){ $('svList').innerHTML = '<div class="empty">불러오기 오류: '+esc(error.message)+'<br>(supabase-update-5.sql 실행 여부 확인)</div>'; return; }
+  $('svCount').textContent = data.length ? `총 ${data.length}개` : '';
+  if(!data.length){ $('svList').innerHTML='<div class="empty">아직 서비스 항목이 없습니다. "＋ 서비스 추가"로 시작하세요.</div>'; return; }
+  $('svList').innerHTML = '<div class="rowlist" id="svRows">' + data.map(r=>`
+    <div class="row" data-rid="${r.id}">
+      <span class="drag-h" title="끌어서 순서 변경">⠿</span>
+      <div class="thumb ph" style="width:48px;height:40px">${esc(r.badge||'')}</div>
+      <div class="info"><div class="t">${esc(r.title)} <span class="muted" style="font-weight:400;font-size:.8rem">${esc(r.subtitle||'')}</span></div>
+        <div class="m">${esc(r.description||'')}</div></div>
+      <div class="acts">
+        <button class="btn sm" data-edit="${r.id}">수정</button>
+        <button class="btn danger sm" data-del="${r.id}">삭제</button>
+      </div></div>`).join('') + '</div>';
+  $('svList').querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click',()=>editSv(data.find(r=>r.id==b.dataset.edit))));
+  $('svList').querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>delSv(b.dataset.del)));
+  enableReorder($('svRows'), 'services', loadSvc);
+}
+$('addSv').addEventListener('click', ()=>{
+  $('svModalTitle').textContent='서비스 추가'; $('svErr').textContent='';
+  ['id','badge','title','subtitle','description'].forEach(k=>$('sv-'+k).value='');
+  $('sv-sort_order').value=0;
+  $('svModal').classList.add('open');
+});
+function editSv(r){
+  if(!r) return;
+  $('svModalTitle').textContent='서비스 수정'; $('svErr').textContent='';
+  $('sv-id').value=r.id; $('sv-badge').value=r.badge||''; $('sv-title').value=r.title||'';
+  $('sv-subtitle').value=r.subtitle||''; $('sv-description').value=r.description||'';
+  $('sv-sort_order').value=r.sort_order??0;
+  $('svModal').classList.add('open');
+}
+$('svSave').addEventListener('click', async ()=>{
+  $('svErr').textContent='';
+  const row = {
+    badge:$('sv-badge').value.trim().toUpperCase(), title:$('sv-title').value.trim(),
+    subtitle:$('sv-subtitle').value.trim(), description:$('sv-description').value.trim(),
+    sort_order:parseInt($('sv-sort_order').value)||0
+  };
+  if(!row.title){ $('svErr').textContent='영문 제목을 입력하세요.'; return; }
+  const id=$('sv-id').value; $('svSave').textContent='저장 중…';
+  let error;
+  if(id){ ({ error } = await sb.from('services').update(row).eq('id', id)); }
+  else  { ({ error } = await sb.from('services').insert(row)); }
+  $('svSave').textContent='저장';
+  if(error){ $('svErr').textContent='저장 실패: '+error.message; return; }
+  closeModal('svModal'); loadSvc(); toast('저장되었습니다. 홈페이지에 바로 반영됩니다');
+});
+async function delSv(id){ if(!confirm('이 서비스 항목을 삭제할까요?'))return;
+  const { error } = await sb.from('services').delete().eq('id', id);
+  if(error){ toast('삭제 실패: '+error.message); return; } loadSvc();
 }
 
 /* ============================================================

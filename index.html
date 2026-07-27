@@ -465,7 +465,7 @@ footer p{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);letter-
         <h2>Services<span class="kr" data-i18n="h2.services">외주 서비스 항목</span></h2>
       </div>
     </div>
-    <div class="svc-grid">
+    <div class="svc-grid" id="svcGrid">
       <div class="svc reveal">
         <div class="ic">RIG</div>
         <h3 data-i18n="svc1.t">Character Rigging</h3>
@@ -1315,6 +1315,9 @@ document.getElementById('openChatCta').addEventListener('click',()=>{
     /* ---------- 3-1) 팀 경력 DB 연동 ---------- */
     try{ loadTeamFromDB(); }catch(e){}
 
+    /* ---------- 3-2) 서비스 항목 DB 연동 ---------- */
+    try{ loadServicesFromDB(); }catch(e){}
+
     /* ---------- 4) 문의 폼 → DB에도 저장 ---------- */
     try{ hookContactForm(); }catch(e){}
   }
@@ -1549,6 +1552,25 @@ document.getElementById('openChatCta').addEventListener('click',()=>{
           window.teamBtnRefreshLabel();
         });
         window.teamBtnRefreshLabel();
+      });
+  }
+
+  /* ================= 서비스 항목 DB 연동 =================
+     관리자 앱 "서비스 항목" 탭 내용이 있으면 Services 섹션을 다시 그림 */
+  function loadServicesFromDB(){
+    sb.from('services').select('*').order('sort_order',{ascending:true}).order('created_at',{ascending:true})
+      .then(function(res){
+        var rows=res.data;
+        if(res.error || !rows || rows.length===0) return;
+        var grid=document.getElementById('svcGrid');
+        if(!grid) return;
+        grid.innerHTML = rows.map(function(r){
+          return '<div class="svc reveal"><div class="ic">'+esc(r.badge||'')+'</div>'
+               +'<h3>'+esc(r.title)+'</h3>'
+               +'<div class="h3-kr">'+esc(r.subtitle||'')+'</div>'
+               +'<p>'+esc(r.description||'')+'</p></div>';
+        }).join('');
+        grid.querySelectorAll('.svc').forEach(function(el){ if(typeof io!=='undefined') io.observe(el); });
       });
   }
 

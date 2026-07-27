@@ -771,7 +771,7 @@ html.tauri .center{margin-top:14vh}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
-const APP_VERSION = '1.8.0';
+const APP_VERSION = '1.8.1';
 
 /* 데스크톱 앱 자동 배포: 사이트에 새 버전이 올라가 있으면 그걸 사용 */
 if(window.__TAURI__ && location.protocol !== 'https:'){
@@ -954,12 +954,15 @@ function beep(){
 }
 function setupNotifButton(){
   if(!('Notification' in window)) return;
+  // 데스크톱 앱은 소리·작업표시줄 배지·깜빡임으로 알림 → 웹 알림 버튼 불필요
+  if(window.__TAURI__) return;
   if(Notification.permission==='default'){
     $('notifBtn').style.display='inline-block';
     $('notifBtn').addEventListener('click', async ()=>{
       const p = await Notification.requestPermission();
-      if(p!=='default') $('notifBtn').style.display='none';
       if(p==='granted') toast('알림이 켜졌습니다');
+      else if(p==='denied') toast('알림 권한이 거부되었습니다. 소리·배지 알림은 계속 작동합니다');
+      if(p!=='default') $('notifBtn').style.display='none';
     });
   }
 }

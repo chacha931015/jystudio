@@ -324,6 +324,7 @@ html.tauri .center{margin-top:14vh}
       <button class="nav-item" data-tab="jobs"><span class="ico"><svg viewBox="0 0 24 24"><rect x="3.5" y="8" width="17" height="11" rx="2.5"/><path d="M9 8V6.5A2.5 2.5 0 0 1 11.5 4h1A2.5 2.5 0 0 1 15 6.5V8M3.5 12.5h17"/></svg></span>외주공고<span class="bdg" data-bdg="jobs">0</span></button>
       <button class="nav-item" data-tab="staff"><span class="ico"><svg viewBox="0 0 24 24"><rect x="4" y="4.5" width="16" height="15" rx="2.5"/><path d="M4 9.5h16M9.5 9.5v10"/></svg></span>직원 관리</button>
       <button class="nav-item" data-tab="ledger"><span class="ico"><svg viewBox="0 0 24 24"><rect x="4" y="3.5" width="16" height="17" rx="2.5"/><path d="M8 8.5h8M8 12.5h8M8 16.5h4.5"/></svg></span>회계 장부</button>
+      <button class="nav-item" data-tab="docs"><span class="ico"><svg viewBox="0 0 24 24"><path d="M6.5 3.5h6.5L18.5 9v10.5a1.5 1.5 0 0 1-1.5 1.5H7a1.5 1.5 0 0 1-1.5-1.5v-14a1.5 1.5 0 0 1 1.5-1.5z" stroke-linejoin="round"/><path d="M13 3.5V9h5.5M9 13.5h6M9 17h6"/></svg></span>계약서</button>
       <div style="height:1px;background:var(--line);margin:10px 10px 8px"></div>
       <button class="nav-item" id="siteBtn"><span class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.3 4 5.2 4 8.5s-1.4 6.2-4 8.5c-2.6-2.3-4-5.2-4-8.5s1.4-6.2 4-8.5z"/></svg></span>홈페이지 바로가기</button>
     </nav>
@@ -464,6 +465,21 @@ html.tauri .center{margin-top:14vh}
       </div>
     </div>
 
+    <!-- ========== 계약서 보관함 ========== -->
+    <div id="tab-docs" style="display:none">
+      <div class="large-title">계약서 보관함</div>
+      <div class="sub-title">계약서·견적서 등 문서 파일을 안전하게 보관합니다. 비공개 저장소라 관리자 로그인 없이는 열 수 없습니다.</div>
+      <div class="section-head">
+        <span class="muted" id="dcCount" style="font-size:.8rem"></span>
+        <div style="display:flex;gap:6px">
+          <input type="file" id="dc-file" style="display:none" multiple>
+          <button class="btn primary sm" id="dcUploadBtn">＋ 파일 올리기</button>
+        </div>
+      </div>
+      <div id="dcList"></div>
+      <p class="hint" style="margin-top:14px">파일을 이 화면으로 끌어다 놓아도 업로드됩니다. (PDF·한글·워드·이미지·압축파일, 개당 50MB 이하)</p>
+    </div>
+
     <!-- ========== 공지 ========== -->
     <div id="tab-notices" style="display:none">
       <div class="large-title">공지사항</div>
@@ -502,6 +518,7 @@ html.tauri .center{margin-top:14vh}
   <button data-tab="team"><span class="ico"><svg viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c.6-3 2.8-4.7 5.5-4.7s4.9 1.7 5.5 4.7M17 11.8a2.6 2.6 0 1 0-1.5-4.9M16 14.3c2.4.2 4 1.8 4.5 4.4"/></svg></span>팀</button>
   <button data-tab="staff"><span class="ico"><svg viewBox="0 0 24 24"><rect x="4" y="4.5" width="16" height="15" rx="2.5"/><path d="M4 9.5h16M9.5 9.5v10"/></svg></span>직원</button>
   <button data-tab="ledger"><span class="ico"><svg viewBox="0 0 24 24"><rect x="4" y="3.5" width="16" height="17" rx="2.5"/><path d="M8 8.5h8M8 12.5h8M8 16.5h4.5"/></svg></span>장부</button>
+  <button data-tab="docs"><span class="ico"><svg viewBox="0 0 24 24"><path d="M6.5 3.5h6.5L18.5 9v10.5a1.5 1.5 0 0 1-1.5 1.5H7a1.5 1.5 0 0 1-1.5-1.5v-14a1.5 1.5 0 0 1 1.5-1.5z" stroke-linejoin="round"/><path d="M13 3.5V9h5.5M9 13.5h6M9 17h6"/></svg></span>계약서</button>
   <button data-tab="notices"><span class="ico"><svg viewBox="0 0 24 24"><path d="M4 10v4h3l7 4.5v-13L7 10H4z" stroke-linejoin="round"/><path d="M17.5 9.5a4.2 4.2 0 0 1 0 5"/></svg></span>공지</button>
   <button data-tab="jobs"><span class="ico"><svg viewBox="0 0 24 24"><rect x="3.5" y="8" width="17" height="11" rx="2.5"/><path d="M9 8V6.5A2.5 2.5 0 0 1 11.5 4h1A2.5 2.5 0 0 1 15 6.5V8M3.5 12.5h17"/></svg></span>공고<span class="bdg" data-bdg="jobs">0</span></button>
   <button id="siteBtnM"><span class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.3 4 5.2 4 8.5s-1.4 6.2-4 8.5c-2.6-2.3-4-5.2-4-8.5s1.4-6.2 4-8.5z"/></svg></span>홈페이지</button>
@@ -711,7 +728,7 @@ html.tauri .center{margin-top:14vh}
   </div>
 </div>
 
-<div id="dropOverlay"><div class="dov-box">파일을 끌어다 놓으세요<small>이미지 · GIF · 동영상이 포트폴리오에 업로드됩니다</small></div></div>
+<div id="dropOverlay"><div class="dov-box"><span id="dovMain">파일을 끌어다 놓으세요</span><small id="dovSub">이미지 · GIF · 동영상이 포트폴리오에 업로드됩니다</small></div></div>
 
 <div id="toast"></div>
 
@@ -719,7 +736,7 @@ html.tauri .center{margin-top:14vh}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
-const APP_VERSION = '1.6.4';
+const APP_VERSION = '1.7.0';
 
 /* 데스크톱 앱 자동 배포: 사이트에 새 버전이 올라가 있으면 그걸 사용 */
 if(window.__TAURI__ && location.protocol !== 'https:'){
@@ -754,17 +771,24 @@ async function jyTranslate(text, target){
   }catch(e){ return null; }
 }
 
-/* 전역 파일 드롭: 앱 어디에 떨어뜨려도 포트폴리오 업로드로 연결 */
+/* 전역 파일 드롭: 계약서 탭에서는 계약서로, 그 외에는 포트폴리오로 업로드 */
 (function(){
   let depth=0;
   const hasFiles = e => [...(e.dataTransfer&&e.dataTransfer.types||[])].includes('Files');
-  window.addEventListener('dragenter', e=>{ if(!hasFiles(e)) return; e.preventDefault(); depth++; $('dropOverlay').classList.add('show'); });
+  const docsMode = () => $('tab-docs') && $('tab-docs').style.display !== 'none';
+  window.addEventListener('dragenter', e=>{
+    if(!hasFiles(e)) return; e.preventDefault(); depth++;
+    $('dovSub').textContent = docsMode() ? '계약서 보관함에 저장됩니다' : '이미지 · GIF · 동영상이 포트폴리오에 업로드됩니다';
+    $('dropOverlay').classList.add('show');
+  });
   window.addEventListener('dragover',  e=>{ if(hasFiles(e)) e.preventDefault(); });
   window.addEventListener('dragleave', e=>{ if(!hasFiles(e)) return; if(--depth<=0){ depth=0; $('dropOverlay').classList.remove('show'); } });
   window.addEventListener('drop', e=>{
     if(!hasFiles(e)) return;
     e.preventDefault(); depth=0; $('dropOverlay').classList.remove('show');
-    const f=e.dataTransfer.files[0]; if(!f || !sb) return;
+    if(!sb) return;
+    if(docsMode()){ [...e.dataTransfer.files].forEach(uploadDocFile); return; }
+    const f=e.dataTransfer.files[0]; if(!f) return;
     if(!$('pfModal').classList.contains('open')){ gotoTab('portfolio'); $('addPf').click(); }
     uploadPfFile(f);
   });
@@ -852,7 +876,7 @@ function enterApp(session, isAuto){
   try{ localStorage.setItem('jy_admin','1'); }catch(e){}
   const h = new Date().getHours();
   $('dashGreet').textContent = (h<6?'늦은 시간까지 고생 많으십니다':h<12?'좋은 아침입니다':h<18?'오늘도 좋은 하루 되세요':'오늘 하루도 수고하셨습니다') + ', 대표님. 최근 30일 방문 현황입니다.';
-  loadDashboard(); loadSessions(); loadPortfolio(); loadTeam(); loadStaff(); loadLedger(); loadNotices(); loadJobs();
+  loadDashboard(); loadSessions(); loadPortfolio(); loadTeam(); loadStaff(); loadLedger(); loadDocs(); loadNotices(); loadJobs();
   startRealtime();
   setupNotifButton();
 }
@@ -863,16 +887,16 @@ function enterApp(session, isAuto){
 document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click', ()=>{
   const tab = b.dataset.tab;
   document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('on', x.dataset.tab===tab));
-  ['dash','chat','portfolio','team','staff','ledger','notices','jobs'].forEach(t=>$('tab-'+t).style.display = tab===t ? 'block':'none');
+  ['dash','chat','portfolio','team','staff','ledger','docs','notices','jobs'].forEach(t=>$('tab-'+t).style.display = tab===t ? 'block':'none');
 }));
 function gotoTab(name){ document.querySelector(`.side-nav [data-tab="${name}"]`)?.click(); }
 
-/* 홈페이지 바로가기 (데스크톱 앱에서는 기본 브라우저로) */
-function openSite(){
-  const url = 'https://jystudio98.com';
+/* 외부 링크 열기 (데스크톱 앱에서는 기본 브라우저로) */
+function openExternal(url){
   if(window.__TAURI__ && window.__TAURI__.opener && window.__TAURI__.opener.openUrl){ window.__TAURI__.opener.openUrl(url); }
   else window.open(url, '_blank', 'noopener');
 }
+function openSite(){ openExternal('https://jystudio98.com'); }
 $('siteBtn').addEventListener('click', openSite);
 $('siteBtnM').addEventListener('click', openSite);
 function closeModal(id){ $(id).classList.remove('open'); }
@@ -1606,6 +1630,59 @@ $('lgSave').addEventListener('click', async ()=>{
 async function delLg(id){ if(!confirm('이 내역을 삭제할까요?'))return;
   const { error } = await sb.from('ledger').delete().eq('id', id);
   if(error){ toast('삭제 실패: '+error.message); return; } loadLedger();
+}
+
+/* ============================================================
+   계약서 보관함 (비공개 저장소, 관리자 전용)
+   ============================================================ */
+let docsData = [];
+function fmtSize(n){ n = Number(n)||0; return n > 1048576 ? (n/1048576).toFixed(1)+' MB' : Math.max(1, Math.round(n/1024))+' KB'; }
+async function loadDocs(){
+  const { data, error } = await sb.from('contracts').select('*').order('created_at',{ascending:false}).limit(300);
+  if(error){ $('dcList').innerHTML = '<div class="empty">불러오기 오류: '+esc(error.message)+'<br>(supabase-update-4.sql 실행 여부 확인)</div>'; return; }
+  docsData = data||[];
+  $('dcCount').textContent = docsData.length ? `총 ${docsData.length}개` : '';
+  if(!docsData.length){ $('dcList').innerHTML = '<div class="empty">아직 저장된 문서가 없습니다.<br>파일을 끌어다 놓거나 "＋ 파일 올리기"를 누르세요.</div>'; return; }
+  $('dcList').innerHTML = '<div class="rowlist">' + docsData.map(d=>`
+    <div class="row">
+      <div class="thumb ph" style="width:48px;height:40px">${esc((d.name.split('.').pop()||'').toUpperCase().slice(0,4))}</div>
+      <div class="info"><div class="t">${esc(d.name)}</div>
+        <div class="m">${fmtSize(d.size)} · 올린 날짜 ${esc(fmtTime(d.created_at))}</div></div>
+      <div class="acts">
+        <button class="btn sm" data-dl="${d.id}">다운로드</button>
+        <button class="btn danger sm" data-del="${d.id}">삭제</button>
+      </div></div>`).join('') + '</div>';
+  $('dcList').querySelectorAll('[data-dl]').forEach(b=>b.addEventListener('click',()=>dlDoc(docsData.find(x=>x.id==b.dataset.dl))));
+  $('dcList').querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>delDoc(docsData.find(x=>x.id==b.dataset.del))));
+}
+$('dcUploadBtn').addEventListener('click', ()=>$('dc-file').click());
+$('dc-file').addEventListener('change', e=>{ [...e.target.files].forEach(uploadDocFile); e.target.value=''; });
+async function uploadDocFile(f){
+  if(!f) return;
+  if(f.size > 50*1024*1024){ toast(`"${f.name}" — 50MB 이하만 업로드할 수 있습니다`); return; }
+  toast(`"${f.name}" 업로드 중…`);
+  const ext = (f.name.split('.').pop()||'bin').replace(/[^\w]/g,'').slice(0,10) || 'bin';
+  const path = 'contracts/' + Date.now() + '-' + Math.random().toString(36).slice(2,8) + '.' + ext;
+  const { error } = await sb.storage.from('docs').upload(path, f);
+  if(error){ toast('업로드 실패: '+error.message+(String(error.message).toLowerCase().includes('bucket')?' — supabase-update-4.sql을 먼저 실행해주세요':'')); return; }
+  const { error: e2 } = await sb.from('contracts').insert({ name: f.name, path, size: f.size });
+  if(e2){ toast('목록 저장 실패: '+e2.message); return; }
+  toast('저장되었습니다');
+  loadDocs();
+}
+async function dlDoc(d){
+  if(!d) return;
+  const { data, error } = await sb.storage.from('docs').createSignedUrl(d.path, 300);
+  if(error || !data){ toast('다운로드 링크 생성 실패: '+(error?error.message:'')); return; }
+  openExternal(data.signedUrl);
+}
+async function delDoc(d){
+  if(!d) return;
+  if(!confirm(`"${d.name}" 파일을 삭제할까요? (복구 불가)`)) return;
+  await sb.storage.from('docs').remove([d.path]);
+  const { error } = await sb.from('contracts').delete().eq('id', d.id);
+  if(error){ toast('삭제 실패: '+error.message); return; }
+  loadDocs();
 }
 
 /* ============================================================

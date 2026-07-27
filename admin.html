@@ -54,10 +54,10 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--blue);bo
 textarea{min-height:90px;resize:vertical;line-height:1.55}
 .err{color:var(--red);font-size:.82rem;margin-top:10px;min-height:1.2em}
 .hint{font-size:.7rem;color:var(--dim2);margin-top:5px}
-/* iOS 스위치 */
-.switch{position:relative;display:inline-flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+/* iOS 스위치 (.field label 규칙보다 우선하도록 선택자 강화) */
+.switch,.field label.switch{position:relative;display:inline-flex;align-items:center;gap:10px;cursor:pointer;user-select:none;margin:0;color:var(--ink);font-size:.88rem}
 .switch input{position:absolute;opacity:0;width:0;height:0}
-.switch .knob{width:46px;height:28px;border-radius:15px;background:rgba(120,120,128,.32);transition:.2s;flex:0 0 auto;position:relative}
+.switch .knob{display:block;width:46px;height:28px;border-radius:15px;background:rgba(120,120,128,.32);transition:.2s;flex:0 0 auto;position:relative}
 .switch .knob::after{content:"";position:absolute;top:2px;left:2px;width:24px;height:24px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 2px 5px rgba(0,0,0,.3)}
 .switch input:checked + .knob{background:var(--green)}
 .switch input:checked + .knob::after{left:20px}
@@ -707,7 +707,7 @@ html.tauri .center{margin-top:14vh}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
-const APP_VERSION = '1.6.1';
+const APP_VERSION = '1.6.2';
 
 /* 데스크톱 앱 자동 배포: 사이트에 새 버전이 올라가 있으면 그걸 사용 */
 if(window.__TAURI__ && location.protocol !== 'https:'){

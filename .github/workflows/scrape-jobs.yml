@@ -1,0 +1,26 @@
+name: 외주 공고 자동 수집
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'   # 6시간마다 (UTC 기준)
+  workflow_dispatch:          # Actions 탭에서 수동 실행도 가능
+
+permissions:
+  contents: read
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: 공고 수집 → Supabase 저장
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          # 키워드를 바꾸고 싶으면 저장소 Variables에 JOB_KEYWORDS 추가 (쉼표 구분)
+          JOB_KEYWORDS: ${{ vars.JOB_KEYWORDS }}
+        run: node scripts/scrape-jobs.mjs

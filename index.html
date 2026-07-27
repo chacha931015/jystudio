@@ -1210,5 +1210,357 @@ document.getElementById('f-send').addEventListener('click',()=>{
   window.location.href='mailto:labkanata@naver.com?subject='+subject+'&body='+body;
 });
 </script>
+
+<!-- ============================================================
+     JY 라이브 — 실시간 채팅 위젯 · 방문자 통계 · 포트폴리오 DB 연동
+     (supabase-config.js에 키가 없으면 아무것도 하지 않고 조용히 넘어감)
+     ============================================================ -->
+<style>
+/* ---- 채팅 위젯 ---- */
+#jyChatBtn{position:fixed;right:18px;bottom:18px;z-index:900;width:56px;height:56px;border-radius:50%;
+  border:1px solid var(--line-strong);cursor:pointer;display:none;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#12141f,#0e1018);box-shadow:0 8px 30px rgba(0,0,0,.55),0 0 18px rgba(122,252,255,.25);
+  transition:transform .15s}
+#jyChatBtn:hover{transform:scale(1.06)}
+#jyChatBtn svg{width:26px;height:26px;stroke:var(--neon)}
+#jyChatBtn .jy-dot{position:absolute;top:2px;right:2px;min-width:18px;height:18px;border-radius:9px;background:var(--neon-3);
+  color:#fff;font-size:.66rem;font-weight:700;font-family:var(--mono);display:none;align-items:center;justify-content:center;padding:0 5px}
+#jyChatBtn .jy-dot.show{display:inline-flex}
+#jyChatPanel{position:fixed;right:18px;bottom:86px;z-index:901;width:min(360px,calc(100vw - 36px));height:min(520px,calc(100dvh - 120px));
+  background:#0e1018;border:1px solid var(--line-strong);border-radius:18px;display:none;flex-direction:column;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,.6)}
+#jyChatPanel.open{display:flex}
+.jy-ch-head{padding:14px 16px;background:linear-gradient(135deg,#12141f,#0e1018);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.jy-ch-head .t{font-family:var(--display);font-weight:700;font-size:.95rem;letter-spacing:.02em}
+.jy-ch-head .s{font-size:.7rem;color:var(--ink-dim);margin-top:1px}
+.jy-ch-head button{background:none;border:none;color:var(--ink-dim);font-size:1.2rem;cursor:pointer;padding:4px}
+.jy-ch-body{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px}
+.jy-msg{max-width:82%;padding:9px 13px;border-radius:14px;font-size:.85rem;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+.jy-msg.me{align-self:flex-end;background:var(--neon);color:#04252a;border-bottom-right-radius:4px}
+.jy-msg.admin{align-self:flex-start;background:#12141f;border:1px solid var(--line);border-bottom-left-radius:4px}
+.jy-msg .tm{display:block;font-family:var(--mono);font-size:.55rem;opacity:.6;margin-top:3px}
+.jy-msg .jy-tr{margin-top:5px;padding-top:5px;border-top:1px dashed var(--line-strong);font-size:.82em;opacity:.85}
+.jy-ch-note{font-size:.72rem;color:var(--ink-dim);text-align:center;padding:4px 10px}
+.jy-ch-input{display:flex;gap:8px;padding:11px;border-top:1px solid var(--line);background:#0b0d13}
+.jy-ch-input textarea{flex:1;min-height:40px;max-height:100px;resize:none;background:#12141f;border:1px solid var(--line);
+  border-radius:10px;color:var(--ink);font-family:var(--kr);font-size:.85rem;padding:9px 12px;line-height:1.4}
+.jy-ch-input textarea:focus{outline:none;border-color:var(--neon)}
+.jy-ch-input button{background:var(--neon);border:none;color:#04252a;font-weight:700;font-family:var(--display);
+  border-radius:10px;padding:0 16px;cursor:pointer;font-size:.85rem}
+.jy-ch-input button:disabled{opacity:.5}
+@media(max-width:480px){#jyChatPanel{right:10px;bottom:80px}}
+</style>
+
+<button id="jyChatBtn" aria-label="실시간 문의 채팅 열기">
+  <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.6 8.6 0 0 1-3.5-.7L3 21l1.7-5A8.38 8.38 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z"/>
+  </svg>
+  <span class="jy-dot" id="jyChatDot">1</span>
+</button>
+<div id="jyChatPanel" role="dialog" aria-label="실시간 문의">
+  <div class="jy-ch-head">
+    <div><div class="t">JY STUDIO 문의</div><div class="s">보통 몇 분 안에 답변드려요 · 자리에 없으면 이메일로 회신</div></div>
+    <button id="jyChatClose" aria-label="닫기">✕</button>
+  </div>
+  <div class="jy-ch-body" id="jyChBody">
+    <div class="jy-msg admin">안녕하세요! JY 스튜디오입니다 👋
+프로젝트 문의, 견적, 일정 등 무엇이든 편하게 남겨주세요.</div>
+  </div>
+  <div class="jy-ch-note" id="jyChNote"></div>
+  <div class="jy-ch-input">
+    <textarea id="jyChInput" placeholder="메시지 입력…" maxlength="2000"></textarea>
+    <button id="jyChSend">전송</button>
+  </div>
+</div>
+
+<script src="supabase-config.js"></script>
+<script>
+(function(){
+  if(!window.JY_SB_READY) return;   // 키 미설정 시 전부 비활성 (사이트는 평소처럼 동작)
+
+  var sdk = document.createElement('script');
+  sdk.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+  sdk.onload = init;
+  document.head.appendChild(sdk);
+
+  var sb, sessionId, bc = null, chatOpened = false;
+
+  function uuid(){
+    return (crypto.randomUUID) ? crypto.randomUUID() :
+      'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0;return (c==='x'?r:(r&0x3|0x8)).toString(16);});
+  }
+  function esc(s){ return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function hm(iso){ var d=iso?new Date(iso):new Date(); return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2); }
+  function siteLang(){
+    // 사이트에서 언어를 선택했으면 그 언어, 아니면 브라우저 언어로 자동 감지
+    var l = (document.documentElement.lang||'ko').slice(0,2);
+    if(l !== 'ko') return l;
+    return (navigator.language||'ko').slice(0,2);
+  }
+  function jyTr(text, target){
+    return fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl='
+        + encodeURIComponent(target) + '&dt=t&q=' + encodeURIComponent(String(text).slice(0,1500)))
+      .then(function(r){ return r.json(); })
+      .then(function(j){ return { text:(j[0]||[]).map(function(x){return x&&x[0];}).filter(Boolean).join(''), src:j[2]||'' }; })
+      .catch(function(){ return null; });
+  }
+
+  function init(){
+    sb = supabase.createClient(window.JY_SUPABASE_URL, window.JY_SUPABASE_ANON_KEY);
+
+    /* ---------- 1) 방문자 통계 ---------- */
+    try{ trackVisit(); }catch(e){}
+
+    /* ---------- 2) 채팅 위젯 ---------- */
+    try{ setupChat(); }catch(e){}
+
+    /* ---------- 3) 포트폴리오 DB 연동 ---------- */
+    try{ loadPortfolioFromDB(); }catch(e){}
+
+    /* ---------- 3-1) 팀 경력 DB 연동 ---------- */
+    try{ loadTeamFromDB(); }catch(e){}
+
+    /* ---------- 4) 문의 폼 → DB에도 저장 ---------- */
+    try{ hookContactForm(); }catch(e){}
+  }
+
+  /* ================= 방문자 통계 ================= */
+  function trackVisit(){
+    if(localStorage.getItem('jy_admin')==='1') return;          // 관리자 본인 제외
+    if(sessionStorage.getItem('jy_v')) return;                  // 같은 탭 세션 중복 제외
+    sessionStorage.setItem('jy_v','1');
+    var isNew = !localStorage.getItem('jy_vid');
+    var vid = localStorage.getItem('jy_vid') || uuid();
+    localStorage.setItem('jy_vid', vid);
+    var device = /Mobi|Android|iPhone/i.test(navigator.userAgent) ? 'mobile'
+               : /iPad|Tablet/i.test(navigator.userAgent) ? 'tablet' : 'desktop';
+    var base = {
+      p_visitor: vid, p_is_new: isNew, p_path: location.pathname + location.hash,
+      p_referrer: document.referrer || '', p_device: device,
+      p_lang: navigator.language || '', p_ua: navigator.userAgent.slice(0,300),
+      p_country:'', p_region:'', p_city:''
+    };
+    var ctl = new AbortController();
+    var tm = setTimeout(function(){ ctl.abort(); }, 3500);
+    fetch('https://get.geojs.io/v1/ip/geo.json', { signal: ctl.signal })
+      .then(function(r){ return r.json(); })
+      .then(function(g){ base.p_country=g.country||''; base.p_region=g.region||''; base.p_city=g.city||''; })
+      .catch(function(){})
+      .then(function(){ clearTimeout(tm); sb.rpc('record_visit', base).then(function(){},function(){}); });
+  }
+
+  /* ================= 실시간 채팅 ================= */
+  function setupChat(){
+    var btn=document.getElementById('jyChatBtn'), panel=document.getElementById('jyChatPanel'),
+        body=document.getElementById('jyChBody'), input=document.getElementById('jyChInput'),
+        send=document.getElementById('jyChSend'), dot=document.getElementById('jyChatDot');
+    btn.style.display='flex';
+
+    sessionId = localStorage.getItem('jy_chat_sid');
+    if(!sessionId){ sessionId = uuid(); localStorage.setItem('jy_chat_sid', sessionId); }
+
+    function addMsg(sender, text, iso){
+      var d=document.createElement('div');
+      d.className='jy-msg '+(sender==='visitor'?'me':'admin');
+      d.innerHTML=esc(text)+'<span class="tm">'+hm(iso)+'</span>';
+      body.appendChild(d); body.scrollTop=body.scrollHeight;
+      // 사이트 언어가 한국어가 아니면 관리자 답변 밑에 번역문 표시
+      var lang=siteLang();
+      if(sender==='admin' && lang!=='ko'){
+        jyTr(text, lang).then(function(r){
+          if(!r || !r.text || r.src===lang || r.text.trim()===String(text).trim()) return;
+          var t=document.createElement('div');
+          t.className='jy-tr'; t.textContent=r.text;
+          d.insertBefore(t, d.querySelector('.tm'));
+          body.scrollTop=body.scrollHeight;
+        });
+      }
+    }
+
+    function openPanel(){
+      panel.classList.add('open'); dot.classList.remove('show');
+      input.focus();
+      if(chatOpened) return;
+      chatOpened=true;
+      // 외국어 방문자에게 인사말 번역 표시
+      if(siteLang()!=='ko'){
+        var g0=body.querySelector('.jy-msg.admin');
+        if(g0 && !g0.querySelector('.jy-tr')){
+          jyTr(g0.textContent, siteLang()).then(function(r){
+            if(!r||!r.text) return;
+            var t=document.createElement('div'); t.className='jy-tr'; t.textContent=r.text; g0.appendChild(t);
+          });
+        }
+      }
+      // 이전 대화 불러오기
+      sb.rpc('chat_history',{ p_session: sessionId }).then(function(res){
+        if(res.error || !res.data || !res.data.length) return;
+        res.data.forEach(function(m){ addMsg(m.sender, m.body, m.created_at); });
+      });
+      // 관리자 답장 실시간 수신
+      bc = sb.channel('chat-'+sessionId);
+      bc.on('broadcast',{ event:'admin-msg' },function(p){
+        addMsg('admin', p.payload.body, p.payload.created_at);
+        if(!panel.classList.contains('open')){ dot.classList.add('show'); }
+      }).subscribe();
+    }
+    btn.addEventListener('click', function(){
+      panel.classList.contains('open') ? panel.classList.remove('open') : openPanel();
+    });
+    document.getElementById('jyChatClose').addEventListener('click', function(){ panel.classList.remove('open'); });
+
+    function doSend(){
+      var text=input.value.trim();
+      if(!text) return;
+      send.disabled=true;
+      sb.rpc('chat_send',{ p_session: sessionId, p_body: text }).then(function(res){
+        send.disabled=false;
+        if(res.error){ document.getElementById('jyChNote').textContent='전송 실패 — 잠시 후 다시 시도해주세요'; return; }
+        document.getElementById('jyChNote').textContent='';
+        input.value='';
+        addMsg('visitor', text, null);
+      });
+    }
+    send.addEventListener('click', doSend);
+    input.addEventListener('keydown', function(e){ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); doSend(); } });
+  }
+
+  /* ================= 포트폴리오 DB 연동 =================
+     관리자 앱에서 등록한 작업물이 있으면 그것으로 그리드를 다시 그림.
+     (DB가 비어있으면 기존 하드코딩된 그리드를 그대로 둠) */
+  function loadPortfolioFromDB(){
+    sb.from('portfolio').select('*').order('sort_order',{ascending:true}).order('created_at',{ascending:false})
+      .then(function(res){
+        var rows=res.data;
+        if(res.error || !rows || rows.length===0) return;
+        var grid=document.getElementById('portGrid');
+        if(!grid) return;
+        // ⭐ 대표 작품은 처음부터 보이고, 나머지는 "더 보기" 뒤에 숨김
+        var featured = rows.filter(function(r){ return r.featured; });
+        var others   = rows.filter(function(r){ return !r.featured; });
+        if(featured.length===0){ featured=rows.slice(0,2); others=rows.slice(2); }
+        rows = featured.concat(others);
+        var featCount = featured.length;
+        var html='';
+        rows.forEach(function(r,i){
+          var more = i>=featCount ? ' more" hidden' : '"';
+          var kr = r.description ? '<div class="kr">'+esc(r.description)+'</div>' : '';
+          var info = '<div class="port-info"><div class="cat">'+esc(r.category||'')+'</div><h4>'+esc(r.title)+'</h4>'+kr+'</div>';
+          if(r.media_type==='youtube'){
+            html+='<div class="port yt reveal'+more+' data-yt="'+esc(r.media)+'">'
+               +'<img class="thumb" src="https://i.ytimg.com/vi/'+esc(r.media)+'/hqdefault.jpg" alt="'+esc(r.title)+'" loading="lazy">'
+               +'<div class="yt-play">▶</div>'+info
+               +'<a class="yt-fallback" href="https://www.youtube.com/watch?v='+esc(r.media)+'" target="_blank" rel="noopener">YouTube ↗</a></div>';
+          } else if(r.media_type==='video'){
+            html+='<div class="port vid reveal'+more+' style="--vbg:#000">'
+               +'<video class="port-video" autoplay loop muted playsinline><source src="'+esc(r.media)+'"></video>'+info+'</div>';
+          } else {
+            html+='<div class="port vid reveal'+more+' style="--vbg:#000">'
+               +'<img class="thumb" src="'+esc(r.media)+'" alt="'+esc(r.title)+'" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">'+info+'</div>';
+          }
+        });
+        grid.innerHTML=html;
+
+        // 애니메이션/클릭 다시 연결
+        grid.querySelectorAll('.port').forEach(function(el){
+          if(!el.hidden && typeof io!=='undefined') io.observe(el);
+        });
+        grid.querySelectorAll('.port.yt').forEach(function(p){
+          p.addEventListener('click',function(ev){
+            if(ev.target.closest('.yt-fallback'))return;
+            if(p.querySelector('iframe'))return;
+            var f=document.createElement('iframe');
+            f.src='https://www.youtube-nocookie.com/embed/'+p.dataset.yt+'?autoplay=1&rel=0&playsinline=1&modestbranding=1';
+            f.title=p.querySelector('h4')?p.querySelector('h4').textContent:'작업 영상';
+            f.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+            f.allowFullscreen=true;
+            p.appendChild(f);
+          });
+        });
+        // "더 보기" 버튼 복구
+        var moreBtn=document.getElementById('moreBtn');
+        if(moreBtn){
+          if(rows.length>featCount){ moreBtn.parentElement.style.display=''; }
+          else{ moreBtn.parentElement.style.display='none'; }
+        }
+      });
+  }
+
+  /* ================= 팀 경력 DB 연동 =================
+     관리자 앱 "팀 경력" 탭에서 등록한 팀원이 있으면 Career 섹션을 다시 그림 */
+  function loadTeamFromDB(){
+    sb.from('team_members').select('*').order('sort_order',{ascending:true}).order('created_at',{ascending:true})
+      .then(function(res){
+        var rows=res.data;
+        if(res.error || !rows || rows.length===0) return;
+        var grid=document.getElementById('teamGrid');
+        var btn=document.getElementById('teamMoreBtn');
+        var reveal=document.getElementById('teamReveal');
+        if(!grid||!btn||!reveal) return;
+        grid.innerHTML = rows.map(function(r){
+          var lis=(r.careers||'').split('\n').filter(function(x){return x.trim();})
+            .map(function(x){return '<li>'+esc(x.trim())+'</li>';}).join('');
+          return '<div class="member reveal more" hidden><div class="m-name">'+esc(r.name)+'</div>'
+               +'<div class="m-role">'+esc(r.role||'')+'</div><ul>'+lis+'</ul></div>';
+        }).join('');
+        grid.classList.add('is-collapsed');
+        reveal.classList.remove('is-open');
+
+        // 기존 토글은 옛 DOM을 기억하고 있으므로 버튼을 새로 만들어 다시 연결
+        var nb=btn.cloneNode(true);
+        btn.parentNode.replaceChild(nb, btn);
+        var krEl=nb.querySelector('.tr-kr');
+        var members=[].slice.call(grid.querySelectorAll('.member.more'));
+        var open=false;
+        var TXT={
+          ko:{show:'JY 스튜디오를 함께 만드는 팀',hide:'팀원 경력 접기'},
+          en:{show:'The people behind JY Studio',hide:'Collapse'},
+          ja:{show:'JY スタジオを支えるチーム',hide:'閉じる'},
+          zh:{show:'组成 JY 工作室的团队',hide:'收起团队履历'}
+        };
+        window.teamBtnRefreshLabel=function(){
+          var lang=document.documentElement.lang||'ko';
+          krEl.textContent=(TXT[lang]||TXT.ko)[open?'hide':'show'];
+        };
+        nb.addEventListener('click',function(){
+          open=!open;
+          nb.setAttribute('aria-expanded',open?'true':'false');
+          if(open){
+            grid.classList.remove('is-collapsed');
+            reveal.classList.add('is-open');
+            members.forEach(function(el,i){
+              el.hidden=false; el.style.transitionDelay=(i*80)+'ms';
+              if(typeof io!=='undefined') io.observe(el);
+            });
+          }else{
+            members.forEach(function(el){ el.classList.remove('in'); el.style.transitionDelay='0ms'; el.hidden=true; });
+            grid.classList.add('is-collapsed');
+            reveal.classList.remove('is-open');
+            nb.scrollIntoView({behavior:'smooth',block:'center'});
+          }
+          window.teamBtnRefreshLabel();
+        });
+        window.teamBtnRefreshLabel();
+      });
+  }
+
+  /* ================= 문의 폼 → DB 저장 ================= */
+  function hookContactForm(){
+    var sendBtn=document.getElementById('f-send');
+    if(!sendBtn) return;
+    sendBtn.addEventListener('click', function(){
+      var n=document.getElementById('f-name').value.trim();
+      var e=document.getElementById('f-email').value.trim();
+      if(!n||!e) return;
+      var t=document.getElementById('f-type').value;
+      var m=document.getElementById('f-msg').value.trim();
+      var sid=localStorage.getItem('jy_chat_sid');
+      if(!sid){ sid=uuid(); localStorage.setItem('jy_chat_sid', sid); }
+      var body='[문의 폼]\n작업 종류: '+t+(m?'\n\n'+m:'');
+      sb.rpc('chat_send',{ p_session:sid, p_body:body, p_name:n, p_email:e, p_source:'form' }).then(function(){},function(){});
+    });
+  }
+})();
+</script>
 </body>
 </html>

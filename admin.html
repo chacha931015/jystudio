@@ -664,6 +664,9 @@ html.tauri .center{margin-top:14vh}
   <div class="box">
     <h3>계정 설정</h3>
     <div class="field"><label>로그인 계정</label><div class="mono" id="acctEmail" style="font-size:.85rem;color:var(--dim)"></div></div>
+    <div class="field"><label>로그인 이력 (모든 기기, 최근 20건)</label>
+      <div id="acctHist" class="tbl-scroll" style="max-height:180px;overflow-y:auto"></div>
+    </div>
     <div class="field" style="margin-top:16px"><label>새 비밀번호 (6자 이상)</label><input id="pw1" type="password" autocomplete="new-password" placeholder="••••••••"></div>
     <div class="field"><label>새 비밀번호 확인</label><input id="pw2" type="password" autocomplete="new-password" placeholder="••••••••"></div>
     <div class="err" id="acctErr"></div>
@@ -771,7 +774,7 @@ html.tauri .center{margin-top:14vh}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
-const APP_VERSION = '1.8.1';
+const APP_VERSION = '1.9.0';
 
 /* 데스크톱 앱 자동 배포: 사이트에 새 버전이 올라가 있으면 그걸 사용 */
 if(window.__TAURI__ && location.protocol !== 'https:'){
@@ -884,7 +887,18 @@ $('logoutBtn').addEventListener('click', async ()=>{ await sb.auth.signOut(); lo
 function openAcct(){
   $('acctErr').textContent=''; $('pw1').value=''; $('pw2').value='';
   $('acctEmail').textContent = $('who').textContent || '';
+  $('acctHist').innerHTML = '<div class="hint">불러오는 중…</div>';
   $('acctModal').classList.add('open');
+  sb.from('login_history').select('*').order('created_at',{ascending:false}).limit(20).then(({data, error})=>{
+    if(error){ $('acctHist').innerHTML = '<div class="hint">이력을 불러올 수 없습니다: '+esc(error.message)+' (supabase-update-6.sql 실행 여부 확인)</div>'; return; }
+    if(!data || !data.length){ $('acctHist').innerHTML = '<div class="hint">아직 기록이 없습니다. 다음 로그인부터 기록됩니다.</div>'; return; }
+    $('acctHist').innerHTML = `<table class="tbl"><tbody>${data.map(h=>`<tr>
+      <td class="mono">${esc(fmtFull(h.created_at))}</td>
+      <td>${h.kind==='auto'?'<span class="badge gray">자동</span>':'<span class="badge">로그인</span>'}</td>
+      <td>${esc(h.device||'—')}</td>
+      <td>${esc([h.city,h.country].filter(Boolean).join(', ')||'—')}</td>
+    </tr>`).join('')}</tbody></table>`;
+  });
 }
 $('acctBtn').addEventListener('click', openAcct);
 $('acctBtnM').addEventListener('click', openAcct);
@@ -901,6 +915,21 @@ $('pwSave').addEventListener('click', async ()=>{
   closeModal('acctModal'); toast('비밀번호가 변경되었습니다');
 });
 
+/* 계정 로그인 이력을 DB에 기록 (모든 기기에서 조회 가능) */
+async function recordLogin(kind, email){
+  try{
+    const device = (/Mobi|Android|iPhone/i.test(navigator.userAgent) ? 'mobile' : 'desktop')
+                 + (window.__TAURI__ ? ' · 앱' : ' · 웹');
+    const row = { email, kind, device, ua: navigator.userAgent.slice(0,200), city:'', country:'' };
+    try{
+      const ctl = new AbortController(); const tm = setTimeout(()=>ctl.abort(), 3000);
+      const g = await fetch('https://get.geojs.io/v1/ip/geo.json', { signal: ctl.signal }).then(r=>r.json());
+      clearTimeout(tm); row.city = g.city||''; row.country = g.country||'';
+    }catch(e){}
+    await sb.from('login_history').insert(row);
+  }catch(e){}
+}
+
 let appEntered = false;
 function enterApp(session, isAuto){
   show('appView');
@@ -908,6 +937,7 @@ function enterApp(session, isAuto){
   if(isAuto){ saveLoginMeta(session.user.email); setTimeout(()=>toast('자동 로그인되었습니다 ✓'), 600); }
   if(appEntered) return;
   appEntered = true;
+  recordLogin(isAuto ? 'auto' : 'login', session.user.email);
   try{ localStorage.setItem('jy_admin','1'); }catch(e){}
   const h = new Date().getHours();
   $('dashGreet').textContent = (h<6?'늦은 시간까지 고생 많으십니다':h<12?'좋은 아침입니다':h<18?'오늘도 좋은 하루 되세요':'오늘 하루도 수고하셨습니다') + ', 대표님. 최근 30일 방문 현황입니다.';

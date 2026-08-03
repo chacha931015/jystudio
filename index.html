@@ -222,9 +222,10 @@ h2 .kr{display:block;font-family:var(--kr);font-weight:700;font-size:.5em;color:
 .port.yt iframe{position:absolute;inset:0;width:100%;height:100%;border:0;z-index:5}
 /* desktop spans on 6-col grid */
 @media(min-width:881px){
-  #portGrid > .port.yt{grid-column:span 3}   /* two featured videos side by side */
-  #portGrid > .port.vid{grid-column:span 2}  /* three per row */
-  #portGrid > .port.vid.wide{grid-column:span 3}
+  #portGrid > .port{grid-column:span 2}      /* three per row */
+  /* first row: two featured videos, wide */
+  #portGrid > .port:nth-child(1),
+  #portGrid > .port:nth-child(2){grid-column:span 3;aspect-ratio:16/9}
 }
 /* character video items */
 .port.vid{aspect-ratio:4/5;background:var(--vbg,#2e3439)}

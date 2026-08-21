@@ -205,7 +205,7 @@ h2 .kr{display:block;font-family:var(--kr);font-weight:700;font-size:.5em;color:
 .port-info .cat{font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--neon);margin-bottom:7px}
 .port-info h4{font-family:var(--display);font-weight:600;font-size:1.2rem}
 .port-info .kr{font-size:.85rem;color:var(--ink-dim);font-weight:500}
-.port:hover .port-info{transform:translateY(-4px)}
+.port:hover .port-info{padding-bottom:26px}
 .port .play{position:absolute;top:18px;right:18px;z-index:2;width:38px;height:38px;border-radius:50%;
   border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center;
   background:rgba(8,9,13,.5);color:var(--neon);font-size:.7rem;transition:.3s}
@@ -226,6 +226,9 @@ h2 .kr{display:block;font-family:var(--kr);font-weight:700;font-size:.5em;color:
   /* first row: three featured full-body characters, large.
      9:16 = source video ratio (1080x1920), so no letterboxing. */
   #portGrid > .port:nth-child(-n+3){aspect-ratio:9/16}
+  /* masonry — JS가 카드마다 원본 영상 비율로 높이를 잡아줌 (검은 여백 제거) */
+  #portGrid.masonry{grid-auto-rows:2px;row-gap:0}
+  #portGrid.masonry > .port{margin-bottom:16px}
 }
 /* character video items */
 .port.vid{aspect-ratio:4/5;background:var(--vbg,#2e3439)}
@@ -1202,8 +1205,48 @@ document.getElementById('moreBtn').addEventListener('click',function(){
   if(hidden.length){
     hidden.forEach(el=>{el.hidden=false;io.observe(el);});
     this.parentElement.style.display='none';
+    if(window.jyWatchPorts) window.jyWatchPorts();
+    if(window.jyLayoutPorts) window.jyLayoutPorts();
   }
 });
+
+/* ---- portfolio masonry: give every card its own media ratio so nothing letterboxes ---- */
+(function(){
+  const GAP=16, UNIT=2;                     // UNIT = grid-auto-rows, GAP = row gap
+  const grid=document.getElementById('portGrid');
+  const mq=window.matchMedia('(min-width:881px)');
+  function ratioOf(el){
+    const v=el.querySelector('video');
+    if(v&&v.videoWidth) return v.videoWidth/v.videoHeight;
+    if(el.classList.contains('yt')) return 16/9;
+    const i=el.querySelector('img');
+    if(i&&i.naturalWidth) return i.naturalWidth/i.naturalHeight;
+    return 0;                                // metadata not in yet — keep the CSS fallback
+  }
+  function layout(){
+    if(!grid) return;
+    const wide=mq.matches;
+    grid.classList.toggle('masonry',wide);
+    grid.querySelectorAll('.port').forEach(function(el){
+      if(!wide||el.hidden){ el.style.gridRowEnd=''; el.style.aspectRatio=''; return; }
+      const r=ratioOf(el); if(!r) return;
+      el.style.aspectRatio=r;
+      const w=el.getBoundingClientRect().width; if(!w) return;
+      el.style.gridRowEnd='span '+Math.ceil((w/r+GAP)/UNIT);
+    });
+  }
+  function watch(){
+    if(!grid) return;
+    grid.querySelectorAll('.port video').forEach(function(v){
+      if(v.dataset.jyw) return; v.dataset.jyw='1';
+      v.addEventListener('loadedmetadata',layout);
+    });
+  }
+  window.jyLayoutPorts=layout; window.jyWatchPorts=watch;
+  watch(); layout();
+  let t; window.addEventListener('resize',function(){clearTimeout(t);t=setTimeout(layout,150);});
+  if(mq.addEventListener) mq.addEventListener('change',layout);
+})();
 
 /* show team member careers, one after another (cascade), toggle open/close */
 (function(){
@@ -1555,6 +1598,8 @@ document.getElementById('openChatCta').addEventListener('click',()=>{
         grid.querySelectorAll('.port').forEach(function(el){
           if(!el.hidden && typeof io!=='undefined') io.observe(el);
         });
+        if(window.jyWatchPorts) window.jyWatchPorts();
+        if(window.jyLayoutPorts) window.jyLayoutPorts();
         grid.querySelectorAll('.port.yt').forEach(function(p){
           p.addEventListener('click',function(ev){
             if(ev.target.closest('.yt-fallback'))return;

@@ -223,9 +223,8 @@ h2 .kr{display:block;font-family:var(--kr);font-weight:700;font-size:.5em;color:
 /* desktop spans on 6-col grid */
 @media(min-width:881px){
   #portGrid > .port{grid-column:span 2}      /* three per row */
-  /* first row: two featured videos, wide */
-  #portGrid > .port:nth-child(1),
-  #portGrid > .port:nth-child(2){grid-column:span 3;aspect-ratio:16/9}
+  /* first row: three featured full-body characters, large */
+  #portGrid > .port:nth-child(-n+3){aspect-ratio:3/4}
 }
 /* character video items */
 .port.vid{aspect-ratio:4/5;background:var(--vbg,#2e3439)}

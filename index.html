@@ -1223,16 +1223,26 @@ document.getElementById('moreBtn').addEventListener('click',function(){
     if(i&&i.naturalWidth) return i.naturalWidth/i.naturalHeight;
     return 0;                                // metadata not in yet — keep the CSS fallback
   }
+  function clear(el){ el.style.gridRowEnd=''; el.style.height=''; }
+  function off(items){ grid.classList.remove('masonry'); items.forEach(clear); }
   function layout(){
     if(!grid) return;
-    const wide=mq.matches;
-    grid.classList.toggle('masonry',wide);
-    grid.querySelectorAll('.port').forEach(function(el){
-      if(!wide||el.hidden){ el.style.gridRowEnd=''; el.style.aspectRatio=''; return; }
-      const r=ratioOf(el); if(!r) return;
-      el.style.aspectRatio=r;
-      const w=el.getBoundingClientRect().width; if(!w) return;
-      el.style.gridRowEnd='span '+Math.ceil((w/r+GAP)/UNIT);
+    const items=[...grid.querySelectorAll('.port')].filter(function(el){return !el.hidden});
+    if(!mq.matches) return off(items);
+    /* All-or-nothing: if a single card can't be measured yet (video metadata still
+       loading), fall back to the plain uniform grid. A half-measured masonry would
+       collapse those cards to a 2px row. We re-run on every loadedmetadata. */
+    const plan=[];
+    for(let i=0;i<items.length;i++){
+      const el=items[i], r=ratioOf(el), w=el.getBoundingClientRect().width;
+      if(!r||!w) return off(items);
+      plan.push([el,Math.round(w/r)]);
+    }
+    grid.classList.add('masonry');
+    plan.forEach(function(pair){
+      const el=pair[0], h=pair[1];
+      el.style.height=h+'px';
+      el.style.gridRowEnd='span '+Math.ceil((h+GAP)/UNIT);
     });
   }
   function watch(){

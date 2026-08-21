@@ -228,7 +228,9 @@ h2 .kr{display:block;font-family:var(--kr);font-weight:700;font-size:.5em;color:
   #portGrid > .port:nth-child(-n+3){aspect-ratio:9/16}
   /* masonry — JS가 카드마다 원본 영상 비율로 높이를 잡아줌 (검은 여백 제거) */
   #portGrid.masonry{grid-auto-rows:2px;row-gap:0}
-  #portGrid.masonry > .port{margin-bottom:16px}
+  /* aspect-ratio must be cleared: with the JS-set height it would otherwise
+     resolve the WIDTH backwards (295px * 4/5 = 236px) instead of filling the column. */
+  #portGrid.masonry > .port{margin-bottom:16px;aspect-ratio:auto}
 }
 /* character video items */
 .port.vid{aspect-ratio:4/5;background:var(--vbg,#2e3439)}

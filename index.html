@@ -1559,7 +1559,11 @@ document.getElementById('openChatCta').addEventListener('click',()=>{
       send.disabled=true;
       sb.rpc('chat_send',{ p_session: sessionId, p_body: text }).then(function(res){
         send.disabled=false;
-        if(res.error){ document.getElementById('jyChNote').textContent='전송 실패 — 잠시 후 다시 시도해주세요'; return; }
+        if(res.error){
+          document.getElementById('jyChNote').innerHTML =
+            '지금은 실시간 상담 연결이 어렵습니다. <a href="mailto:labkanata@naver.com" style="color:var(--neon)">labkanata@naver.com</a> 으로 보내주시면 빠르게 회신드릴게요.';
+          return;
+        }
         document.getElementById('jyChNote').textContent='';
         input.value='';
         addMsg('visitor', text, null);

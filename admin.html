@@ -322,7 +322,6 @@ html.tauri .center{margin-top:14vh}
       <button class="nav-item" data-tab="svc"><span class="ico"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7.5" height="7.5" rx="2"/><rect x="13" y="3.5" width="7.5" height="7.5" rx="2"/><rect x="3.5" y="13" width="7.5" height="7.5" rx="2"/><rect x="13" y="13" width="7.5" height="7.5" rx="2"/></svg></span>서비스 항목</button>
       <button class="nav-item" data-tab="notices"><span class="ico"><svg viewBox="0 0 24 24"><path d="M4 10v4h3l7 4.5v-13L7 10H4z" stroke-linejoin="round"/><path d="M17.5 9.5a4.2 4.2 0 0 1 0 5"/></svg></span>공지</button>
       <div class="nav-group">내부 관리</div>
-      <button class="nav-item" data-tab="jobs"><span class="ico"><svg viewBox="0 0 24 24"><rect x="3.5" y="8" width="17" height="11" rx="2.5"/><path d="M9 8V6.5A2.5 2.5 0 0 1 11.5 4h1A2.5 2.5 0 0 1 15 6.5V8M3.5 12.5h17"/></svg></span>외주공고<span class="bdg" data-bdg="jobs">0</span></button>
       <button class="nav-item" data-tab="staff"><span class="ico"><svg viewBox="0 0 24 24"><rect x="4" y="4.5" width="16" height="15" rx="2.5"/><path d="M4 9.5h16M9.5 9.5v10"/></svg></span>직원 관리</button>
       <button class="nav-item" data-tab="ledger"><span class="ico"><svg viewBox="0 0 24 24"><rect x="4" y="3.5" width="16" height="17" rx="2.5"/><path d="M8 8.5h8M8 12.5h8M8 16.5h4.5"/></svg></span>회계 장부</button>
       <button class="nav-item" data-tab="docs"><span class="ico"><svg viewBox="0 0 24 24"><path d="M6.5 3.5h6.5L18.5 9v10.5a1.5 1.5 0 0 1-1.5 1.5H7a1.5 1.5 0 0 1-1.5-1.5v-14a1.5 1.5 0 0 1 1.5-1.5z" stroke-linejoin="round"/><path d="M13 3.5V9h5.5M9 13.5h6M9 17h6"/></svg></span>계약서</button>
@@ -503,22 +502,6 @@ html.tauri .center{margin-top:14vh}
       <div id="ntList"></div>
     </div>
 
-    <!-- ========== 외주 공고 ========== -->
-    <div id="tab-jobs" style="display:none">
-      <div class="large-title">외주 공고함</div>
-      <div class="sub-title">자동 수집기가 6시간마다 스파인/캐릭터/애니메이션 관련 공고를 모아옵니다.</div>
-      <div class="section-head">
-        <span class="muted" id="jbCount" style="font-size:.8rem"></span>
-        <div style="display:flex;gap:6px">
-          <button class="btn sm" id="jbFilterBtn">안 읽음만</button>
-          <button class="btn sm" id="jbReadAll">모두 읽음</button>
-          <button class="btn sm" id="jbRefresh">↻</button>
-        </div>
-      </div>
-      <div id="jbList"></div>
-      <p class="hint" style="margin-top:14px">GitHub Actions 설정 방법은 SETUP-GUIDE.md 6단계를 참고하세요.</p>
-    </div>
-
   </main>
 </div>
 
@@ -533,7 +516,6 @@ html.tauri .center{margin-top:14vh}
   <button data-tab="ledger"><span class="ico"><svg viewBox="0 0 24 24"><rect x="4" y="3.5" width="16" height="17" rx="2.5"/><path d="M8 8.5h8M8 12.5h8M8 16.5h4.5"/></svg></span>장부</button>
   <button data-tab="docs"><span class="ico"><svg viewBox="0 0 24 24"><path d="M6.5 3.5h6.5L18.5 9v10.5a1.5 1.5 0 0 1-1.5 1.5H7a1.5 1.5 0 0 1-1.5-1.5v-14a1.5 1.5 0 0 1 1.5-1.5z" stroke-linejoin="round"/><path d="M13 3.5V9h5.5M9 13.5h6M9 17h6"/></svg></span>계약서</button>
   <button data-tab="notices"><span class="ico"><svg viewBox="0 0 24 24"><path d="M4 10v4h3l7 4.5v-13L7 10H4z" stroke-linejoin="round"/><path d="M17.5 9.5a4.2 4.2 0 0 1 0 5"/></svg></span>공지</button>
-  <button data-tab="jobs"><span class="ico"><svg viewBox="0 0 24 24"><rect x="3.5" y="8" width="17" height="11" rx="2.5"/><path d="M9 8V6.5A2.5 2.5 0 0 1 11.5 4h1A2.5 2.5 0 0 1 15 6.5V8M3.5 12.5h17"/></svg></span>공고<span class="bdg" data-bdg="jobs">0</span></button>
   <button id="siteBtnM"><span class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.3 4 5.2 4 8.5s-1.4 6.2-4 8.5c-2.6-2.3-4-5.2-4-8.5s1.4-6.2 4-8.5z"/></svg></span>홈페이지</button>
 </nav>
 </div>
@@ -779,7 +761,7 @@ html.tauri .center{margin-top:14vh}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
-const APP_VERSION = '1.10.0';
+const APP_VERSION = '1.11.0';
 
 /* 데스크톱 앱 자동 배포: 사이트에 새 버전이 올라가 있으면 그걸 사용 */
 if(window.__TAURI__ && location.protocol !== 'https:'){
@@ -792,7 +774,7 @@ const $ = id => document.getElementById(id);
 let sb = null;
 const state = {
   sessions: [], unread: {}, currentSession: null, bcChannel: null,
-  jobs: [], jobsUnreadOnly: false, charts: {},
+  charts: {},
 };
 
 function show(view){ ['setupView','loginView','appView'].forEach(v=>$(v).style.display = v===view ? 'block' : 'none'); }
@@ -966,7 +948,7 @@ function enterApp(session, isAuto){
   try{ localStorage.setItem('jy_admin','1'); }catch(e){}
   const h = new Date().getHours();
   $('dashGreet').textContent = (h<6?'늦은 시간까지 고생 많으십니다':h<12?'좋은 아침입니다':h<18?'오늘도 좋은 하루 되세요':'오늘 하루도 수고하셨습니다') + ', 대표님. 최근 30일 방문 현황입니다.';
-  loadDashboard(); loadSessions(); loadPortfolio(); loadTeam(); loadSvc(); loadStaff(); loadLedger(); loadDocs(); loadNotices(); loadJobs();
+  loadDashboard(); loadSessions(); loadPortfolio(); loadTeam(); loadSvc(); loadStaff(); loadLedger(); loadDocs(); loadNotices();
   startRealtime();
   setupNotifButton();
 }
@@ -977,7 +959,7 @@ function enterApp(session, isAuto){
 document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click', ()=>{
   const tab = b.dataset.tab;
   document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('on', x.dataset.tab===tab));
-  ['dash','chat','portfolio','team','svc','staff','ledger','docs','notices','jobs'].forEach(t=>$('tab-'+t).style.display = tab===t ? 'block':'none');
+  ['dash','chat','portfolio','team','svc','staff','ledger','docs','notices'].forEach(t=>$('tab-'+t).style.display = tab===t ? 'block':'none');
 }));
 function gotoTab(name){ document.querySelector(`.side-nav [data-tab="${name}"]`)?.click(); }
 
@@ -1039,8 +1021,6 @@ function updateBadges(){
   document.title = (n>0?`(${n}) `:'') + '정읍 스튜디오 — 관리자';
   if(navigator.setAppBadge){ n>0 ? navigator.setAppBadge(n).catch(()=>{}) : navigator.clearAppBadge?.().catch(()=>{}); }
   updateTaskbarBadge(n).catch(()=>{});
-  const jn = state.jobs.filter(j=>!j.is_read).length;
-  document.querySelectorAll('[data-bdg="jobs"]').forEach(b=>{ b.textContent = jn>99?'99+':jn; b.classList.toggle('show', jn>0); });
 }
 /* 작업표시줄 아이콘 위 빨간 숫자 배지 (데스크톱 앱 전용) */
 async function updateTaskbarBadge(n){
@@ -1908,51 +1888,6 @@ $('ntSave').addEventListener('click', async ()=>{
 async function delNt(id){ if(!confirm('이 공지를 삭제할까요?'))return;
   const { error } = await sb.from('notices').delete().eq('id', id);
   if(error){ toast('삭제 실패: '+error.message); return; } loadNotices();
-}
-
-/* ============================================================
-   외주 공고함
-   ============================================================ */
-$('jbRefresh').addEventListener('click', loadJobs);
-$('jbFilterBtn').addEventListener('click', ()=>{
-  state.jobsUnreadOnly = !state.jobsUnreadOnly;
-  $('jbFilterBtn').textContent = state.jobsUnreadOnly ? '전체 보기' : '안 읽음만';
-  renderJobs();
-});
-$('jbReadAll').addEventListener('click', async ()=>{
-  const { error } = await sb.from('job_leads').update({ is_read:true }).eq('is_read', false);
-  if(error){ toast('오류: '+error.message); return; }
-  loadJobs();
-});
-async function loadJobs(){
-  const { data, error } = await sb.from('job_leads').select('*').order('fetched_at',{ascending:false}).limit(300);
-  if(error){ $('jbList').innerHTML='<div class="empty">불러오기 오류: '+esc(error.message)+'</div>'; return; }
-  state.jobs = data||[];
-  renderJobs();
-  updateBadges();
-}
-const SRC_NAME = { wishket:'위시켓', freemoa:'프리모아' };
-function renderJobs(){
-  const list = state.jobsUnreadOnly ? state.jobs.filter(j=>!j.is_read) : state.jobs;
-  $('jbCount').textContent = state.jobs.length ? `총 ${state.jobs.length}건 · 안 읽음 ${state.jobs.filter(j=>!j.is_read).length}건` : '';
-  if(!list.length){
-    $('jbList').innerHTML = `<div class="empty">${state.jobs.length? '조건에 맞는 공고가 없습니다.' : '아직 수집된 공고가 없습니다.<br>GitHub Actions 수집기를 설정하면 자동으로 채워집니다.'}</div>`;
-    return;
-  }
-  $('jbList').innerHTML = '<div class="rowlist">' + list.map(j=>`
-    <div class="row ${j.is_read?'':'unread'}">
-      <div class="info">
-        <div class="t"><a href="${esc(j.url)}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">${esc(j.title)} ↗</a></div>
-        <div class="m">${esc(SRC_NAME[j.source]||j.source)} · ${esc(j.budget||'금액 미표기')} ${j.posted?'· '+esc(j.posted):''} · 수집 ${esc(fmtTime(j.fetched_at))}</div>
-        ${j.keywords&&j.keywords.length?`<div class="chips">${j.keywords.map(k=>`<span class="badge amber">${esc(k)}</span>`).join('')}</div>`:''}
-      </div>
-      <div class="acts">${j.is_read?'':`<button class="btn sm" data-read="${j.id}">읽음</button>`}</div>
-    </div>`).join('') + '</div>';
-  $('jbList').querySelectorAll('[data-read]').forEach(b=>b.addEventListener('click', async ()=>{
-    await sb.from('job_leads').update({ is_read:true }).eq('id', b.dataset.read);
-    const j = state.jobs.find(x=>x.id==b.dataset.read); if(j) j.is_read=true;
-    renderJobs(); updateBadges();
-  }));
 }
 
 /* ============================================================

@@ -9,27 +9,28 @@
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#08090d;
-  --panel:#12141f;
-  --line:rgba(255,255,255,.08);
-  --line-strong:rgba(255,255,255,.16);
-  --ink:#eef1f7;
-  --ink-dim:#8c92a6;
-  --ink-faint:#565d72;
-  --neon:#7afcff;
+  --bg:#252423;
+  --panel:#2c2a28;
+  --line:rgba(246,244,242,.09);
+  --line-strong:rgba(246,244,242,.18);
+  --ink:#f6f4f2;
+  --ink-dim:#85827e;
+  --ink-faint:#5b5855;
+  --neon:#ff7d36;        /* 브랜드 악센트 (따뜻한 코랄) */
+  --sel:#26f2d5;         /* 에디터 선택 강조 — 소프트웨어 UI 느낌 */
   --bone:#ffc857;
   --display:"Space Grotesk",sans-serif;
   --kr:"Noto Sans KR",sans-serif;
   --mono:"JetBrains Mono",monospace;
 
   /* Spine editor chrome — 실제 앱 톤에 맞춘 중성 그레이 */
-  --ed-chrome:#1c1d21;
-  --ed-panel:#232428;
-  --ed-line:rgba(255,255,255,.07);
-  --ed-text:#9a9ca3;
-  --ed-text-hi:#d8dade;
-  --ed-canvas-a:#303136;
-  --ed-canvas-b:#25262a;
+  --ed-chrome:#1f1e1d;
+  --ed-panel:#2c2a28;
+  --ed-line:rgba(246,244,242,.07);
+  --ed-text:#85827e;
+  --ed-text-hi:#cccac8;
+  --ed-canvas-a:#3b3936;
+  --ed-canvas-b:#2c2a28;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -41,14 +42,14 @@ body{
 /* 단일 광원 — 무지개 그라데이션 대신 한 방향에서 오는 은은한 빛 */
 body::before{
   content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:radial-gradient(900px 620px at 72% -10%,rgba(122,252,255,.07),transparent 62%);
+  background:radial-gradient(900px 620px at 72% -10%,rgba(255,125,54,.06),transparent 62%);
 }
 .wrap{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:0 32px}
 @media(max-width:560px){.wrap{padding:0 20px}}
 
 /* ---- 미리보기 배지 ---- */
 .pvbar{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;align-items:center;gap:12px;
-  padding:9px 20px;background:rgba(8,9,13,.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);
+  padding:9px 20px;background:rgba(31,30,29,.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);
   font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;color:var(--ink-faint)}
 .pvbar .dot{width:6px;height:6px;border-radius:50%;background:var(--bone)}
 .pvbar a{color:var(--ink-dim);text-decoration:none;margin-left:auto}
@@ -60,7 +61,7 @@ body::before{
   font-family:"Figtree",var(--display);font-size:1.5rem;line-height:1;color:var(--ink);
   transform:skewX(-11deg);transform-origin:left baseline}
 .logo .jy{font-weight:900;letter-spacing:-.055em}
-.logo .st{font-weight:300;font-size:.7em;letter-spacing:.02em;margin-left:.2em;color:rgba(238,241,247,.55)}
+.logo .st{font-weight:300;font-size:.7em;letter-spacing:.02em;margin-left:.2em;color:rgba(246,244,242,.55)}
 @media(max-width:640px){.topbar{padding:14px 20px}.logo{font-size:1.2rem}}
 
 /* ================= HERO ================= */
@@ -75,7 +76,7 @@ header{position:relative;min-height:100svh;display:flex;align-items:center;paddi
 h1{font-family:var(--kr);font-weight:900;
   font-size:clamp(2.1rem,4.4vw,3.45rem);line-height:1.22;letter-spacing:-.035em;
   color:var(--ink);margin-bottom:26px}
-h1 .l2{display:block;color:#b9c0d0}
+h1 .l2{display:block;color:#cccac8}
 
 .lead{max-width:498px;color:var(--ink-dim);font-size:1.015rem;line-height:1.85;letter-spacing:-.01em}
 .lead b{color:var(--ink);font-weight:700}
@@ -93,7 +94,7 @@ h1 .l2{display:block;color:#b9c0d0}
   text-decoration:none;transition:.22s ease;display:inline-flex;align-items:center;gap:10px;cursor:pointer;border:1px solid transparent}
 .btn .ar{transition:transform .22s ease}
 .btn:hover .ar{transform:translateX(4px)}
-.btn-primary{background:var(--ink);color:#0a0b10;font-weight:600}
+.btn-primary{background:var(--ink);color:#252423;font-weight:600}
 .btn-primary:hover{background:var(--neon)}
 .btn-ghost{border-color:var(--line-strong);color:var(--ink-dim)}
 .btn-ghost:hover{border-color:var(--ink-dim);color:var(--ink)}
@@ -124,9 +125,9 @@ h1 .l2{display:block;color:#b9c0d0}
 .ed-tools{background:#17181c;border-right:1px solid var(--ed-line);
   display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0}
 .ed-tools i{width:21px;height:21px;border-radius:3px;display:grid;place-items:center;opacity:.5}
-.ed-tools i.on{background:rgba(122,252,255,.14);opacity:1}
+.ed-tools i.on{background:rgba(38,242,213,.13);opacity:1}
 .ed-tools i svg{width:12px;height:12px;stroke:#b9bcc4;stroke-width:1.5;fill:none}
-.ed-tools i.on svg{stroke:var(--neon)}
+.ed-tools i.on svg{stroke:var(--sel)}
 .ed-tools .sep{width:15px;height:1px;background:var(--ed-line);margin:5px 0;opacity:1}
 
 /* 뷰포트 */
@@ -134,8 +135,8 @@ h1 .l2{display:block;color:#b9c0d0}
   linear-gradient(160deg,var(--ed-canvas-a),var(--ed-canvas-b));
   transform-style:preserve-3d}
 .ed-view .cgrid{position:absolute;inset:0;opacity:.55;
-  background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),
-                   linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);
+  background-image:linear-gradient(rgba(246,244,242,.045) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(246,244,242,.045) 1px,transparent 1px);
   background-size:19px 19px}
 .ed-view video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
 .rig{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
@@ -143,8 +144,8 @@ h1 .l2{display:block;color:#b9c0d0}
 /* 뷰포트 좌상단 HUD */
 .vhud{position:absolute;left:9px;top:8px;display:flex;gap:6px;
   font-family:var(--mono);font-size:.55rem;letter-spacing:.07em;color:#5d5f66}
-.vhud span{background:rgba(0,0,0,.38);border:1px solid rgba(255,255,255,.08);padding:2px 6px;border-radius:2px}
-.vhud span.k{color:#cfd2d8}
+.vhud span{background:rgba(0,0,0,.3);border:1px solid rgba(246,244,242,.09);padding:2px 6px;border-radius:2px}
+.vhud span.k{color:#cccac8}
 
 /* 오른쪽 트리 */
 .ed-tree{background:var(--ed-panel);border-left:1px solid var(--ed-line);padding:9px 0;overflow:hidden}
@@ -153,7 +154,7 @@ h1 .l2{display:block;color:#b9c0d0}
   font-family:var(--mono);font-size:.615rem;color:var(--ed-text);white-space:nowrap}
 .tr .tw{width:7px;color:#606268;font-size:.5rem}
 .tr .sw{width:7px}
-.tr.sel{background:rgba(122,252,255,.1);color:#e6f9fb}
+.tr.sel{background:rgba(38,242,213,.1);color:#d7fbf5}
 .tr.bone .ic{width:7px;height:7px;background:var(--bone);border-radius:1px;transform:rotate(45deg);flex:none;opacity:.9}
 .tr .ic{width:7px;height:7px;border-radius:1px;background:#4e5058;flex:none}
 .tr.anim .ic{background:#7ec27e}
@@ -166,7 +167,7 @@ h1 .l2{display:block;color:#b9c0d0}
 .dope-names{border-right:1px solid var(--ed-line);padding:17px 0 0}
 .dope-names div{font-family:var(--mono);font-size:.58rem;color:var(--ed-text);
   padding:0 10px;height:13.5px;line-height:13.5px;white-space:nowrap}
-.dope-names div.sel{color:#e6f9fb;background:rgba(122,252,255,.08)}
+.dope-names div.sel{color:#d7fbf5;background:rgba(38,242,213,.08)}
 .dope-track{position:relative;overflow:hidden}
 .ruler{height:17px;border-bottom:1px solid var(--ed-line);position:relative}
 .ruler span{position:absolute;top:3px;font-family:var(--mono);font-size:.5rem;color:#5b5d64;transform:translateX(-50%)}
@@ -174,14 +175,14 @@ h1 .l2{display:block;color:#b9c0d0}
 .krow{position:relative;height:13.5px}
 .krow b{position:absolute;top:4.2px;width:5.4px;height:5.4px;background:var(--bone);
   transform:translateX(-50%) rotate(45deg);border-radius:.5px}
-.krow.sel{background:rgba(122,252,255,.08)}
+.krow.sel{background:rgba(38,242,213,.08)}
 .krow s{position:absolute;top:6.4px;height:1px;background:rgba(255,200,87,.26);text-decoration:none}
-.playhead{position:absolute;top:0;bottom:0;width:1px;background:var(--neon);opacity:.85}
+.playhead{position:absolute;top:0;bottom:0;width:1px;background:var(--sel);opacity:.85}
 .playhead::before{content:"";position:absolute;top:0;left:-3.5px;border-left:4px solid transparent;
-  border-right:4px solid transparent;border-top:5px solid var(--neon)}
+  border-right:4px solid transparent;border-top:5px solid var(--sel)}
 
 /* 떠 있는 캡션 칩 — 얇은 괘선 + 모노, 글래스 남발 금지 */
-.chip{position:absolute;background:rgba(18,20,31,.9);border:1px solid var(--line-strong);
+.chip{position:absolute;background:rgba(31,30,29,.92);border:1px solid var(--line-strong);
   border-radius:4px;padding:9px 13px;backdrop-filter:blur(9px);
   box-shadow:0 18px 34px -16px rgba(0,0,0,.9)}
 .chip .k{font-family:var(--mono);font-size:.55rem;letter-spacing:.15em;color:var(--ink-faint);display:block;margin-bottom:3px}
@@ -396,9 +397,9 @@ h1 .l2{display:block;color:#b9c0d0}
     for(var c=0;c<=cols;c++) mesh+='M'+(mx+c*cw)+','+my+'V'+(my+mh);
     for(var r2=0;r2<rows;r2++) for(var c2=0;c2<cols;c2++)
       mesh+='M'+(mx+c2*cw)+','+(my+r2*ch)+'L'+(mx+(c2+1)*cw)+','+(my+(r2+1)*ch);
-    out+='<path d="'+mesh+'" fill="none" stroke="#7afcff" stroke-width="0.7" opacity="0.32"/>';
+    out+='<path d="'+mesh+'" fill="none" stroke="#26f2d5" stroke-width="0.7" opacity="0.34"/>';
     for(var r3=0;r3<=rows;r3++) for(var c3=0;c3<=cols;c3++)
-      out+='<rect x="'+(mx+c3*cw-1.7)+'" y="'+(my+r3*ch-1.7)+'" width="3.4" height="3.4" fill="#7afcff" opacity="0.55"/>';
+      out+='<rect x="'+(mx+c3*cw-1.7)+'" y="'+(my+r3*ch-1.7)+'" width="3.4" height="3.4" fill="#26f2d5" opacity="0.58"/>';
 
     /* 본 */
     BONES.forEach(function(b){
@@ -411,13 +412,13 @@ h1 .l2{display:block;color:#b9c0d0}
          '<circle cx="200" cy="510" r="5.4" fill="none" stroke="#8a5f13" stroke-width="1"/>'+
          '<path d="M200,510 H231" stroke="#c0392b" stroke-width="1.5"/>'+
          '<path d="M200,510 V479" stroke="#2e8b3d" stroke-width="1.5"/>'+
-         '<text x="206" y="524" font-family="monospace" font-size="8.5" fill="#9a9ca3">root</text>'+
+         '<text x="206" y="524" font-family="monospace" font-size="8.5" fill="#85827e">root</text>'+
          '</g>';
 
     /* 선택된 본 라벨 */
-    out+='<g><path d="M200,300 V250" stroke="#7afcff" stroke-width="1.6"/>'+
-         '<circle cx="200" cy="300" r="3.4" fill="#7afcff"/>'+
-         '<text x="209" y="278" font-family="monospace" font-size="9" fill="#7afcff">spine</text></g>';
+    out+='<g><path d="M200,300 V250" stroke="#26f2d5" stroke-width="1.6"/>'+
+         '<circle cx="200" cy="300" r="3.4" fill="#26f2d5"/>'+
+         '<text x="209" y="278" font-family="monospace" font-size="9" fill="#26f2d5">spine</text></g>';
 
     svg.innerHTML='<g id="rigG">'+out+'</g>';
   }

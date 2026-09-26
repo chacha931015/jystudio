@@ -78,6 +78,8 @@ h1{font-family:var(--kr);font-weight:900;
   color:var(--ink);margin-bottom:26px}
 h1 .l2{display:block;color:#cccac8}
 
+/* 제목/아이브로우는 칼럼 끝에 두고 본문만 들여써서, 제목이 왼쪽으로 돌출돼 보이게 */
+.lead,.pillars,.cta{margin-left:clamp(0px,3.4vw,54px)}
 .lead{max-width:498px;color:var(--ink-dim);font-size:1.015rem;line-height:1.85;letter-spacing:-.01em}
 .lead b{color:var(--ink);font-weight:700}
 
@@ -209,6 +211,7 @@ h1 .l2{display:block;color:#cccac8}
   .cap{border-bottom:1px solid var(--line)}
 }
 @media(max-width:640px){
+  .lead,.pillars,.cta{margin-left:0}
   header{min-height:auto;padding:104px 0 56px}
   .editor{grid-template-columns:28px 1fr 0;grid-template-rows:28px 1fr 96px}
   .ed-tree{display:none}

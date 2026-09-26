@@ -293,7 +293,7 @@ h1 .l2{display:block;color:#cccac8}
 
             <div class="ed-view" data-depth="14">
               <div class="cgrid"></div>
-              <video id="rigVideo" autoplay loop muted playsinline>
+              <video id="rigVideo" muted playsinline preload="auto">
                 <source src="char1.webm" type="video/webm">
                 <source src="char1.mp4" type="video/mp4">
               </video>
@@ -462,8 +462,15 @@ h1 .l2{display:block;color:#cccac8}
   if(rv){
     var tries=0;
     var tryAlign=function(){ if(alignRig()||++tries>25) return; setTimeout(tryAlign,260); };
-    rv.addEventListener('loadeddata',tryAlign);
-    if(rv.readyState>=2) tryAlign();
+    /* 재생하지 않고 한 프레임만 세워둔다 (에디터가 정지해 있는 상태) */
+    var seekOnce=function(){
+      rv.pause();
+      try{ rv.currentTime=Math.min(0.6,(rv.duration||1.6)*0.34); }catch(e){ tryAlign(); }
+    };
+    rv.addEventListener('loadedmetadata',seekOnce);
+    rv.addEventListener('seeked',tryAlign);
+    rv.addEventListener('play',function(){ rv.pause(); });
+    if(rv.readyState>=1) seekOnce();
     window.addEventListener('resize',function(){ setTimeout(alignRig,120); });
   }
 
@@ -497,15 +504,7 @@ h1 .l2{display:block;color:#cccac8}
   }
 
   /* 플레이헤드 — 타임라인을 실제로 훑고 지나감 */
-  var ph=document.getElementById('playhead');
-  if(ph&&!reduce){
-    var t0=performance.now();
-    (function tick(now){
-      var p=((now-t0)/1200)%1;               // 1.2s 루프 = idle 길이
-      ph.style.left=(p*100).toFixed(2)+'%';
-      requestAnimationFrame(tick);
-    })(t0);
-  }
+  /* 캐릭터가 정지해 있으므로 플레이헤드도 같은 프레임에 멈춰 둔다 */
 
   /* ---------- 3. 마우스 패럴랙스 (자이로 느낌) ---------- */
   var stage=document.getElementById('stage'), deck=document.getElementById('deck');

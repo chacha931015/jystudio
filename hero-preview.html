@@ -56,13 +56,13 @@ body::before{
 .pvbar a:hover{color:var(--neon)}
 
 /* ---- 상단 로고 ---- */
-.topbar{position:fixed;top:30px;left:0;right:0;z-index:55;padding:18px 0;pointer-events:none}
+.topbar{position:fixed;top:30px;left:0;right:0;z-index:55;padding:18px 26px;pointer-events:none}
 .logo{display:inline-flex;align-items:baseline;pointer-events:auto;text-decoration:none;
   font-family:"Figtree",var(--display);font-size:1.5rem;line-height:1;color:var(--ink);
   transform:skewX(-11deg);transform-origin:left baseline}
 .logo .jy{font-weight:900;letter-spacing:-.055em}
 .logo .st{font-weight:300;font-size:.7em;letter-spacing:.02em;margin-left:.2em;color:rgba(246,244,242,.55)}
-@media(max-width:640px){.topbar{padding:14px 0}.logo{font-size:1.2rem}}
+@media(max-width:640px){.topbar{padding:14px 18px}.logo{font-size:1.2rem}}
 
 /* ================= HERO ================= */
 header{position:relative;min-height:100svh;display:flex;align-items:center;padding:150px 0 76px}
@@ -78,8 +78,6 @@ h1{font-family:var(--kr);font-weight:900;
   color:var(--ink);margin-bottom:26px}
 h1 .l2{display:block;color:#cccac8}
 
-/* 제목/아이브로우는 칼럼 끝에 두고 본문만 들여써서, 제목이 왼쪽으로 돌출돼 보이게 */
-.lead,.pillars,.cta{margin-left:clamp(0px,3.4vw,54px)}
 .lead{max-width:498px;color:var(--ink-dim);font-size:1.015rem;line-height:1.85;letter-spacing:-.01em}
 .lead b{color:var(--ink);font-weight:700}
 
@@ -211,7 +209,6 @@ h1 .l2{display:block;color:#cccac8}
   .cap{border-bottom:1px solid var(--line)}
 }
 @media(max-width:640px){
-  .lead,.pillars,.cta{margin-left:0}
   header{min-height:auto;padding:104px 0 56px}
   .editor{grid-template-columns:28px 1fr 0;grid-template-rows:28px 1fr 96px}
   .ed-tree{display:none}
@@ -232,7 +229,7 @@ h1 .l2{display:block;color:#cccac8}
 </div>
 
 <div class="topbar">
-  <div class="wrap"><a class="logo" href="#"><span class="jy">JY</span><span class="st">STUDIO</span></a></div>
+  <a class="logo" href="#"><span class="jy">JY</span><span class="st">STUDIO</span></a>
 </div>
 
 <header>

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JY STUDIO — 대문 시안 (Spine Rig)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#08090d;
+  --panel:#12141f;
+  --line:rgba(255,255,255,.08);
+  --line-strong:rgba(255,255,255,.16);
+  --ink:#eef1f7;
+  --ink-dim:#8c92a6;
+  --ink-faint:#565d72;
+  --neon:#7afcff;
+  --bone:#ffc857;
+  --display:"Space Grotesk",sans-serif;
+  --kr:"Noto Sans KR",sans-serif;
+  --mono:"JetBrains Mono",monospace;
+
+  /* Spine editor chrome — 실제 앱 톤에 맞춘 중성 그레이 */
+  --ed-chrome:#1c1d21;
+  --ed-panel:#232428;
+  --ed-line:rgba(255,255,255,.07);
+  --ed-text:#9a9ca3;
+  --ed-text-hi:#d8dade;
+  --ed-canvas-a:#dedfe3;
+  --ed-canvas-b:#c9cbd1;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--ink);
+  font-family:var(--kr);line-height:1.6;overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+/* 단일 광원 — 무지개 그라데이션 대신 한 방향에서 오는 은은한 빛 */
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(900px 620px at 72% -10%,rgba(122,252,255,.07),transparent 62%);
+}
+.wrap{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:0 32px}
+@media(max-width:560px){.wrap{padding:0 20px}}
+
+/* ---- 미리보기 배지 ---- */
+.pvbar{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;align-items:center;gap:12px;
+  padding:9px 20px;background:rgba(8,9,13,.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;color:var(--ink-faint)}
+.pvbar .dot{width:6px;height:6px;border-radius:50%;background:var(--bone)}
+.pvbar a{color:var(--ink-dim);text-decoration:none;margin-left:auto}
+.pvbar a:hover{color:var(--neon)}
+
+/* ---- 상단 로고 ---- */
+.topbar{position:fixed;top:30px;left:0;right:0;z-index:55;padding:18px 32px;pointer-events:none}
+.logo{display:inline-flex;align-items:baseline;pointer-events:auto;text-decoration:none;
+  font-family:var(--display);font-size:1.42rem;line-height:1;color:var(--ink);
+  transform:skewX(-11deg);transform-origin:left baseline}
+.logo .jy{font-weight:700;letter-spacing:-.035em}
+.logo .st{font-weight:300;letter-spacing:.005em;margin-left:.3em}
+@media(max-width:640px){.topbar{padding:14px 20px}.logo{font-size:1.2rem}}
+
+/* ================= HERO ================= */
+header{position:relative;min-height:100svh;display:flex;align-items:center;padding:150px 0 76px}
+.hero-grid{display:grid;grid-template-columns:1fr 1.02fr;gap:64px;align-items:center;width:100%}
+
+.eyebrow{display:flex;align-items:center;gap:14px;
+  font-family:var(--mono);font-size:.7rem;font-weight:500;letter-spacing:.24em;
+  color:var(--neon);text-transform:uppercase;margin-bottom:30px}
+.eyebrow::after{content:"";flex:0 0 74px;height:1px;background:linear-gradient(90deg,var(--line-strong),transparent)}
+
+h1{font-family:var(--kr);font-weight:900;
+  font-size:clamp(2.1rem,4.4vw,3.45rem);line-height:1.22;letter-spacing:-.035em;
+  color:var(--ink);margin-bottom:26px}
+h1 .l2{display:block;color:#b9c0d0}
+
+.lead{max-width:498px;color:var(--ink-dim);font-size:1.015rem;line-height:1.85;letter-spacing:-.01em}
+.lead b{color:var(--ink);font-weight:700}
+
+/* 3개 강점 — 아이콘 남발 대신 번호 + 얇은 괘선 */
+.pillars{margin:40px 0 44px;border-top:1px solid var(--line)}
+.pillar{display:grid;grid-template-columns:30px 1fr;gap:16px;align-items:baseline;
+  padding:17px 0;border-bottom:1px solid var(--line)}
+.pillar .no{font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;color:var(--ink-faint);padding-top:3px}
+.pillar .t{font-weight:700;font-size:.985rem;color:var(--ink);letter-spacing:-.015em}
+.pillar .d{font-size:.875rem;color:var(--ink-dim);margin-top:3px;letter-spacing:-.01em}
+
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.btn{font-family:var(--mono);font-size:.8rem;letter-spacing:.04em;padding:15px 27px;border-radius:3px;
+  text-decoration:none;transition:.22s ease;display:inline-flex;align-items:center;gap:10px;cursor:pointer;border:1px solid transparent}
+.btn .ar{transition:transform .22s ease}
+.btn:hover .ar{transform:translateX(4px)}
+.btn-primary{background:var(--ink);color:#0a0b10;font-weight:600}
+.btn-primary:hover{background:var(--neon)}
+.btn-ghost{border-color:var(--line-strong);color:var(--ink-dim)}
+.btn-ghost:hover{border-color:var(--ink-dim);color:var(--ink)}
+
+/* ================= SPINE 에디터 목업 ================= */
+.stage{position:relative;perspective:1500px;perspective-origin:50% 42%}
+.deck{position:relative;transform-style:preserve-3d;will-change:transform;
+  transition:transform .55s cubic-bezier(.22,.61,.36,1)}
+.stage.live .deck{transition:none}
+
+.editor{position:relative;transform-style:preserve-3d;
+  background:var(--ed-chrome);border:1px solid rgba(255,255,255,.1);border-radius:7px;overflow:hidden;
+  box-shadow:0 44px 90px -30px rgba(0,0,0,.92),0 0 0 1px rgba(0,0,0,.55);
+  display:grid;grid-template-columns:34px 1fr 152px;grid-template-rows:31px 1fr 116px}
+
+/* 타이틀바 */
+.ed-title{grid-column:1/-1;display:flex;align-items:center;gap:9px;padding:0 11px;
+  background:#17181c;border-bottom:1px solid var(--ed-line)}
+.ed-title .lights{display:flex;gap:6px}
+.ed-title .lights i{width:9px;height:9px;border-radius:50%;background:#3a3c42;display:block}
+.ed-title .name{font-family:var(--mono);font-size:.64rem;letter-spacing:.07em;color:var(--ed-text);margin-left:6px}
+.ed-title .name em{font-style:normal;color:var(--ed-text-hi)}
+.ed-title .ver{margin-left:auto;font-family:var(--mono);font-size:.58rem;color:#5b5d64;letter-spacing:.06em}
+
+/* 왼쪽 툴 레일 */
+.ed-tools{background:#17181c;border-right:1px solid var(--ed-line);
+  display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0}
+.ed-tools i{width:21px;height:21px;border-radius:3px;display:grid;place-items:center;opacity:.5}
+.ed-tools i.on{background:rgba(122,252,255,.14);opacity:1}
+.ed-tools i svg{width:12px;height:12px;stroke:#b9bcc4;stroke-width:1.5;fill:none}
+.ed-tools i.on svg{stroke:var(--neon)}
+.ed-tools .sep{width:15px;height:1px;background:var(--ed-line);margin:5px 0;opacity:1}
+
+/* 뷰포트 */
+.ed-view{position:relative;overflow:hidden;background:
+  linear-gradient(160deg,var(--ed-canvas-a),var(--ed-canvas-b));
+  transform-style:preserve-3d}
+.ed-view .cgrid{position:absolute;inset:0;opacity:.5;
+  background-image:linear-gradient(rgba(0,0,0,.055) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(0,0,0,.055) 1px,transparent 1px);
+  background-size:19px 19px}
+.ed-view video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
+  mix-blend-mode:multiply}
+.rig{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+
+/* 뷰포트 좌상단 HUD */
+.vhud{position:absolute;left:9px;top:8px;display:flex;gap:6px;
+  font-family:var(--mono);font-size:.55rem;letter-spacing:.07em;color:#5d5f66}
+.vhud span{background:rgba(255,255,255,.62);border:1px solid rgba(0,0,0,.08);padding:2px 6px;border-radius:2px}
+.vhud span.k{color:#1e1f24}
+
+/* 오른쪽 트리 */
+.ed-tree{background:var(--ed-panel);border-left:1px solid var(--ed-line);padding:9px 0;overflow:hidden}
+.ed-tree .hd{font-family:var(--mono);font-size:.57rem;letter-spacing:.14em;color:#6a6c73;padding:0 11px 7px}
+.tr{display:flex;align-items:center;gap:5px;padding:2.5px 11px;
+  font-family:var(--mono);font-size:.615rem;color:var(--ed-text);white-space:nowrap}
+.tr .tw{width:7px;color:#606268;font-size:.5rem}
+.tr .sw{width:7px}
+.tr.sel{background:rgba(122,252,255,.1);color:#e6f9fb}
+.tr.bone .ic{width:7px;height:7px;background:var(--bone);border-radius:1px;transform:rotate(45deg);flex:none;opacity:.9}
+.tr .ic{width:7px;height:7px;border-radius:1px;background:#4e5058;flex:none}
+.tr.anim .ic{background:#7ec27e}
+.tr.slot .ic{background:#6a8fc4}
+.tr .ct{color:#5b5d64;margin-left:3px}
+
+/* 하단 도프시트 */
+.ed-dope{grid-column:1/-1;background:#1a1b1f;border-top:1px solid var(--ed-line);
+  display:grid;grid-template-columns:96px 1fr}
+.dope-names{border-right:1px solid var(--ed-line);padding:17px 0 0}
+.dope-names div{font-family:var(--mono);font-size:.58rem;color:var(--ed-text);
+  padding:0 10px;height:13.5px;line-height:13.5px;white-space:nowrap}
+.dope-names div.sel{color:#e6f9fb;background:rgba(122,252,255,.08)}
+.dope-track{position:relative;overflow:hidden}
+.ruler{height:17px;border-bottom:1px solid var(--ed-line);position:relative}
+.ruler span{position:absolute;top:3px;font-family:var(--mono);font-size:.5rem;color:#5b5d64;transform:translateX(-50%)}
+.ruler i{position:absolute;bottom:0;width:1px;height:4px;background:rgba(255,255,255,.14)}
+.krow{position:relative;height:13.5px}
+.krow b{position:absolute;top:4.2px;width:5.4px;height:5.4px;background:var(--bone);
+  transform:translateX(-50%) rotate(45deg);border-radius:.5px}
+.krow.sel{background:rgba(122,252,255,.08)}
+.krow s{position:absolute;top:6.4px;height:1px;background:rgba(255,200,87,.26);text-decoration:none}
+.playhead{position:absolute;top:0;bottom:0;width:1px;background:var(--neon);opacity:.85}
+.playhead::before{content:"";position:absolute;top:0;left:-3.5px;border-left:4px solid transparent;
+  border-right:4px solid transparent;border-top:5px solid var(--neon)}
+
+/* 떠 있는 캡션 칩 — 얇은 괘선 + 모노, 글래스 남발 금지 */
+.chip{position:absolute;background:rgba(18,20,31,.9);border:1px solid var(--line-strong);
+  border-radius:4px;padding:9px 13px;backdrop-filter:blur(9px);
+  box-shadow:0 18px 34px -16px rgba(0,0,0,.9)}
+.chip .k{font-family:var(--mono);font-size:.55rem;letter-spacing:.15em;color:var(--ink-faint);display:block;margin-bottom:3px}
+.chip .v{font-family:var(--mono);font-size:.72rem;letter-spacing:.03em;color:var(--ink)}
+.chip .v em{font-style:normal;color:var(--bone)}
+.chip-mesh{left:-30px;bottom:132px}
+.chip-fps{right:-26px;top:64px}
+
+/* 하단 역량 바 */
+.caps{margin-top:62px;border:1px solid var(--line);border-radius:5px;
+  display:grid;grid-template-columns:repeat(5,1fr);overflow:hidden;background:rgba(18,20,31,.42)}
+.cap{padding:17px 18px;border-right:1px solid var(--line)}
+.cap:last-child{border-right:none}
+.cap .n{font-family:var(--mono);font-size:.78rem;color:var(--ink);letter-spacing:.02em}
+.cap .s{font-size:.72rem;color:var(--ink-faint);margin-top:2px;letter-spacing:-.005em}
+
+@media(max-width:1020px){
+  .hero-grid{grid-template-columns:1fr;gap:52px}
+  .stage{max-width:560px;width:100%}
+  .chip-mesh{left:8px}.chip-fps{right:8px}
+  .caps{grid-template-columns:repeat(2,1fr)}
+  .cap:nth-child(2n){border-right:none}
+  .cap{border-bottom:1px solid var(--line)}
+}
+@media(max-width:640px){
+  header{min-height:auto;padding:104px 0 56px}
+  .editor{grid-template-columns:28px 1fr 0;grid-template-rows:28px 1fr 96px}
+  .ed-tree{display:none}
+  .caps{grid-template-columns:1fr}
+  .cap{border-right:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .deck{transition:none!important;transform:none!important}
+  .playhead{animation:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="pvbar">
+  <span class="dot"></span> 대문 시안 — 최종본 아님
+  <a href="https://jystudio98.com" target="_blank" rel="noopener">현재 사이트 보기 ↗</a>
+</div>
+
+<div class="topbar">
+  <a class="logo" href="#"><span class="jy">JY</span><span class="st">STUDIO</span></a>
+</div>
+
+<header>
+  <div class="wrap">
+    <div class="hero-grid">
+
+      <!-- ===== 왼쪽: 카피 ===== -->
+      <div class="copy">
+        <div class="eyebrow">Spine 2D Animation Outsourcing</div>
+
+        <h1>대량 제작도 안정적으로,<span class="l2">퀄리티는 일관되게</span></h1>
+
+        <p class="lead">
+          게임을 위한 <b>SPINE 2D 리소스 외주 전문 스튜디오</b>.
+          전 제작 과정을 직접 관리하며, 일정과 수량에 따른 안정적인 납품으로
+          신뢰할 수 있는 파트너가 되겠습니다.
+        </p>
+
+        <div class="pillars">
+          <div class="pillar">
+            <div class="no">01</div>
+            <div><div class="t">대량 수주 대응</div><div class="d">프로젝트 규모에 맞춘 유연한 제작</div></div>
+          </div>
+          <div class="pillar">
+            <div class="no">02</div>
+            <div><div class="t">일관된 품질 관리</div><div class="d">전 과정을 직접 관리하는 제작 시스템</div></div>
+          </div>
+          <div class="pillar">
+            <div class="no">03</div>
+            <div><div class="t">안정적인 일정 대응</div><div class="d">주어진 기간과 물량에 맞춘 체계적인 운영</div></div>
+          </div>
+        </div>
+
+        <div class="cta">
+          <a href="#" class="btn btn-primary">포트폴리오 보기 <span class="ar">→</span></a>
+          <a href="#" class="btn btn-ghost">견적 문의 <span class="ar">→</span></a>
+        </div>
+      </div>
+
+      <!-- ===== 오른쪽: Spine 에디터 ===== -->
+      <div class="stage" id="stage">
+        <div class="deck" id="deck">
+
+          <div class="editor" data-depth="0">
+
+            <div class="ed-title">
+              <div class="lights"><i></i><i></i><i></i></div>
+              <div class="name">Exia<em>.spine</em> — Animate</div>
+              <div class="ver">4.2</div>
+            </div>
+
+            <div class="ed-tools">
+              <i class="on" title="pose"><svg viewBox="0 0 16 16"><circle cx="8" cy="4" r="2.2"/><path d="M8 6.2v5M8 8.4 5 11M8 8.4 11 11"/></svg></i>
+              <i title="rotate"><svg viewBox="0 0 16 16"><path d="M13 8a5 5 0 1 1-1.8-3.8"/><path d="M13 2v3h-3"/></svg></i>
+              <i title="translate"><svg viewBox="0 0 16 16"><path d="M8 2v12M2 8h12M8 2 6 4M8 2l2 2M8 14l-2-2M8 14l2-2"/></svg></i>
+              <i title="scale"><svg viewBox="0 0 16 16"><rect x="3" y="3" width="10" height="10" rx="1"/><path d="M6 10 10 6"/></svg></i>
+              <span class="sep"></span>
+              <i title="mesh"><svg viewBox="0 0 16 16"><path d="M3 12 8 3l5 9z"/><path d="M3 12h10M8 3v9"/></svg></i>
+              <i title="weights"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="5"/><path d="M8 3v10"/></svg></i>
+            </div>
+
+            <div class="ed-view" data-depth="14">
+              <div class="cgrid"></div>
+              <video id="rigVideo" autoplay loop muted playsinline
+                     src="https://juheyqabwnkzhzpuitrj.supabase.co/storage/v1/object/public/media/pf/1785750416772-_NIKKE_Exia_.mp4"></video>
+              <svg class="rig" id="rig" viewBox="0 0 400 540" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg>
+              <div class="vhud"><span class="k">Animate</span><span>idle</span><span>100%</span></div>
+            </div>
+
+            <div class="ed-tree">
+              <div class="hd">TREE</div>
+              <div class="tr"><span class="tw">▾</span><span class="ic"></span>Exia</div>
+              <div class="tr"><span class="sw"></span><span class="tw">▸</span><span class="ic"></span>Images<span class="ct">31</span></div>
+              <div class="tr"><span class="sw"></span><span class="tw">▾</span><span class="ic"></span>Skeleton</div>
+              <div class="tr bone"><span class="sw"></span><span class="sw"></span><span class="tw">▾</span><span class="ic"></span>root</div>
+              <div class="tr bone"><span class="sw"></span><span class="sw"></span><span class="sw"></span><span class="tw">▾</span><span class="ic"></span>hip</div>
+              <div class="tr bone sel"><span class="sw"></span><span class="sw"></span><span class="sw"></span><span class="sw"></span><span class="tw">▸</span><span class="ic"></span>spine</div>
+              <div class="tr bone"><span class="sw"></span><span class="sw"></span><span class="sw"></span><span class="sw"></span><span class="tw">▸</span><span class="ic"></span>leg_l</div>
+              <div class="tr bone"><span class="sw"></span><span class="sw"></span><span class="sw"></span><span class="sw"></span><span class="tw">▸</span><span class="ic"></span>leg_r</div>
+              <div class="tr slot"><span class="sw"></span><span class="tw">▸</span><span class="ic"></span>Slots<span class="ct">31</span></div>
+              <div class="tr"><span class="sw"></span><span class="tw">▸</span><span class="ic"></span>Skins<span class="ct">2</span></div>
+              <div class="tr anim"><span class="sw"></span><span class="tw">▾</span><span class="ic"></span>Animations</div>
+              <div class="tr anim sel"><span class="sw"></span><span class="sw"></span><span class="sw"></span><span class="ic"></span>idle</div>
+              <div class="tr anim"><span class="sw"></span><span class="sw"></span><span class="sw"></span><span class="ic"></span>attack</div>
+              <div class="tr anim"><span class="sw"></span><span class="sw"></span><span class="sw"></span><span class="ic"></span>skill_01</div>
+              <div class="tr"><span class="sw"></span><span class="tw">▸</span><span class="ic"></span>Constraints<span class="ct">4</span></div>
+            </div>
+
+            <div class="ed-dope">
+              <div class="dope-names" id="dopeNames"></div>
+              <div class="dope-track">
+                <div class="ruler" id="ruler"></div>
+                <div id="krows"></div>
+                <div class="playhead" id="playhead" style="left:22%"></div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="chip chip-mesh" data-depth="46">
+            <span class="k">MESH DEFORMATION</span>
+            <span class="v">vertices <em>248</em> · weights <em>4</em></span>
+          </div>
+          <div class="chip chip-fps" data-depth="38">
+            <span class="k">TIMELINE</span>
+            <span class="v">30 fps · <em>idle</em> 1.20s</span>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <div class="caps">
+      <div class="cap"><div class="n">Rigging</div><div class="s">본 구조 설계</div></div>
+      <div class="cap"><div class="n">Skinning</div><div class="s">웨이트 페인팅</div></div>
+      <div class="cap"><div class="n">Mesh Deformation</div><div class="s">메쉬 변형</div></div>
+      <div class="cap"><div class="n">Animation</div><div class="s">모션 제작</div></div>
+      <div class="cap"><div class="n">Live Ops</div><div class="s">라이브 대응</div></div>
+    </div>
+  </div>
+</header>
+
+<script>
+(function(){
+  'use strict';
+  var reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  /* ---------- 1. 본 체인 (Spine 식 탄젠트 본) ---------- */
+  /* 본 하나 = 시작점이 굵고 끝으로 갈수록 좁아지는 사각형 + 시작점 원 */
+  var BONES = [
+    /* x1,  y1,   x2,  y2,  base */
+    [200, 462, 200, 372, 13],   // hip
+    [200, 372, 200, 300, 12],   // spine
+    [200, 300, 200, 250, 11],   // chest
+    [200, 250, 199, 198, 10],   // neck→head
+    [186, 286, 152, 330, 8.5],  // arm_l
+    [152, 330, 138, 386, 7],    // forearm_l
+    [214, 286, 250, 328, 8.5],  // arm_r
+    [250, 328, 268, 382, 7],    // forearm_r
+    [189, 470, 181, 550, 9],    // leg_l  (화면 밖으로 이어짐)
+    [211, 470, 221, 550, 9]     // leg_r
+  ];
+
+  function bonePath(x1,y1,x2,y2,base){
+    var dx=x2-x1, dy=y2-y1, len=Math.hypot(dx,dy);
+    if(!len) return '';
+    var nx=-dy/len, ny=dx/len;      // 법선
+    var h=base/2, tip=base*0.16;    // 끝은 거의 뾰족하게
+    return 'M'+(x1+nx*h)+','+(y1+ny*h)+
+           'L'+(x2+nx*tip)+','+(y2+ny*tip)+
+           'L'+(x2-nx*tip)+','+(y2-ny*tip)+
+           'L'+(x1-nx*h)+','+(y1-ny*h)+'Z';
+  }
+
+  var svg=document.getElementById('rig');
+  if(svg){
+    var NS='http://www.w3.org/2000/svg', out='';
+
+    /* 메쉬 와이어프레임 — 하체/스커트 영역에 삼각분할 */
+    var mx=146, my=352, mw=108, mh=132, cols=4, rows=5, cw=mw/cols, ch=mh/rows, mesh='';
+    for(var r=0;r<=rows;r++) mesh+='M'+mx+','+(my+r*ch)+'H'+(mx+mw);
+    for(var c=0;c<=cols;c++) mesh+='M'+(mx+c*cw)+','+my+'V'+(my+mh);
+    for(var r2=0;r2<rows;r2++) for(var c2=0;c2<cols;c2++)
+      mesh+='M'+(mx+c2*cw)+','+(my+r2*ch)+'L'+(mx+(c2+1)*cw)+','+(my+(r2+1)*ch);
+    out+='<path d="'+mesh+'" fill="none" stroke="#1d6f7a" stroke-width="0.7" opacity="0.5"/>';
+    for(var r3=0;r3<=rows;r3++) for(var c3=0;c3<=cols;c3++)
+      out+='<rect x="'+(mx+c3*cw-1.7)+'" y="'+(my+r3*ch-1.7)+'" width="3.4" height="3.4" fill="#0f5b66" opacity="0.72"/>';
+
+    /* 본 */
+    BONES.forEach(function(b){
+      out+='<path d="'+bonePath(b[0],b[1],b[2],b[3],b[4])+'" fill="rgba(255,200,87,.5)" stroke="#8a5f13" stroke-width="0.85" stroke-linejoin="round"/>';
+      out+='<circle cx="'+b[0]+'" cy="'+b[1]+'" r="'+(b[4]*0.3)+'" fill="#fff3d4" stroke="#8a5f13" stroke-width="0.85"/>';
+    });
+
+    /* root 본 — Spine 의 원점 축 기즈모 */
+    out+='<g opacity="0.9">'+
+         '<circle cx="200" cy="510" r="5.4" fill="none" stroke="#8a5f13" stroke-width="1"/>'+
+         '<path d="M200,510 H231" stroke="#c0392b" stroke-width="1.5"/>'+
+         '<path d="M200,510 V479" stroke="#2e8b3d" stroke-width="1.5"/>'+
+         '<text x="206" y="524" font-family="monospace" font-size="8.5" fill="#6b6d74">root</text>'+
+         '</g>';
+
+    /* 선택된 본 라벨 */
+    out+='<g><path d="M200,300 V250" stroke="#7afcff" stroke-width="1.6"/>'+
+         '<circle cx="200" cy="300" r="3.4" fill="#7afcff"/>'+
+         '<text x="209" y="278" font-family="monospace" font-size="9" fill="#0d7c88">spine</text></g>';
+
+    svg.innerHTML=out;
+  }
+
+  /* ---------- 2. 도프시트 ---------- */
+  var ROWS=[
+    {n:'root',    k:[0,30,60,90,120]},
+    {n:'hip',     k:[0,18,42,66,90,114]},
+    {n:'spine',   k:[0,24,48,72,96,120], sel:true},
+    {n:'chest',   k:[0,30,60,90,120]},
+    {n:'arm_l',   k:[0,20,40,62,84,108]},
+    {n:'arm_r',   k:[0,20,40,62,84,108]},
+    {n:'hair_01', k:[0,26,52,78,104]},
+    {n:'cape',    k:[0,34,68,102]}
+  ];
+  var MAXF=126;
+  var names=document.getElementById('dopeNames'), krows=document.getElementById('krows'), ruler=document.getElementById('ruler');
+  if(names&&krows&&ruler){
+    var hn='', hk='';
+    ROWS.forEach(function(row){
+      hn+='<div class="'+(row.sel?'sel':'')+'">'+row.n+'</div>';
+      var keys='';
+      row.k.forEach(function(f){ keys+='<b style="left:'+(f/MAXF*100)+'%"></b>'; });
+      keys+='<s style="left:'+(row.k[0]/MAXF*100)+'%;width:'+((row.k[row.k.length-1]-row.k[0])/MAXF*100)+'%"></s>';
+      hk+='<div class="krow '+(row.sel?'sel':'')+'">'+keys+'</div>';
+    });
+    names.innerHTML=hn; krows.innerHTML=hk;
+    var hr='';
+    for(var f=0;f<=120;f+=20){ hr+='<span style="left:'+(f/MAXF*100)+'%">'+f+'</span>'; }
+    for(var f2=0;f2<=MAXF;f2+=5){ hr+='<i style="left:'+(f2/MAXF*100)+'%"></i>'; }
+    ruler.innerHTML=hr;
+  }
+
+  /* 플레이헤드 — 타임라인을 실제로 훑고 지나감 */
+  var ph=document.getElementById('playhead');
+  if(ph&&!reduce){
+    var t0=performance.now();
+    (function tick(now){
+      var p=((now-t0)/1200)%1;               // 1.2s 루프 = idle 길이
+      ph.style.left=(p*100).toFixed(2)+'%';
+      requestAnimationFrame(tick);
+    })(t0);
+  }
+
+  /* ---------- 3. 마우스 패럴랙스 (자이로 느낌) ---------- */
+  var stage=document.getElementById('stage'), deck=document.getElementById('deck');
+  if(stage&&deck&&!reduce&&matchMedia('(hover:hover)').matches){
+    var layers=[].slice.call(deck.querySelectorAll('[data-depth]'));
+    var tx=0,ty=0,cx=0,cy=0,raf=null,active=false;
+
+    function frame(){
+      cx+=(tx-cx)*0.075; cy+=(ty-cy)*0.075;     // 감쇠 — 툭 끊기지 않게
+      var rx=(-cy*5.2).toFixed(3), ry=(cx*6.4).toFixed(3);
+      deck.style.transform='rotateX('+rx+'deg) rotateY('+ry+'deg)';
+      layers.forEach(function(el){
+        var d=+el.dataset.depth;
+        el.style.transform='translate3d('+(cx*d*-0.5).toFixed(2)+'px,'+(cy*d*-0.5).toFixed(2)+'px,'+d+'px)';
+      });
+      if(Math.abs(tx-cx)>0.0004||Math.abs(ty-cy)>0.0004){ raf=requestAnimationFrame(frame); }
+      else { raf=null; if(!active) stage.classList.remove('live'); }
+    }
+    function kick(){ if(!raf) raf=requestAnimationFrame(frame); }
+
+    /* 화면 전체에서 마우스를 따라가야 "자이로" 같은 느낌이 남 */
+    window.addEventListener('mousemove',function(e){
+      var r=stage.getBoundingClientRect();
+      if(r.bottom<0||r.top>innerHeight) return;
+      active=true; stage.classList.add('live');
+      tx=Math.max(-1,Math.min(1,(e.clientX-(r.left+r.width/2))/(innerWidth/2)));
+      ty=Math.max(-1,Math.min(1,(e.clientY-(r.top+r.height/2))/(innerHeight/2)));
+      kick();
+    },{passive:true});
+
+    document.addEventListener('mouseleave',function(){ active=false; tx=0; ty=0; kick(); });
+  }
+})();
+</script>
+</body>
+</html>

@@ -99,14 +99,16 @@ h1 .l2{display:block;color:#b9c0d0}
 .btn-ghost:hover{border-color:var(--ink-dim);color:var(--ink)}
 
 /* ================= SPINE 에디터 목업 ================= */
-.stage{position:relative;perspective:1500px;perspective-origin:50% 42%}
+.stage{position:relative;perspective:1350px;perspective-origin:30% 44%}
 .deck{position:relative;transform-style:preserve-3d;will-change:transform;
+  /* 기본 자세 — 정면이 아니라 살짝 틀어서 세운다 */
+  transform:rotateX(3deg) rotateY(-16deg) rotateZ(-.6deg);
   transition:transform .55s cubic-bezier(.22,.61,.36,1)}
 .stage.live .deck{transition:none}
 
 .editor{position:relative;transform-style:preserve-3d;
   background:var(--ed-chrome);border:1px solid rgba(255,255,255,.1);border-radius:7px;overflow:hidden;
-  box-shadow:0 44px 90px -30px rgba(0,0,0,.92),0 0 0 1px rgba(0,0,0,.55);
+  box-shadow:38px 52px 104px -34px rgba(0,0,0,.95),0 0 0 1px rgba(0,0,0,.55);
   display:grid;grid-template-columns:34px 1fr 152px;grid-template-rows:31px 1fr 116px}
 
 /* 타이틀바 */
@@ -197,6 +199,7 @@ h1 .l2{display:block;color:#b9c0d0}
 .cap .s{font-size:.72rem;color:var(--ink-faint);margin-top:2px;letter-spacing:-.005em}
 
 @media(max-width:1020px){
+  .deck{transform:rotateX(2deg) rotateY(-8deg) rotateZ(-.4deg)}
   .hero-grid{grid-template-columns:1fr;gap:52px}
   .stage{max-width:560px;width:100%}
   .chip-mesh{left:0;bottom:-20px}.chip-fps{right:0;top:-20px}
@@ -505,14 +508,15 @@ h1 .l2{display:block;color:#b9c0d0}
 
   /* ---------- 3. 마우스 패럴랙스 (자이로 느낌) ---------- */
   var stage=document.getElementById('stage'), deck=document.getElementById('deck');
+  var REST={x:3,y:-16,z:-0.6};        // CSS 기본 자세와 동일하게 유지
   if(stage&&deck&&!reduce&&matchMedia('(hover:hover)').matches){
     var layers=[].slice.call(deck.querySelectorAll('[data-depth]'));
     var tx=0,ty=0,cx=0,cy=0,raf=null,active=false;
 
     function frame(){
       cx+=(tx-cx)*0.075; cy+=(ty-cy)*0.075;     // 감쇠 — 툭 끊기지 않게
-      var rx=(-cy*5.2).toFixed(3), ry=(cx*6.4).toFixed(3);
-      deck.style.transform='rotateX('+rx+'deg) rotateY('+ry+'deg)';
+      var rx=(REST.x-cy*5.2).toFixed(3), ry=(REST.y+cx*7.2).toFixed(3);
+      deck.style.transform='rotateX('+rx+'deg) rotateY('+ry+'deg) rotateZ('+REST.z+'deg)';
       layers.forEach(function(el){
         var d=+el.dataset.depth;
         el.style.transform='translate3d('+(cx*d*-0.5).toFixed(2)+'px,'+(cy*d*-0.5).toFixed(2)+'px,'+d+'px)';

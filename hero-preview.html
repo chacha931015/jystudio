@@ -56,13 +56,13 @@ body::before{
 .pvbar a:hover{color:var(--neon)}
 
 /* ---- 상단 로고 ---- */
-.topbar{position:fixed;top:30px;left:0;right:0;z-index:55;padding:18px 32px;pointer-events:none}
+.topbar{position:fixed;top:30px;left:0;right:0;z-index:55;padding:18px 0;pointer-events:none}
 .logo{display:inline-flex;align-items:baseline;pointer-events:auto;text-decoration:none;
   font-family:"Figtree",var(--display);font-size:1.5rem;line-height:1;color:var(--ink);
   transform:skewX(-11deg);transform-origin:left baseline}
 .logo .jy{font-weight:900;letter-spacing:-.055em}
 .logo .st{font-weight:300;font-size:.7em;letter-spacing:.02em;margin-left:.2em;color:rgba(246,244,242,.55)}
-@media(max-width:640px){.topbar{padding:14px 20px}.logo{font-size:1.2rem}}
+@media(max-width:640px){.topbar{padding:14px 0}.logo{font-size:1.2rem}}
 
 /* ================= HERO ================= */
 header{position:relative;min-height:100svh;display:flex;align-items:center;padding:150px 0 76px}
@@ -188,8 +188,8 @@ h1 .l2{display:block;color:#cccac8}
 .chip .k{font-family:var(--mono);font-size:.55rem;letter-spacing:.15em;color:var(--ink-faint);display:block;margin-bottom:3px}
 .chip .v{font-family:var(--mono);font-size:.72rem;letter-spacing:.03em;color:var(--ink)}
 .chip .v em{font-style:normal;color:var(--bone)}
-.chip-mesh{left:-24px;bottom:-26px}
-.chip-fps{right:-24px;top:-24px}
+.chip-mesh{left:-24px;top:47%}          /* 캐릭터 메쉬 영역 옆 */
+.chip-fps{right:-24px;bottom:16px}      /* 도프시트 옆 */
 
 /* 하단 역량 바 */
 .caps{margin-top:62px;border:1px solid var(--line);border-radius:5px;
@@ -203,7 +203,7 @@ h1 .l2{display:block;color:#cccac8}
   .deck{transform:rotateX(2deg) rotateY(-8deg) rotateZ(-.4deg)}
   .hero-grid{grid-template-columns:1fr;gap:52px}
   .stage{max-width:560px;width:100%}
-  .chip-mesh{left:0;bottom:-20px}.chip-fps{right:0;top:-20px}
+  .chip-mesh{left:0;top:46%}.chip-fps{right:0;bottom:10px}
   .caps{grid-template-columns:repeat(2,1fr)}
   .cap:nth-child(2n){border-right:none}
   .cap{border-bottom:1px solid var(--line)}
@@ -229,7 +229,7 @@ h1 .l2{display:block;color:#cccac8}
 </div>
 
 <div class="topbar">
-  <a class="logo" href="#"><span class="jy">JY</span><span class="st">STUDIO</span></a>
+  <div class="wrap"><a class="logo" href="#"><span class="jy">JY</span><span class="st">STUDIO</span></a></div>
 </div>
 
 <header>
@@ -337,7 +337,7 @@ h1 .l2{display:block;color:#cccac8}
           </div>
           <div class="chip chip-fps" data-depth="38">
             <span class="k">TIMELINE</span>
-            <span class="v">30 fps · <em>idle</em> 1.20s</span>
+            <span class="v">30 fps · <em>idle</em> 4.20s</span>
           </div>
 
         </div>
@@ -368,12 +368,12 @@ h1 .l2{display:block;color:#cccac8}
     [200, 372, 200, 300, 12],   // spine
     [200, 300, 200, 250, 11],   // chest
     [200, 250, 199, 198, 10],   // neck→head
-    [186, 286, 152, 330, 8.5],  // arm_l
-    [152, 330, 138, 386, 7],    // forearm_l
-    [214, 286, 250, 328, 8.5],  // arm_r
-    [250, 328, 268, 382, 7],    // forearm_r
-    [189, 470, 182, 528, 9],    // leg_l
-    [211, 470, 220, 528, 9]     // leg_r
+    [188, 288, 163, 332, 8],    // arm_l
+    [163, 332, 153, 386, 6.5],  // forearm_l
+    [212, 288, 237, 330, 8],    // arm_r
+    [237, 330, 249, 384, 6.5],  // forearm_r
+    [191, 470, 186, 528, 8.5],  // leg_l
+    [209, 470, 215, 528, 8.5]   // leg_r
   ];
 
   function bonePath(x1,y1,x2,y2,base){
@@ -392,7 +392,7 @@ h1 .l2{display:block;color:#cccac8}
     var NS='http://www.w3.org/2000/svg', out='';
 
     /* 메쉬 와이어프레임 — 하체/스커트 영역에 삼각분할 */
-    var mx=146, my=352, mw=108, mh=132, cols=4, rows=5, cw=mw/cols, ch=mh/rows, mesh='';
+    var mx=158, my=356, mw=84, mh=126, cols=4, rows=5, cw=mw/cols, ch=mh/rows, mesh='';
     for(var r=0;r<=rows;r++) mesh+='M'+mx+','+(my+r*ch)+'H'+(mx+mw);
     for(var c=0;c<=cols;c++) mesh+='M'+(mx+c*cw)+','+my+'V'+(my+mh);
     for(var r2=0;r2<rows;r2++) for(var c2=0;c2<cols;c2++)
@@ -448,13 +448,21 @@ h1 .l2{display:block;color:#cccac8}
       }
     }
     if(maxX<0||maxY-minY<H*0.2) return false;     // 측정 실패 — 기본 배치 유지
+    /* 가로 중심은 외곽(머리카락·무기·망토까지 포함)이 아니라 몸통 밴드의
+       픽셀 무게중심으로 잡아야 척추가 실제 몸에 얹힌다. */
+    var y0=Math.round(minY+(maxY-minY)*0.34), y1=Math.round(minY+(maxY-minY)*0.72);
+    var sum=0,cnt=0;
+    for(var yy=y0;yy<=y1;yy++)for(var xx=minX;xx<=maxX;xx++){
+      var qq=px(xx,yy);
+      if(Math.abs(qq[0]-bg[0])+Math.abs(qq[1]-bg[1])+Math.abs(qq[2]-bg[2])>TH){ sum+=xx; cnt++; }
+    }
+    var bodyCx = cnt ? sum/cnt : (minX+maxX)/2;
     /* 픽셀 -> viewBox(400x540). 영상은 contain, 비율이 거의 같아 그대로 매핑 */
     var vb=400, vbh=540;
-    var bx=minX/W*vb, bw=(maxX-minX+1)/W*vb;
     var by=minY/H*vbh, bh=(maxY-minY+1)/H*vbh;
     var s2=bh/(DES.bot-DES.top);
     g.setAttribute('transform',
-      'translate('+(bx+bw/2).toFixed(2)+','+by.toFixed(2)+') scale('+s2.toFixed(4)+') '+
+      'translate('+((bodyCx+0.5)/W*vb).toFixed(2)+','+by.toFixed(2)+') scale('+s2.toFixed(4)+') '+
       'translate('+(-DES.cx)+','+(-DES.top)+')');
     return true;
   }
@@ -504,7 +512,16 @@ h1 .l2{display:block;color:#cccac8}
   }
 
   /* 플레이헤드 — 타임라인을 실제로 훑고 지나감 */
-  /* 캐릭터가 정지해 있으므로 플레이헤드도 같은 프레임에 멈춰 둔다 */
+  /* 플레이헤드 — 도프시트 길이와 동일한 속도로 훑는다.
+     126프레임 / 30fps = 4.2초. 기존 1.2초보다 3.5배 느리다. */
+  var ph=document.getElementById('playhead');
+  if(ph&&!reduce){
+    var t0=performance.now();
+    (function tick(now){
+      ph.style.left=(((now-t0)/4200)%1*100).toFixed(2)+'%';
+      requestAnimationFrame(tick);
+    })(t0);
+  }
 
   /* ---------- 3. 마우스 패럴랙스 (자이로 느낌) ---------- */
   var stage=document.getElementById('stage'), deck=document.getElementById('deck');

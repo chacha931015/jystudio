@@ -1,0 +1,299 @@
+[
+ {
+  "sort_order": 1,
+  "category": "Portrait Animation",
+  "title": "Nikke",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785750371689-_NIKKE_Laplace_.mp4",
+  "description": "",
+  "featured": true
+ },
+ {
+  "sort_order": 2,
+  "category": "Portrait Animation",
+  "title": "Nikke",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785750410218-_NIKKE_Viper_.mp4",
+  "description": "",
+  "featured": true
+ },
+ {
+  "sort_order": 3,
+  "category": "Portrait Animation",
+  "title": "Nikke",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785750359712-_NIKKE_N102_N102_.mp4",
+  "description": "",
+  "featured": true
+ },
+ {
+  "sort_order": 4,
+  "category": "Spine 2D",
+  "title": "Nikke",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785750416772-_NIKKE_Exia_.mp4",
+  "description": "",
+  "featured": false
+ },
+ {
+  "sort_order": 5,
+  "category": "Spine 2D",
+  "title": "Nikke",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785750889473-_NIKKE_Liter_.mp4",
+  "description": "",
+  "featured": false
+ },
+ {
+  "sort_order": 6,
+  "category": "Spine 2D",
+  "title": "Nikke",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785750413909-_NIKKE_Alice_.mp4",
+  "description": "",
+  "featured": false
+ },
+ {
+  "sort_order": 7,
+  "category": "SD Character",
+  "title": "Trickcal",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785167613542-Ultimate1_1.webm",
+  "description": "",
+  "featured": true
+ },
+ {
+  "sort_order": 8,
+  "category": "SD Character",
+  "title": "Trickcal",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785167598577-Attack2_1.webm",
+  "description": "",
+  "featured": true
+ },
+ {
+  "sort_order": 9,
+  "category": "SD Character",
+  "title": "Trickcal",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785167588073-Attack1_1.webm",
+  "description": "",
+  "featured": true
+ },
+ {
+  "sort_order": 10,
+  "category": "LD Character",
+  "title": "Epic7",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785483424838-__skill3.webm",
+  "description": "",
+  "featured": false
+ },
+ {
+  "sort_order": 11,
+  "category": "LD Character",
+  "title": "Epic7",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785483415024-__skill1_2.webm",
+  "description": "",
+  "featured": false
+ },
+ {
+  "sort_order": 12,
+  "category": "LD Character",
+  "title": "Epic7",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785483402642-__camping.webm",
+  "description": "",
+  "featured": false
+ },
+ {
+  "sort_order": 13,
+  "category": "LD Character",
+  "title": "Epic7",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785481939160-__skill1.webm",
+  "description": "",
+  "featured": true
+ },
+ {
+  "sort_order": 14,
+  "category": "LD Character",
+  "title": "Epic7",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785481898411-__skill2.webm",
+  "description": "",
+  "featured": true
+ },
+ {
+  "sort_order": 15,
+  "category": "LD Character",
+  "title": "Epic7",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785481903030-__skill3.webm",
+  "description": "",
+  "featured": true
+ },
+ {
+  "sort_order": 16,
+  "category": "SD Character",
+  "title": "Trickcal",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785167602570-Idle.webm",
+  "description": "",
+  "featured": false
+ },
+ {
+  "sort_order": 17,
+  "category": "SD Character",
+  "title": "Trickcal",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785167610195-Spawn.webm",
+  "description": "",
+  "featured": false
+ },
+ {
+  "sort_order": 18,
+  "category": "SD Character",
+  "title": "Trickcal",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785167606385-Move.webm",
+  "description": "",
+  "featured": false
+ },
+ {
+  "sort_order": 19,
+  "category": "SD Character",
+  "title": "Trickcal",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785166428111-Skill1_1.webm",
+  "description": "",
+  "featured": false
+ },
+ {
+  "sort_order": 20,
+  "category": "SD Character",
+  "title": "Trickcal",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785166397728-Attack1_1.webm",
+  "description": "",
+  "featured": false
+ },
+ {
+  "sort_order": 21,
+  "category": "SD Character",
+  "title": "Trickcal",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785166403356-Attack2_1.webm",
+  "description": "",
+  "featured": false
+ },
+ {
+  "sort_order": 22,
+  "category": "SD Character",
+  "title": "Trickcal",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785166126489-Idle.webm",
+  "description": "",
+  "featured": false
+ },
+ {
+  "sort_order": 23,
+  "category": "SD Character",
+  "title": "Trickcal",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785166433953-Spawn.webm",
+  "description": "",
+  "featured": false
+ },
+ {
+  "sort_order": 24,
+  "category": "SD Character",
+  "title": "Trickcal",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785168355259-Move.webm",
+  "description": "",
+  "featured": false
+ },
+ {
+  "sort_order": 25,
+  "category": "SD Character",
+  "title": "Trickcal",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785168413348-Attack1_1.webm",
+  "description": "",
+  "featured": false
+ },
+ {
+  "sort_order": 26,
+  "category": "SD Character",
+  "title": "Trickcal",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785168443712-Victory.webm",
+  "description": "",
+  "featured": false
+ },
+ {
+  "sort_order": 27,
+  "category": "SD Character",
+  "title": "Trickcal",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785168428511-Skill1_1.webm",
+  "description": "",
+  "featured": false
+ },
+ {
+  "sort_order": 28,
+  "category": "SD Character",
+  "title": "Trickcal",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785168435061-Spawn.webm",
+  "description": "",
+  "featured": false
+ },
+ {
+  "sort_order": 29,
+  "category": "SD Character",
+  "title": "Trickcal",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785168423777-Idle.webm",
+  "description": "",
+  "featured": false
+ },
+ {
+  "sort_order": 30,
+  "category": "SD Character",
+  "title": "Trickcal",
+  "media_type": "video",
+  "media": "https://jystudio98.com/media/1785168418095-Attack2_1.webm",
+  "description": "",
+  "featured": false
+ },
+ {
+  "sort_order": 31,
+  "category": "Animation",
+  "title": "Startravler Lala",
+  "media_type": "video",
+  "media": "https://embed.notion.co/files/3537d5da098f9cb144d9dd2810238a90.mp4",
+  "description": "",
+  "featured": false
+ },
+ {
+  "sort_order": 32,
+  "category": "Animation",
+  "title": "Startravler Lala",
+  "media_type": "video",
+  "media": "https://embed.notion.co/files/1586aba7c1a1d25141a1413441540164.mp4",
+  "description": "",
+  "featured": false
+ },
+ {
+  "sort_order": 33,
+  "category": "Animation",
+  "title": "Startravler Lala",
+  "media_type": "video",
+  "media": "https://embed.notion.co/files/cc88eed0674c60117d97030def1c3f45.mp4",
+  "description": "",
+  "featured": false
+ }
+]

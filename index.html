@@ -1579,8 +1579,18 @@ document.getElementById('openChatCta').addEventListener('click',()=>{
   function loadPortfolioFromDB(){
     sb.from('portfolio').select('*').order('sort_order',{ascending:true}).order('created_at',{ascending:false})
       .then(function(res){
-        var rows=res.data;
-        if(res.error || !rows || rows.length===0) return;
+        if(res.error || !res.data || res.data.length===0){ loadPortfolioSnapshot(); return; }
+        renderPortfolio(res.data);
+      });
+  }
+  /* DB가 응답하지 않을 때(한도 초과 등) 마지막으로 저장해둔 스냅샷으로 표시 */
+  function loadPortfolioSnapshot(){
+    fetch('portfolio-fallback.json', { cache:'no-store' })
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(rows){ if(rows && rows.length) renderPortfolio(rows); })
+      .catch(function(){});
+  }
+  function renderPortfolio(rows){
         var grid=document.getElementById('portGrid');
         if(!grid) return;
         // ⭐ 대표 작품은 처음부터 보이고, 나머지는 "더 보기" 뒤에 숨김
@@ -1634,7 +1644,6 @@ document.getElementById('openChatCta').addEventListener('click',()=>{
           if(rows.length>featCount){ moreBtn.parentElement.style.display=''; }
           else{ moreBtn.parentElement.style.display='none'; }
         }
-      });
   }
 
   /* ================= 팀 경력 DB 연동 =================

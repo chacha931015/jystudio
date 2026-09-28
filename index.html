@@ -6,7 +6,7 @@
 <title>JY STUDIO — Spine 2D Animation Outsourcing Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;900&family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#08090d;
@@ -59,7 +59,11 @@ nav{
   padding:16px 28px;backdrop-filter:blur(14px);
   background:rgba(8,9,13,.6);border-bottom:1px solid var(--line);
 }
-.logo{font-family:var(--display);font-weight:700;letter-spacing:.04em;font-size:1.05rem;display:flex;align-items:center;gap:10px}
+.logo{font-family:"Figtree",var(--display);font-size:1.32rem;line-height:1;color:var(--ink);
+  display:inline-flex;align-items:baseline;text-decoration:none;
+  transform:skewX(-11deg);transform-origin:left baseline}
+.logo .jy{font-weight:900;letter-spacing:-.055em}
+.logo .st{font-weight:300;font-size:.7em;letter-spacing:.02em;margin-left:.2em;color:rgba(238,241,247,.55)}
 .logo .dot{width:9px;height:9px;border-radius:50%;background:var(--neon);box-shadow:var(--glow);animation:pulse 2.4s infinite}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.82)}}
 .nav-links{display:flex;gap:30px;font-family:var(--mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.12em}
@@ -124,7 +128,7 @@ h1 .gl{
 .btn-ghost:hover{border-color:var(--neon-2);color:var(--neon-2)}
 
 /* hero two-column with rotating showcase */
-.hero-grid{display:grid;grid-template-columns:1fr 0.92fr;gap:48px;align-items:center;width:100%}
+.hero-grid{display:grid;grid-template-columns:1fr 1.02fr;gap:64px;align-items:center;width:100%}
 .hero-copy{max-width:560px}
 .hero-stage{position:relative;justify-self:end;width:100%;max-width:440px}
 .hero-stage::before{content:"";position:absolute;inset:-20%;z-index:0;border-radius:50%;
@@ -141,10 +145,109 @@ h1 .gl{
   background:var(--line-strong);transition:.3s}
 .hs-dots button.active{background:var(--neon);box-shadow:var(--glow);width:22px;border-radius:5px}
 @media(max-width:900px){
-  .hero-grid{grid-template-columns:1fr;gap:36px}
-  .hero-stage{justify-self:center;max-width:320px}
+  .hero-grid{grid-template-columns:1fr;gap:48px}
+  .stage{max-width:560px}
   header{padding-top:120px;min-height:auto;padding-bottom:60px}
 }
+
+/* ================= HERO - Spine editor mock ================= */
+.eyebrow{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:.7rem;
+  font-weight:500;letter-spacing:.24em;color:var(--neon);text-transform:uppercase;margin-bottom:30px}
+.eyebrow::after{content:"";flex:0 0 74px;height:1px;background:linear-gradient(90deg,var(--line-strong),transparent)}
+h1.hero-h1{font-family:var(--kr);font-weight:900;
+  font-size:clamp(2.1rem,4.4vw,3.45rem);line-height:1.22;letter-spacing:-.035em;
+  color:var(--ink);margin-bottom:26px}
+h1.hero-h1 .l2{display:block;color:#b9c0d0}
+.hero-lead{max-width:498px;color:var(--ink-dim);font-size:1.015rem;line-height:1.85;letter-spacing:-.01em}
+.hero-lead b{color:var(--ink);font-weight:700}
+.pillars{margin:40px 0 44px;border-top:1px solid var(--line)}
+.pillar{display:grid;grid-template-columns:30px 1fr;gap:16px;align-items:baseline;
+  padding:17px 0;border-bottom:1px solid var(--line)}
+.pillar .no{font-family:var(--mono);font-size:.68rem;color:var(--ink-faint);padding-top:3px}
+.pillar .t{font-weight:700;font-size:.985rem;color:var(--ink);letter-spacing:-.015em}
+.pillar .d{font-size:.875rem;color:var(--ink-dim);margin-top:3px}
+.stage{position:relative;perspective:1350px;perspective-origin:30% 44%;width:100%}
+.deck{position:relative;transform-style:preserve-3d;will-change:transform;
+  transform:rotateX(3deg) rotateY(-16deg) rotateZ(-.6deg);
+  transition:transform .55s cubic-bezier(.22,.61,.36,1)}
+.stage.live .deck{transition:none}
+.editor{position:relative;transform-style:preserve-3d;
+  background:#1c1d21;border:1px solid rgba(255,255,255,.1);border-radius:7px;overflow:hidden;
+  box-shadow:38px 52px 104px -34px rgba(0,0,0,.95),0 0 0 1px rgba(0,0,0,.55);
+  display:grid;grid-template-columns:34px 1fr 152px;grid-template-rows:31px 1fr 116px}
+.ed-title{grid-column:1/-1;display:flex;align-items:center;gap:9px;padding:0 11px;
+  background:#17181c;border-bottom:1px solid rgba(255,255,255,.07)}
+.ed-title .lights{display:flex;gap:6px}
+.ed-title .lights i{width:9px;height:9px;border-radius:50%;background:#3a3c42;display:block}
+.ed-title .name{font-family:var(--mono);font-size:.64rem;letter-spacing:.07em;color:#9a9ca3;margin-left:6px}
+.ed-title .name em{font-style:normal;color:#d8dade}
+.ed-title .ver{margin-left:auto;font-family:var(--mono);font-size:.58rem;color:#5b5d64}
+.ed-tools{background:#17181c;border-right:1px solid rgba(255,255,255,.07);
+  display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0}
+.ed-tools i{width:21px;height:21px;border-radius:3px;display:grid;place-items:center;opacity:.5}
+.ed-tools i.on{background:rgba(122,252,255,.14);opacity:1}
+.ed-tools i svg{width:12px;height:12px;stroke:#b9bcc4;stroke-width:1.5;fill:none}
+.ed-tools i.on svg{stroke:var(--neon)}
+.ed-tools .sep{width:15px;height:1px;background:rgba(255,255,255,.07);margin:5px 0}
+.ed-view{position:relative;overflow:hidden;transform-style:preserve-3d;
+  background:linear-gradient(160deg,#303136,#25262a)}
+.ed-view .cgrid{position:absolute;inset:0;opacity:.55;
+  background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);
+  background-size:19px 19px}
+.ed-view video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.rig{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.vhud{position:absolute;left:9px;top:8px;display:flex;gap:6px;
+  font-family:var(--mono);font-size:.55rem;letter-spacing:.07em;color:#8c92a6}
+.vhud span{background:rgba(0,0,0,.38);border:1px solid rgba(255,255,255,.08);padding:2px 6px;border-radius:2px}
+.vhud span.k{color:#cfd2d8}
+.ed-tree{background:#232428;border-left:1px solid rgba(255,255,255,.07);padding:9px 0;overflow:hidden}
+.ed-tree .hd{font-family:var(--mono);font-size:.57rem;letter-spacing:.14em;color:#6a6c73;padding:0 11px 7px}
+.tr{display:flex;align-items:center;gap:5px;padding:2.5px 11px;
+  font-family:var(--mono);font-size:.615rem;color:#9a9ca3;white-space:nowrap}
+.tr .tw{width:7px;color:#606268;font-size:.5rem}
+.tr .sw{width:7px}
+.tr.sel{background:rgba(122,252,255,.1);color:#e6f9fb}
+.tr .ic{width:7px;height:7px;border-radius:1px;background:#4e5058;flex:none}
+.tr.bone .ic{background:var(--bone);transform:rotate(45deg);opacity:.9}
+.tr.anim .ic{background:#7ec27e}
+.tr.slot .ic{background:#6a8fc4}
+.tr .ct{color:#5b5d64;margin-left:3px}
+.ed-dope{grid-column:1/-1;background:#1a1b1f;border-top:1px solid rgba(255,255,255,.07);
+  display:grid;grid-template-columns:96px 1fr}
+.dope-names{border-right:1px solid rgba(255,255,255,.07);padding:17px 0 0}
+.dope-names div{font-family:var(--mono);font-size:.58rem;color:#9a9ca3;
+  padding:0 10px;height:13.5px;line-height:13.5px;white-space:nowrap}
+.dope-names div.sel{color:#e6f9fb;background:rgba(122,252,255,.08)}
+.dope-track{position:relative;overflow:hidden}
+.ruler{height:17px;border-bottom:1px solid rgba(255,255,255,.07);position:relative}
+.ruler span{position:absolute;top:3px;font-family:var(--mono);font-size:.5rem;color:#5b5d64;transform:translateX(-50%)}
+.ruler i{position:absolute;bottom:0;width:1px;height:4px;background:rgba(255,255,255,.14)}
+.krow{position:relative;height:13.5px}
+.krow b{position:absolute;top:4.2px;width:5.4px;height:5.4px;background:var(--bone);
+  transform:translateX(-50%) rotate(45deg);border-radius:.5px}
+.krow.sel{background:rgba(122,252,255,.08)}
+.krow s{position:absolute;top:6.4px;height:1px;background:rgba(255,209,102,.26);text-decoration:none}
+.playhead{position:absolute;top:0;bottom:0;width:1px;background:var(--neon);opacity:.85}
+.playhead::before{content:"";position:absolute;top:0;left:-3.5px;border-left:4px solid transparent;
+  border-right:4px solid transparent;border-top:5px solid var(--neon)}
+.chip{position:absolute;background:rgba(18,20,31,.92);border:1px solid var(--line-strong);
+  border-radius:4px;padding:9px 13px;backdrop-filter:blur(9px);
+  box-shadow:0 18px 34px -16px rgba(0,0,0,.9)}
+.chip .k{font-family:var(--mono);font-size:.55rem;letter-spacing:.15em;color:var(--ink-faint);display:block;margin-bottom:3px}
+.chip .v{font-family:var(--mono);font-size:.72rem;color:var(--ink)}
+.chip .v em{font-style:normal;color:var(--bone)}
+.chip-mesh{left:-24px;top:47%}
+.chip-fps{right:-24px;bottom:16px}
+@media(max-width:1020px){
+  .deck{transform:rotateX(2deg) rotateY(-8deg) rotateZ(-.4deg)}
+  .chip-mesh{left:0;top:46%}.chip-fps{right:0;bottom:10px}
+}
+@media(max-width:640px){
+  .editor{grid-template-columns:28px 1fr 0;grid-template-rows:28px 1fr 96px}
+  .ed-tree{display:none}
+}
+@media(prefers-reduced-motion:reduce){.deck{transition:none!important;transform:none!important}}
 
 /* ---- SECTION SHARED ---- */
 section{padding:120px 0;position:relative}
@@ -363,7 +466,7 @@ h2 .kr{display:block;font-family:var(--kr);font-weight:700;font-size:.5em;color:
 
 /* ---- FOOTER ---- */
 footer{border-top:1px solid var(--line);padding:48px 0;text-align:center}
-footer .logo{justify-content:center;margin-bottom:22px}
+footer .logo{margin:0 auto 22px;display:table}
 .biz{font-family:var(--mono);font-size:.8rem;color:var(--ink-dim);line-height:1.9;letter-spacing:.02em;max-width:760px;margin:0 auto 18px}
 .biz .sep{color:var(--ink-faint);margin:0 8px}
 .biz a{color:var(--neon);text-decoration:none}
@@ -385,7 +488,7 @@ footer p{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);letter-
 <div class="grid-overlay"></div>
 
 <nav>
-  <div class="logo"><span class="dot"></span>JY&nbsp;STUDIO</div>
+  <div class="logo"><span class="jy">JY</span><span class="st">STUDIO</span></div>
   <div class="nav-links">
     <a href="#services" data-i18n="nav.services">Services</a>
     <a href="#career" data-i18n="nav.career">Career</a>
@@ -417,26 +520,101 @@ footer p{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);letter-
   <canvas id="constellation" aria-hidden="true"></canvas>
   <div class="wrap hero-grid">
     <div class="hero-copy">
-      <div class="eyebrow" data-i18n="hero.eyebrow">Spine 2D Animation Studio</div>
-      <h1>BRING <span class="gl">RIGS</span><br>TO LIFE</h1>
-      <div class="hero-kr" data-i18n="hero.kr">살아 숨 쉬는 2D 캐릭터 애니메이션</div>
-      <p class="hero-sub" data-i18n="hero.sub">게임·캐릭터·모션그래픽을 위한 Spine 전문 외주 스튜디오. 리깅부터 스킨, 메시 디포메이션까지 — 한 컷의 망설임 없이 움직입니다.</p>
+      <div class="eyebrow" data-i18n="hero.eyebrow">Spine 2D Animation Outsourcing</div>
+
+      <h1 class="hero-h1"><span data-i18n="hero.h1a">대량 제작도 안정적으로,</span><span class="l2" data-i18n="hero.h1b">퀄리티는 일관되게</span></h1>
+
+      <p class="hero-lead"><b data-i18n="hero.leadb">게임을 위한 SPINE 2D 리소스 외주 전문 스튜디오.</b> <span data-i18n="hero.lead">전 제작 과정을 직접 관리하며, 일정과 수량에 따른 안정적인 납품으로 신뢰할 수 있는 파트너가 되겠습니다.</span></p>
+
+      <div class="pillars">
+        <div class="pillar">
+          <div class="no">01</div>
+          <div><div class="t" data-i18n="pillar1.t">대량 수주 대응</div><div class="d" data-i18n="pillar1.d">프로젝트 규모에 맞춘 유연한 제작</div></div>
+        </div>
+        <div class="pillar">
+          <div class="no">02</div>
+          <div><div class="t" data-i18n="pillar2.t">일관된 품질 관리</div><div class="d" data-i18n="pillar2.d">전 과정을 직접 관리하는 제작 시스템</div></div>
+        </div>
+        <div class="pillar">
+          <div class="no">03</div>
+          <div><div class="t" data-i18n="pillar3.t">안정적인 일정 대응</div><div class="d" data-i18n="pillar3.d">주어진 기간과 물량에 맞춘 체계적인 운영</div></div>
+        </div>
+      </div>
+
       <div class="hero-cta">
-        <a href="#work" class="btn btn-primary" data-i18n="hero.cta1">작업물 보기 / View Work</a>
-        <a href="#contact" class="btn btn-ghost" data-i18n="hero.cta2">견적 문의 / Get a Quote</a>
+        <a href="#work" class="btn btn-primary"><span data-i18n="hero.cta1">포트폴리오 보기</span> →</a>
+        <a href="#contact" class="btn btn-ghost"><span data-i18n="hero.cta2">견적 문의</span> →</a>
       </div>
     </div>
-    <div class="hero-stage">
-      <div class="hs-slides" id="hsSlides">
-        <img class="hs-slide active" src="game2.png" alt="별의 여행자 라라" loading="eager">
-        <img class="hs-slide shrink" src="game3.png" alt="디패스트 임팩트" loading="lazy">
-        <img class="hs-slide shrink" src="game1.png" alt="승리의 여신: 니케" loading="lazy">
-      </div>
-      <div class="hs-caption" id="hsCaption">별의 여행자 라라</div>
-      <div class="hs-dots" id="hsDots">
-        <button class="active" aria-label="1"></button>
-        <button aria-label="2"></button>
-        <button aria-label="3"></button>
+
+    <div class="stage" id="stage">
+      <div class="deck" id="deck">
+        <div class="editor" data-depth="0">
+
+          <div class="ed-title">
+            <div class="lights"><i></i><i></i><i></i></div>
+            <div class="name">character<em>.spine</em> &mdash; Animate</div>
+            <div class="ver">4.2</div>
+          </div>
+
+          <div class="ed-tools">
+            <i class="on"><svg viewBox="0 0 16 16"><circle cx="8" cy="4" r="2.2"/><path d="M8 6.2v5M8 8.4 5 11M8 8.4 11 11"/></svg></i>
+            <i><svg viewBox="0 0 16 16"><path d="M13 8a5 5 0 1 1-1.8-3.8"/><path d="M13 2v3h-3"/></svg></i>
+            <i><svg viewBox="0 0 16 16"><path d="M8 2v12M2 8h12M8 2 6 4M8 2l2 2M8 14l-2-2M8 14l2-2"/></svg></i>
+            <i><svg viewBox="0 0 16 16"><rect x="3" y="3" width="10" height="10" rx="1"/><path d="M6 10 10 6"/></svg></i>
+            <span class="sep"></span>
+            <i><svg viewBox="0 0 16 16"><path d="M3 12 8 3l5 9z"/><path d="M3 12h10M8 3v9"/></svg></i>
+            <i><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="5"/><path d="M8 3v10"/></svg></i>
+          </div>
+
+          <div class="ed-view" data-depth="14">
+            <div class="cgrid"></div>
+            <video id="rigVideo" muted playsinline preload="auto">
+              <source src="char1.webm" type="video/webm">
+              <source src="char1.mp4" type="video/mp4">
+            </video>
+            <svg class="rig" id="rig" viewBox="0 0 400 540" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg>
+            <div class="vhud"><span class="k">Animate</span><span>idle</span><span>100%</span></div>
+          </div>
+
+          <div class="ed-tree">
+            <div class="hd">TREE</div>
+            <div class="tr"><span class="tw">&#9662;</span><span class="ic"></span>character</div>
+            <div class="tr"><span class="sw"></span><span class="tw">&#9656;</span><span class="ic"></span>Images<span class="ct">31</span></div>
+            <div class="tr"><span class="sw"></span><span class="tw">&#9662;</span><span class="ic"></span>Skeleton</div>
+            <div class="tr bone"><span class="sw"></span><span class="sw"></span><span class="tw">&#9662;</span><span class="ic"></span>root</div>
+            <div class="tr bone"><span class="sw"></span><span class="sw"></span><span class="sw"></span><span class="tw">&#9662;</span><span class="ic"></span>hip</div>
+            <div class="tr bone sel"><span class="sw"></span><span class="sw"></span><span class="sw"></span><span class="sw"></span><span class="tw">&#9656;</span><span class="ic"></span>spine</div>
+            <div class="tr bone"><span class="sw"></span><span class="sw"></span><span class="sw"></span><span class="sw"></span><span class="tw">&#9656;</span><span class="ic"></span>leg_l</div>
+            <div class="tr bone"><span class="sw"></span><span class="sw"></span><span class="sw"></span><span class="sw"></span><span class="tw">&#9656;</span><span class="ic"></span>leg_r</div>
+            <div class="tr slot"><span class="sw"></span><span class="tw">&#9656;</span><span class="ic"></span>Slots<span class="ct">31</span></div>
+            <div class="tr"><span class="sw"></span><span class="tw">&#9656;</span><span class="ic"></span>Skins<span class="ct">2</span></div>
+            <div class="tr anim"><span class="sw"></span><span class="tw">&#9662;</span><span class="ic"></span>Animations</div>
+            <div class="tr anim sel"><span class="sw"></span><span class="sw"></span><span class="sw"></span><span class="ic"></span>idle</div>
+            <div class="tr anim"><span class="sw"></span><span class="sw"></span><span class="sw"></span><span class="ic"></span>attack</div>
+            <div class="tr anim"><span class="sw"></span><span class="sw"></span><span class="sw"></span><span class="ic"></span>skill_01</div>
+            <div class="tr"><span class="sw"></span><span class="tw">&#9656;</span><span class="ic"></span>Constraints<span class="ct">4</span></div>
+          </div>
+
+          <div class="ed-dope">
+            <div class="dope-names" id="dopeNames"></div>
+            <div class="dope-track">
+              <div class="ruler" id="ruler"></div>
+              <div id="krows"></div>
+              <div class="playhead" id="playhead" style="left:22%"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="chip chip-mesh" data-depth="46">
+          <span class="k">MESH DEFORMATION</span>
+          <span class="v">vertices <em>248</em> &middot; weights <em>4</em></span>
+        </div>
+        <div class="chip chip-fps" data-depth="38">
+          <span class="k">TIMELINE</span>
+          <span class="v">30 fps &middot; <em>idle</em> 4.20s</span>
+        </div>
       </div>
     </div>
   </div>
@@ -899,8 +1077,8 @@ footer p{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);letter-
     <div class="contact-box reveal">
       <div>
         <div class="sec-tag"><span class="num">05</span> / <span data-i18n="tag.contact">LET'S TALK</span></div>
-        <h2 style="margin-top:14px">Live Chat<span class="kr" data-i18n="h2.contact">실시간 상담</span></h2>
-        <p class="lead" data-i18n="contact.lead">오른쪽 아래 실시간 상담 버튼으로 문의주시면 가장 빠르게 답변드립니다. 부재 시 이메일로 회신드립니다.</p>
+        <h2 style="margin-top:14px">Contact<span class="kr" data-i18n="h2.contact">문의하기</span></h2>
+        <p class="lead" data-i18n="contact.lead">프로젝트 내용과 일정을 이메일로 보내주시면 확인 후 빠르게 회신드립니다.</p>
         <div class="contact-meta">
           <div class="row"><span>EMAIL</span><a href="mailto:labkanata@naver.com">labkanata@naver.com</a></div>
           <div class="row"><span>TEL</span><a href="tel:01033304414">010-3330-4414</a></div>
@@ -908,9 +1086,9 @@ footer p{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);letter-
         </div>
       </div>
       <div style="display:flex;flex-direction:column;justify-content:center;gap:16px">
-        <p style="color:var(--ink-dim);font-size:.95rem;line-height:1.75">채팅으로 프로젝트 내용을 남겨주시면<br>보통 몇 분 안에 바로 답변드립니다.<br>견적 양식도 채팅창에 준비되어 있어요.</p>
-        <button class="btn btn-primary" style="width:100%;justify-content:center" id="openChatCta">실시간 상담 시작하기 →</button>
-        <p style="color:var(--ink-faint);font-size:.78rem">Mon–Fri · 10:00–19:00 KST · 부재 시 이메일로 회신드립니다</p>
+        <p style="color:var(--ink-dim);font-size:.95rem;line-height:1.75" data-i18n="contact.note">작업 범위·분량·희망 일정을 간단히 적어 보내주시면<br>검토 후 견적과 일정을 회신드립니다.</p>
+        <a class="btn btn-primary" style="width:100%;justify-content:center" href="mailto:labkanata@naver.com?subject=%5BJY%20STUDIO%5D%20%EC%99%B8%EC%A3%BC%20%EB%AC%B8%EC%9D%98"><span data-i18n="contact.cta">이메일로 문의하기</span> →</a>
+        <p style="color:var(--ink-faint);font-size:.78rem">Mon–Fri · 10:00–19:00 KST</p>
       </div>
     </div>
   </div>
@@ -918,7 +1096,7 @@ footer p{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);letter-
 
 <footer>
   <div class="wrap">
-    <div class="logo"><span class="dot"></span>JY&nbsp;STUDIO</div>
+    <div class="logo"><span class="jy">JY</span><span class="st">STUDIO</span></div>
     <div class="biz">
       상호명 JY 스튜디오<span class="sep">|</span>대표자명 박태형<span class="sep">|</span>사업자등록번호 534-71-01348<br>
       대표번호 <a href="tel:01033304414">010-3330-4414</a><span class="sep">|</span>이메일 <a href="mailto:labkanata@naver.com">labkanata@naver.com</a><br>
@@ -942,14 +1120,24 @@ const I18N={
   "nav.process":{ko:"Process",en:"Process",ja:"進行",zh:"流程"},
   "nav.contact":{ko:"Contact",en:"Contact",ja:"お問い合わせ",zh:"联系我们"},
   "nav.cta":{ko:"문의하기 →",en:"Get in touch →",ja:"お問い合わせ →",zh:"联系我们 →"},
-  "hero.eyebrow":{ko:"Spine 2D Animation Studio",en:"Spine 2D Animation Studio",ja:"Spine 2D アニメーションスタジオ",zh:"Spine 2D 动画工作室"},
+  "hero.eyebrow":{ko:"Spine 2D Animation Outsourcing",en:"Spine 2D Animation Outsourcing",ja:"Spine 2D Animation Outsourcing",zh:"Spine 2D Animation Outsourcing"},
+  "hero.h1a":{ko:"\ub300\ub7c9 \uc81c\uc791\ub3c4 \uc548\uc815\uc801\uc73c\ub85c,",en:"Scale without compromise,",ja:"\u5927\u91cf\u5236\u4f5c\u3082\u5b89\u5b9a\u3057\u3066\u3001",zh:"\u5927\u6279\u91cf\u5236\u4f5c\u4e5f\u7a33\u5b9a\uff0c"},
+  "hero.h1b":{ko:"\ud004\ub9ac\ud2f0\ub294 \uc77c\uad00\ub418\uac8c",en:"quality that stays consistent",ja:"\u54c1\u8cea\u306f\u4e00\u8cab\u3057\u3066",zh:"\u54c1\u8d28\u59cb\u7ec8\u5982\u4e00"},
+  "hero.leadb":{ko:"\uac8c\uc784\uc744 \uc704\ud55c SPINE 2D \ub9ac\uc18c\uc2a4 \uc678\uc8fc \uc804\ubb38 \uc2a4\ud29c\ub514\uc624.",en:"A Spine 2D asset outsourcing studio for games.",ja:"\u30b2\u30fc\u30e0\u306e\u305f\u3081\u306eSpine 2D\u30ea\u30bd\u30fc\u30b9\u5916\u6ce8\u5c02\u9580\u30b9\u30bf\u30b8\u30aa\u3002",zh:"\u4e13\u6ce8\u6e38\u620f Spine 2D \u8d44\u6e90\u5916\u5305\u7684\u5de5\u4f5c\u5ba4\u3002"},
+  "hero.lead":{ko:"\uc804 \uc81c\uc791 \uacfc\uc815\uc744 \uc9c1\uc811 \uad00\ub9ac\ud558\uba70, \uc77c\uc815\uacfc \uc218\ub7c9\uc5d0 \ub530\ub978 \uc548\uc815\uc801\uc778 \ub0a9\ud488\uc73c\ub85c \uc2e0\ub8b0\ud560 \uc218 \uc788\ub294 \ud30c\ud2b8\ub108\uac00 \ub418\uaca0\uc2b5\ub2c8\ub2e4.",en:"We manage the entire production process in house and deliver reliably against your schedule and volume.",ja:"\u5168\u5236\u4f5c\u5de5\u7a0b\u3092\u81ea\u793e\u3067\u7ba1\u7406\u3057\u3001\u30b9\u30b1\u30b8\u30e5\u30fc\u30eb\u3068\u7269\u91cf\u306b\u5fdc\u3058\u305f\u5b89\u5b9a\u3057\u305f\u7d0d\u54c1\u3067\u304a\u5fdc\u3048\u3057\u307e\u3059\u3002",zh:"\u6211\u4eec\u5168\u7a0b\u81ea\u4e3b\u7ba1\u7406\u5236\u4f5c\u6d41\u7a0b\uff0c\u6309\u671f\u6309\u91cf\u7a33\u5b9a\u4ea4\u4ed8\u3002"},
+  "pillar1.t":{ko:"\ub300\ub7c9 \uc218\uc8fc \ub300\uc751",en:"Built for volume",ja:"\u5927\u91cf\u53d7\u6ce8\u5bfe\u5fdc",zh:"\u627f\u63a5\u5927\u6279\u91cf\u8ba2\u5355"},
+  "pillar1.d":{ko:"\ud504\ub85c\uc81d\ud2b8 \uaddc\ubaa8\uc5d0 \ub9de\ucd98 \uc720\uc5f0\ud55c \uc81c\uc791",en:"Production that flexes with project scale",ja:"\u30d7\u30ed\u30b8\u30a7\u30af\u30c8\u898f\u6a21\u306b\u5408\u308f\u305b\u305f\u67d4\u8edf\u306a\u5236\u4f5c",zh:"\u6839\u636e\u9879\u76ee\u89c4\u6a21\u7075\u6d3b\u5236\u4f5c"},
+  "pillar2.t":{ko:"\uc77c\uad00\ub41c \ud488\uc9c8 \uad00\ub9ac",en:"Consistent quality",ja:"\u4e00\u8cab\u3057\u305f\u54c1\u8cea\u7ba1\u7406",zh:"\u4e00\u81f4\u7684\u54c1\u8d28\u7ba1\u7406"},
+  "pillar2.d":{ko:"\uc804 \uacfc\uc815\uc744 \uc9c1\uc811 \uad00\ub9ac\ud558\ub294 \uc81c\uc791 \uc2dc\uc2a4\ud15c",en:"A pipeline we run end to end",ja:"\u5168\u5de5\u7a0b\u3092\u81ea\u793e\u3067\u7ba1\u7406\u3059\u308b\u5236\u4f5c\u30b7\u30b9\u30c6\u30e0",zh:"\u5168\u6d41\u7a0b\u81ea\u4e3b\u7ba1\u7406\u7684\u5236\u4f5c\u4f53\u7cfb"},
+  "pillar3.t":{ko:"\uc548\uc815\uc801\uc778 \uc77c\uc815 \ub300\uc751",en:"Schedules you can plan around",ja:"\u5b89\u5b9a\u3057\u305f\u30b9\u30b1\u30b8\u30e5\u30fc\u30eb\u5bfe\u5fdc",zh:"\u7a33\u5b9a\u7684\u6392\u671f\u5e94\u5bf9"},
+  "pillar3.d":{ko:"\uc8fc\uc5b4\uc9c4 \uae30\uac04\uacfc \ubb3c\ub7c9\uc5d0 \ub9de\ucd98 \uccb4\uacc4\uc801\uc778 \uc6b4\uc601",en:"Systematic delivery against time and volume",ja:"\u671f\u9593\u3068\u7269\u91cf\u306b\u5408\u308f\u305b\u305f\u4f53\u7cfb\u7684\u306a\u904b\u55b6",zh:"\u4f9d\u636e\u5468\u671f\u4e0e\u4f53\u91cf\u7684\u7cfb\u7edf\u5316\u8fd0\u4f5c"},
   "hero.kr":{ko:"살아 숨 쉬는 2D 캐릭터 애니메이션",en:"2D character animation that breathes",ja:"生き生きと動く2Dキャラクターアニメーション",zh:"栩栩如生的 2D 角色动画"},
   "hero.sub":{ko:"게임·캐릭터·모션그래픽을 위한 Spine 전문 외주 스튜디오. 리깅부터 스킨, 메시 디포메이션까지 — 한 컷의 망설임 없이 움직입니다.",
     en:"A Spine specialist studio for games, characters, and motion graphics. From rigging to skins and mesh deformation — every frame moves without hesitation.",
     ja:"ゲーム・キャラクター・モーショングラフィックスのためのSpine専門スタジオ。リギングからスキン、メッシュ変形まで — 一コマも迷いなく動かします。",
     zh:"专注于游戏、角色与动态图形的 Spine 外包工作室。从绑定到蒙皮、网格变形 — 每一帧都毫不犹豫地动起来。"},
-  "hero.cta1":{ko:"작업물 보기 / View Work",en:"View Work",ja:"作品を見る",zh:"查看作品"},
-  "hero.cta2":{ko:"견적 문의 / Get a Quote",en:"Get a Quote",ja:"お見積もり",zh:"获取报价"},
+  "hero.cta1":{ko:"포트폴리오 보기",en:"View Portfolio",ja:"ポートフォリオを見る",zh:"查看作品集"},
+  "hero.cta2":{ko:"견적 문의",en:"Get a Quote",ja:"お見積もり",zh:"获取报价"},
   "clients.label":{ko:"함께한 파트너 / Trusted by",en:"Trusted by",ja:"取引実績 / Trusted by",zh:"合作伙伴 / Trusted by"},
   "tag.services":{ko:"WHAT WE DO",en:"WHAT WE DO",ja:"事業内容",zh:"业务内容"},
   "h2.services":{ko:"외주 서비스 항목",en:"Outsourcing services",ja:"外注サービス",zh:"外包服务项目"},
@@ -984,8 +1172,10 @@ const I18N={
   "proc3":{ko:"리깅 → 애니메이션 작업",en:"Rigging → animation",ja:"リギング → アニメーション",zh:"绑定 → 动画制作"},
   "proc4":{ko:"JSON · Atlas 파일 전달",en:"Deliver JSON & Atlas",ja:"JSON・Atlasファイル納品",zh:"交付 JSON · Atlas 文件"},
   "tag.contact":{ko:"LET'S TALK",en:"LET'S TALK",ja:"お問い合わせ",zh:"联系洽谈"},
-  "h2.contact":{ko:"실시간 상담",en:"Live Chat",ja:"リアルタイム相談",zh:"在线咨询"},
-  "contact.lead":{ko:"오른쪽 아래 실시간 상담 버튼으로 문의주시면 가장 빠르게 답변드립니다. 부재 시 이메일로 회신드립니다.",
+  "h2.contact":{ko:"문의하기",en:"Contact",ja:"お問い合わせ",zh:"联系我们"},
+  "contact.note":{ko:"작업 범위·분량·희망 일정을 간단히 적어 보내주시면 검토 후 견적과 일정을 회신드립니다.",en:"Send us the scope, volume, and target schedule and we will reply with a quote and timeline.",ja:"作業範囲・物量・希望スケジュールをお送りください。確認後、お見積もりと日程をご返信します。",zh:"请告知工作范围、体量与期望排期，我们将回复报价与时间表。"},
+  "contact.cta":{ko:"이메일로 문의하기",en:"Email us",ja:"メールで問い合わせ",zh:"发邮件咨询"},
+  "contact.lead":{ko:"프로젝트 내용과 일정을 이메일로 보내주시면 확인 후 빠르게 회신드립니다.",
     en:"Use the live chat button at the bottom right for the fastest reply. If we are away, we will reply by email.",
     ja:"右下のライブチャットからお問い合わせいただくと、最も早くご返信できます。不在時はメールでご返信します。",
     zh:"点击右下角的在线咨询按钮可最快获得回复。若不在线，我们将通过邮件回复。"},
@@ -1201,6 +1391,166 @@ let hsIndex=0;
 const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.15});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
+/* ---- HERO: Spine 리그 오버레이 · 도프시트 · 마우스 패럴랙스 ---- */
+(function(){
+  'use strict';
+  var reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  /* 본 하나 = 시작이 굵고 끝으로 갈수록 좁아지는 사각형 + 시작점 원 (Spine 탄젠트 본) */
+  var BONES=[
+    [200,462,200,372,13],[200,372,200,300,12],[200,300,200,250,11],[200,250,199,198,10],
+    [188,288,163,332,8],[163,332,153,386,6.5],[212,288,237,330,8],[237,330,249,384,6.5],
+    [191,470,186,528,8.5],[209,470,215,528,8.5]
+  ];
+  function bonePath(x1,y1,x2,y2,base){
+    var dx=x2-x1,dy=y2-y1,len=Math.hypot(dx,dy); if(!len) return '';
+    var nx=-dy/len,ny=dx/len,h=base/2,tip=base*0.16;
+    return 'M'+(x1+nx*h)+','+(y1+ny*h)+'L'+(x2+nx*tip)+','+(y2+ny*tip)+
+           'L'+(x2-nx*tip)+','+(y2-ny*tip)+'L'+(x1-nx*h)+','+(y1-ny*h)+'Z';
+  }
+
+  var svg=document.getElementById('rig');
+  if(svg){
+    var out='';
+    var mx=158,my=356,mw=84,mh=126,cols=4,rows=5,cw=mw/cols,ch=mh/rows,mesh='';
+    for(var r=0;r<=rows;r++) mesh+='M'+mx+','+(my+r*ch)+'H'+(mx+mw);
+    for(var c=0;c<=cols;c++) mesh+='M'+(mx+c*cw)+','+my+'V'+(my+mh);
+    for(var r2=0;r2<rows;r2++) for(var c2=0;c2<cols;c2++)
+      mesh+='M'+(mx+c2*cw)+','+(my+r2*ch)+'L'+(mx+(c2+1)*cw)+','+(my+(r2+1)*ch);
+    out+='<path d="'+mesh+'" fill="none" stroke="#7afcff" stroke-width="0.7" opacity="0.32"/>';
+    for(var r3=0;r3<=rows;r3++) for(var c3=0;c3<=cols;c3++)
+      out+='<rect x="'+(mx+c3*cw-1.7)+'" y="'+(my+r3*ch-1.7)+'" width="3.4" height="3.4" fill="#7afcff" opacity="0.55"/>';
+    BONES.forEach(function(b){
+      out+='<path d="'+bonePath(b[0],b[1],b[2],b[3],b[4])+'" fill="rgba(255,209,102,.62)" stroke="#6d4a0f" stroke-width="0.9" stroke-linejoin="round"/>';
+      out+='<circle cx="'+b[0]+'" cy="'+b[1]+'" r="'+(b[4]*0.3)+'" fill="#fff3d4" stroke="#6d4a0f" stroke-width="0.9"/>';
+    });
+    out+='<g opacity="0.9"><circle cx="200" cy="510" r="5.4" fill="none" stroke="#6d4a0f" stroke-width="1"/>'+
+         '<path d="M200,510 H231" stroke="#c0392b" stroke-width="1.5"/>'+
+         '<path d="M200,510 V479" stroke="#2e8b3d" stroke-width="1.5"/>'+
+         '<text x="206" y="524" font-family="monospace" font-size="8.5" fill="#8c92a6">root</text></g>';
+    out+='<g><path d="M200,300 V250" stroke="#7afcff" stroke-width="1.6"/>'+
+         '<circle cx="200" cy="300" r="3.4" fill="#7afcff"/>'+
+         '<text x="209" y="278" font-family="monospace" font-size="9" fill="#7afcff">spine</text></g>';
+    svg.innerHTML='<g id="rigG">'+out+'</g>';
+  }
+
+  /* 리그 정렬 — 영상 프레임에서 캐릭터 외곽을 측정해 그 박스에 본을 맞춘다.
+     캐릭터를 교체해도 자동으로 맞는다. 디자인 공간: 머리끝 y=150, 발끝 y=528 */
+  var DES={cx:200,top:150,bot:528};
+  function alignRig(){
+    var vid=document.getElementById('rigVideo'), g=document.getElementById('rigG');
+    if(!vid||!g||!vid.videoWidth) return false;
+    var W=90,H=Math.round(W*vid.videoHeight/vid.videoWidth);
+    var cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+    var cx2=cv.getContext('2d',{willReadFrequently:true}); if(!cx2) return false;
+    try{ cx2.drawImage(vid,0,0,W,H); }catch(e){ return false; }
+    var d; try{ d=cx2.getImageData(0,0,W,H).data; }catch(e){ return false; }
+    function px(x,y){var i=(y*W+x)*4;return [d[i],d[i+1],d[i+2]];}
+    var corners=[px(0,0),px(W-1,0),px(0,H-1),px(W-1,H-1)];
+    var bg=[0,1,2].map(function(c){return corners.reduce(function(a,q){return a+q[c]},0)/4;});
+    var minX=W,maxX=-1,minY=H,maxY=-1,TH=34;
+    for(var y=0;y<H;y++)for(var x=0;x<W;x++){
+      var q=px(x,y);
+      if(Math.abs(q[0]-bg[0])+Math.abs(q[1]-bg[1])+Math.abs(q[2]-bg[2])>TH){
+        if(x<minX)minX=x; if(x>maxX)maxX=x; if(y<minY)minY=y; if(y>maxY)maxY=y;
+      }
+    }
+    if(maxX<0||maxY-minY<H*0.2) return false;
+    /* 가로 중심은 실루엣(머리카락·무기)이 아니라 몸통 밴드의 무게중심으로 */
+    var y0=Math.round(minY+(maxY-minY)*0.34), y1=Math.round(minY+(maxY-minY)*0.72);
+    var sum=0,cnt=0;
+    for(var yy=y0;yy<=y1;yy++)for(var xx=minX;xx<=maxX;xx++){
+      var qq=px(xx,yy);
+      if(Math.abs(qq[0]-bg[0])+Math.abs(qq[1]-bg[1])+Math.abs(qq[2]-bg[2])>TH){ sum+=xx; cnt++; }
+    }
+    var bodyCx = cnt ? sum/cnt : (minX+maxX)/2;
+    var vb=400,vbh=540;
+    var by=minY/H*vbh, bh=(maxY-minY+1)/H*vbh, s2=bh/(DES.bot-DES.top);
+    g.setAttribute('transform','translate('+((bodyCx+0.5)/W*vb).toFixed(2)+','+by.toFixed(2)+
+      ') scale('+s2.toFixed(4)+') translate('+(-DES.cx)+','+(-DES.top)+')');
+    return true;
+  }
+  var rv=document.getElementById('rigVideo');
+  if(rv){
+    var tries=0;
+    var tryAlign=function(){ if(alignRig()||++tries>25) return; setTimeout(tryAlign,260); };
+    /* 재생하지 않고 한 프레임만 세워둔다 */
+    var seekOnce=function(){
+      rv.pause();
+      try{ rv.currentTime=Math.min(0.6,(rv.duration||1.6)*0.34); }catch(e){ tryAlign(); }
+    };
+    rv.addEventListener('loadedmetadata',seekOnce);
+    rv.addEventListener('seeked',tryAlign);
+    rv.addEventListener('play',function(){ rv.pause(); });
+    if(rv.readyState>=1) seekOnce();
+    window.addEventListener('resize',function(){ setTimeout(alignRig,120); });
+  }
+
+  /* 도프시트 */
+  var ROWS=[
+    {n:'root',k:[0,30,60,90,120]},{n:'hip',k:[0,18,42,66,90,114]},
+    {n:'spine',k:[0,24,48,72,96,120],sel:true},{n:'chest',k:[0,30,60,90,120]},
+    {n:'arm_l',k:[0,20,40,62,84,108]},{n:'arm_r',k:[0,20,40,62,84,108]},
+    {n:'hair_01',k:[0,26,52,78,104]},{n:'cape',k:[0,34,68,102]}
+  ];
+  var MAXF=126;
+  var names=document.getElementById('dopeNames'),krows=document.getElementById('krows'),ruler=document.getElementById('ruler');
+  if(names&&krows&&ruler){
+    var hn='',hk='';
+    ROWS.forEach(function(row){
+      hn+='<div class="'+(row.sel?'sel':'')+'">'+row.n+'</div>';
+      var keys='';
+      row.k.forEach(function(f){ keys+='<b style="left:'+(f/MAXF*100)+'%"></b>'; });
+      keys+='<s style="left:'+(row.k[0]/MAXF*100)+'%;width:'+((row.k[row.k.length-1]-row.k[0])/MAXF*100)+'%"></s>';
+      hk+='<div class="krow '+(row.sel?'sel':'')+'">'+keys+'</div>';
+    });
+    names.innerHTML=hn; krows.innerHTML=hk;
+    var hr='';
+    for(var f=0;f<=120;f+=20) hr+='<span style="left:'+(f/MAXF*100)+'%">'+f+'</span>';
+    for(var f2=0;f2<=MAXF;f2+=5) hr+='<i style="left:'+(f2/MAXF*100)+'%"></i>';
+    ruler.innerHTML=hr;
+  }
+
+  /* 플레이헤드 — 도프시트 실제 길이(126f / 30fps = 4.2s)와 같은 속도 */
+  var ph=document.getElementById('playhead');
+  if(ph&&!reduce){
+    var t0=performance.now();
+    (function tick(now){
+      ph.style.left=(((now-t0)/4200)%1*100).toFixed(2)+'%';
+      requestAnimationFrame(tick);
+    })(t0);
+  }
+
+  /* 마우스 패럴랙스 — 기본 자세 위에 더해진다 */
+  var REST={x:3,y:-16,z:-0.6};
+  var stage=document.getElementById('stage'), deck=document.getElementById('deck');
+  if(stage&&deck&&!reduce&&matchMedia('(hover:hover)').matches){
+    var layers=[].slice.call(deck.querySelectorAll('[data-depth]'));
+    var tx=0,ty=0,cx=0,cy=0,raf=null,active=false;
+    function frame(){
+      cx+=(tx-cx)*0.075; cy+=(ty-cy)*0.075;
+      deck.style.transform='rotateX('+(REST.x-cy*5.2).toFixed(3)+'deg) rotateY('+
+        (REST.y+cx*7.2).toFixed(3)+'deg) rotateZ('+REST.z+'deg)';
+      layers.forEach(function(el){
+        var dp=+el.dataset.depth;
+        el.style.transform='translate3d('+(cx*dp*-0.5).toFixed(2)+'px,'+(cy*dp*-0.5).toFixed(2)+'px,'+dp+'px)';
+      });
+      if(Math.abs(tx-cx)>0.0004||Math.abs(ty-cy)>0.0004) raf=requestAnimationFrame(frame);
+      else { raf=null; if(!active) stage.classList.remove('live'); }
+    }
+    function kick(){ if(!raf) raf=requestAnimationFrame(frame); }
+    window.addEventListener('mousemove',function(e){
+      var r=stage.getBoundingClientRect();
+      if(r.bottom<0||r.top>innerHeight) return;
+      active=true; stage.classList.add('live');
+      tx=Math.max(-1,Math.min(1,(e.clientX-(r.left+r.width/2))/(innerWidth/2)));
+      ty=Math.max(-1,Math.min(1,(e.clientY-(r.top+r.height/2))/(innerHeight/2)));
+      kick();
+    },{passive:true});
+    document.addEventListener('mouseleave',function(){ active=false; tx=0; ty=0; kick(); });
+  }
+})();
+
 /* show more portfolio */
 document.getElementById('moreBtn').addEventListener('click',function(){
   const hidden=document.querySelectorAll('#portGrid .port.more[hidden]');
@@ -1319,88 +1669,12 @@ document.querySelectorAll('.port.yt').forEach(p=>{
   });
 });
 
-/* 실시간 상담 열기 버튼 */
-document.getElementById('openChatCta').addEventListener('click',()=>{
-  const b=document.getElementById('jyChatBtn');
-  if(b && b.style.display!=='none'){ b.click(); }
-  else{ location.href='mailto:labkanata@naver.com'; }   // 채팅 미설정 시 이메일로
-});
 </script>
 
 <!-- ============================================================
      JY 라이브 — 실시간 채팅 위젯 · 방문자 통계 · 포트폴리오 DB 연동
      (supabase-config.js에 키가 없으면 아무것도 하지 않고 조용히 넘어감)
      ============================================================ -->
-<style>
-/* ---- 채팅 위젯 ---- */
-#jyChatBtn{position:fixed;right:18px;bottom:18px;z-index:900;height:62px;padding:0 24px 0 18px;border-radius:34px;
-  border:1.5px solid var(--line-strong);cursor:pointer;display:none;align-items:center;gap:11px;
-  background:linear-gradient(135deg,#12141f,#0e1018);box-shadow:0 10px 34px rgba(0,0,0,.6),0 0 22px rgba(122,252,255,.3);
-  transition:transform .15s, box-shadow .15s}
-#jyChatBtn:hover{transform:scale(1.04);box-shadow:0 12px 38px rgba(0,0,0,.65),0 0 30px rgba(122,252,255,.45)}
-#jyChatBtn svg{width:30px;height:30px;stroke:var(--neon);flex:0 0 auto}
-#jyChatBtn .jy-cb-txt{font-family:var(--kr);font-weight:700;font-size:1.02rem;color:var(--ink);letter-spacing:.01em;white-space:nowrap}
-#jyChatBtn .jy-dot{position:absolute;top:-5px;right:2px;min-width:20px;height:20px;border-radius:10px;background:var(--neon-3);
-  color:#fff;font-size:.7rem;font-weight:700;font-family:var(--mono);display:none;align-items:center;justify-content:center;padding:0 6px}
-#jyChatBtn .jy-dot.show{display:inline-flex}
-@media(max-width:480px){#jyChatBtn{height:56px;padding:0 18px 0 15px}#jyChatBtn .jy-cb-txt{font-size:.92rem}}
-#jyChatPanel{position:fixed;right:18px;bottom:92px;z-index:901;width:min(360px,calc(100vw - 36px));height:min(560px,calc(100dvh - 126px));
-  background:#0e1018;border:1px solid var(--line-strong);border-radius:18px;display:none;flex-direction:column;overflow:hidden;
-  box-shadow:0 20px 60px rgba(0,0,0,.6)}
-#jyChatPanel.open{display:flex}
-.jy-ch-head{padding:14px 16px;background:linear-gradient(135deg,#12141f,#0e1018);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
-.jy-ch-head .t{font-family:var(--display);font-weight:700;font-size:.95rem;letter-spacing:.02em}
-.jy-ch-head .s{font-size:.7rem;color:var(--ink-dim);margin-top:1px}
-.jy-ch-head button{background:none;border:none;color:var(--ink-dim);font-size:1.2rem;cursor:pointer;padding:4px}
-.jy-ch-body{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px}
-.jy-msg{max-width:82%;padding:9px 13px;border-radius:14px;font-size:.85rem;line-height:1.5;white-space:pre-wrap;word-break:break-word}
-.jy-msg.me{align-self:flex-end;background:var(--neon);color:#04252a;border-bottom-right-radius:4px}
-.jy-msg.admin{align-self:flex-start;background:#12141f;border:1px solid var(--line);border-bottom-left-radius:4px}
-.jy-msg .tm{display:block;font-family:var(--mono);font-size:.55rem;opacity:.6;margin-top:3px}
-.jy-msg .jy-tr{margin-top:5px;padding-top:5px;border-top:1px dashed var(--line-strong);font-size:.82em;opacity:.85}
-.jy-ch-note{font-size:.72rem;color:var(--ink-dim);text-align:center;padding:4px 10px}
-.jy-ch-tpl{display:flex;gap:6px;padding:8px 11px 2px;flex-wrap:wrap}
-.jy-ch-tpl button{background:#12141f;border:1px solid var(--line-strong);color:var(--ink-dim);border-radius:16px;
-  padding:6px 12px;font-size:.75rem;cursor:pointer;font-family:var(--kr);transition:.12s}
-.jy-ch-tpl button:hover{border-color:var(--neon);color:var(--neon)}
-.jy-ch-input{display:flex;gap:8px;padding:11px;border-top:1px solid var(--line);background:#0b0d13}
-.jy-ch-input textarea{flex:1;min-height:40px;max-height:100px;resize:none;background:#12141f;border:1px solid var(--line);
-  border-radius:10px;color:var(--ink);font-family:var(--kr);font-size:.85rem;padding:9px 12px;line-height:1.4}
-.jy-ch-input textarea:focus{outline:none;border-color:var(--neon)}
-.jy-ch-input button{background:var(--neon);border:none;color:#04252a;font-weight:700;font-family:var(--display);
-  border-radius:10px;padding:0 16px;cursor:pointer;font-size:.85rem}
-.jy-ch-input button:disabled{opacity:.5}
-@media(max-width:480px){#jyChatPanel{right:10px;bottom:80px}}
-</style>
-
-<button id="jyChatBtn" aria-label="실시간 상담 열기">
-  <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.6 8.6 0 0 1-3.5-.7L3 21l1.7-5A8.38 8.38 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z"/>
-  </svg>
-  <span class="jy-cb-txt">실시간 상담</span>
-  <span class="jy-dot" id="jyChatDot">1</span>
-</button>
-<div id="jyChatPanel" role="dialog" aria-label="실시간 문의">
-  <div class="jy-ch-head">
-    <div><div class="t">JY STUDIO 문의</div><div class="s">보통 몇 분 안에 답변드려요 · 자리에 없으면 이메일로 회신</div></div>
-    <button id="jyChatClose" aria-label="닫기">✕</button>
-  </div>
-  <div class="jy-ch-body" id="jyChBody">
-    <div class="jy-msg admin">안녕하세요! JY 스튜디오입니다 👋
-프로젝트 문의, 견적, 일정 등 무엇이든 편하게 남겨주세요.</div>
-  </div>
-  <div class="jy-ch-note" id="jyChNote"></div>
-  <div class="jy-ch-tpl" id="jyChTpl">
-    <button data-tpl="quote">견적 문의 양식</button>
-    <button data-tpl="schedule">일정 문의</button>
-    <button data-tpl="free">자유 문의</button>
-  </div>
-  <div class="jy-ch-input">
-    <textarea id="jyChInput" placeholder="메시지 입력…" maxlength="2000"></textarea>
-    <button id="jyChSend">전송</button>
-  </div>
-</div>
-
 <script src="supabase-config.js"></script>
 <script>
 (function(){
@@ -1485,6 +1759,7 @@ document.getElementById('openChatCta').addEventListener('click',()=>{
     var btn=document.getElementById('jyChatBtn'), panel=document.getElementById('jyChatPanel'),
         body=document.getElementById('jyChBody'), input=document.getElementById('jyChInput'),
         send=document.getElementById('jyChSend'), dot=document.getElementById('jyChatDot');
+    if(!btn||!panel||!body||!input||!send) return;   /* 위젯 제거됨 — 조용히 종료 */
     btn.style.display='flex';
 
     sessionId = localStorage.getItem('jy_chat_sid');

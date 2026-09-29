@@ -1583,14 +1583,14 @@ document.getElementById('moreBtn').addEventListener('click',function(){
     if(!grid) return;
     const items=[...grid.querySelectorAll('.port')].filter(function(el){return !el.hidden});
     if(!mq.matches) return off(items);
-    /* All-or-nothing: if a single card can't be measured yet (video metadata still
-       loading), fall back to the plain uniform grid. A half-measured masonry would
-       collapse those cards to a 2px row. We re-run on every loadedmetadata. */
+    /* 비율을 못 구한 카드(메타데이터 미도착 또는 링크 사망)는 CSS 기본값 4:5 로 둔다.
+       예전처럼 전체를 균일 그리드로 되돌리면 죽은 영상 한 장이 그리드 전부를 망친다.
+       메타데이터가 뒤늦게 도착하면 loadedmetadata 에서 다시 계산된다. */
     const plan=[];
     for(let i=0;i<items.length;i++){
-      const el=items[i], r=ratioOf(el), w=el.getBoundingClientRect().width;
-      if(!r||!w) return off(items);
-      plan.push([el,Math.round(w/r)]);
+      const el=items[i], w=el.getBoundingClientRect().width;
+      if(!w) return off(items);              /* 레이아웃 자체가 안 잡힌 상태 */
+      plan.push([el,Math.round(w/(ratioOf(el)||0.8))]);
     }
     grid.classList.add('masonry');
     plan.forEach(function(pair){

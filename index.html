@@ -569,8 +569,8 @@ footer p{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);letter-
 
           <div class="ed-view" data-depth="14">
             <div class="cgrid"></div>
-            <img id="rigArt" src="lala.png?v=2" alt="" decoding="async">
-            <svg class="rig" id="rig" viewBox="0 0 363 589" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg>
+            <img id="rigArt" src="lala.png?v=3" alt="" decoding="async">
+            <svg class="rig" id="rig" viewBox="0 0 1155 1186" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg>
             <div class="vhud"><span class="k">Animate</span><span>idle</span><span>100%</span></div>
           </div>
 
@@ -1398,18 +1398,24 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
   /* 본 하나 = 시작이 굵고 끝으로 갈수록 좁아지는 사각형 + 시작점 원 (Spine 탄젠트 본) */
   /* 앉아서 책 읽는 자세 — lala.png(363x589) 픽셀 좌표 */
   var BONES=[
-    [122,438, 136,372, 16],   /* hip    -> spine   */
-    [136,372, 147,316, 15],   /* spine  -> chest   */
-    [147,316, 156,276, 13],   /* chest  -> neck    */
-    [156,276, 160,180, 12],   /* neck   -> head    */
-    [122,312,  76,352, 11],   /* arm_l   (소매)    */
-    [ 76,352, 104,378,  9],   /* forearm_l         */
-    [178,306, 216,336, 11],   /* arm_r   (책 쪽)   */
-    [216,336, 232,358,  9],   /* forearm_r         */
-    [122,438, 214,466, 13],   /* thigh_l           */
-    [214,466, 298,518, 11],   /* shin_l            */
-    [128,452, 190,502, 12],   /* thigh_r           */
-    [190,502, 256,546, 10]    /* shin_r            */
+    /* 캐릭터 — 앉아서 책 읽는 자세 */
+    [ 912,1012,  926, 946, 16],   // hip
+    [ 926, 946,  937, 890, 15],   // spine
+    [ 937, 890,  946, 850, 13],   // chest
+    [ 946, 850,  950, 754, 12],   // neck
+    [ 912, 886,  866, 926, 11],   // arm_l
+    [ 866, 926,  894, 952,  9],   // forearm_l
+    [ 968, 880, 1006, 910, 11],   // arm_r
+    [1006, 910, 1022, 932,  9],   // forearm_r
+    [ 912,1012, 1004,1040, 13],   // thigh_l
+    [1004,1040, 1088,1092, 11],   // shin_l
+    [ 918,1026,  980,1076, 12],   // thigh_r
+    [ 980,1076, 1046,1120, 10],   // shin_r
+    /* 곰탱이 — 몸통/머리/귀 */
+    [ 560,1110,  610, 830, 46],   // body
+    [ 610, 830,  648, 520, 40],   // head
+    [ 612, 470,  360, 150, 30],   // ear_l
+    [ 690, 460,  852, 110, 30]    // ear_r
   ];
   function bonePath(x1,y1,x2,y2,base){
     var dx=x2-x1,dy=y2-y1,len=Math.hypot(dx,dy); if(!len) return '';
@@ -1421,25 +1427,25 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
   var svg=document.getElementById('rig');
   if(svg){
     var out='';
-    var mx=92,my=398,mw=150,mh=96,cols=4,rows=3,cw=mw/cols,ch=mh/rows,mesh='';
+    var mx=396,my=820,mw=400,mh=250,cols=5,rows=4,cw=mw/cols,ch=mh/rows,mesh='';
     for(var r=0;r<=rows;r++) mesh+='M'+mx+','+(my+r*ch)+'H'+(mx+mw);
     for(var c=0;c<=cols;c++) mesh+='M'+(mx+c*cw)+','+my+'V'+(my+mh);
     for(var r2=0;r2<rows;r2++) for(var c2=0;c2<cols;c2++)
       mesh+='M'+(mx+c2*cw)+','+(my+r2*ch)+'L'+(mx+(c2+1)*cw)+','+(my+(r2+1)*ch);
-    out+='<path d="'+mesh+'" fill="none" stroke="#7afcff" stroke-width="0.9" opacity="0.34"/>';
+    out+='<path d="'+mesh+'" fill="none" stroke="#7afcff" stroke-width="2.4" opacity="0.34"/>';
     for(var r3=0;r3<=rows;r3++) for(var c3=0;c3<=cols;c3++)
-      out+='<rect x="'+(mx+c3*cw-2)+'" y="'+(my+r3*ch-2)+'" width="4" height="4" fill="#7afcff" opacity="0.6"/>';
+      out+='<rect x="'+(mx+c3*cw-5.5)+'" y="'+(my+r3*ch-5.5)+'" width="11" height="11" fill="#7afcff" opacity="0.6"/>';
     BONES.forEach(function(b){
-      out+='<path d="'+bonePath(b[0],b[1],b[2],b[3],b[4])+'" fill="rgba(255,209,102,.62)" stroke="#6d4a0f" stroke-width="1.2" stroke-linejoin="round"/>';
-      out+='<circle cx="'+b[0]+'" cy="'+b[1]+'" r="'+(b[4]*0.28)+'" fill="#fff3d4" stroke="#6d4a0f" stroke-width="1.2"/>';
+      out+='<path d="'+bonePath(b[0],b[1],b[2],b[3],b[4])+'" fill="rgba(255,209,102,.62)" stroke="#6d4a0f" stroke-width="3.2" stroke-linejoin="round"/>';
+      out+='<circle cx="'+b[0]+'" cy="'+b[1]+'" r="'+(b[4]*0.28)+'" fill="#fff3d4" stroke="#6d4a0f" stroke-width="3.2"/>';
     });
-    out+='<g opacity="0.9"><circle cx="126" cy="560" r="7" fill="none" stroke="#6d4a0f" stroke-width="1.4"/>'+
-         '<path d="M126,560 H168" stroke="#c0392b" stroke-width="2"/>'+
-         '<path d="M126,560 V518" stroke="#2e8b3d" stroke-width="2"/>'+
-         '<text x="134" y="580" font-family="monospace" font-size="13" fill="#8c92a6">root</text></g>';
-    out+='<g><path d="M136,372 L147,316" stroke="#7afcff" stroke-width="2.4"/>'+
-         '<circle cx="136" cy="372" r="4.6" fill="#7afcff"/>'+
-         '<text x="152" y="352" font-family="monospace" font-size="13" fill="#7afcff">spine</text></g>';
+    out+='<g opacity="0.9"><circle cx="560" cy="1150" r="20" fill="none" stroke="#6d4a0f" stroke-width="4"/>'+
+         '<path d="M560,1150 H680" stroke="#c0392b" stroke-width="5.5"/>'+
+         '<path d="M560,1150 V1030" stroke="#2e8b3d" stroke-width="5.5"/>'+
+         '<text x="584" y="1196" font-family="monospace" font-size="38" fill="#8c92a6">root</text></g>';
+    out+='<g><path d="M926,946 L937,890" stroke="#7afcff" stroke-width="6.5"/>'+
+         '<circle cx="926" cy="946" r="13" fill="#7afcff"/>'+
+         '<text x="960" y="912" font-family="monospace" font-size="38" fill="#7afcff">spine</text></g>';
     svg.innerHTML='<g id="rigG">'+out+'</g>';
   }
 

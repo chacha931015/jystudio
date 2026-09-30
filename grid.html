@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>원통 격자 — 기초</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   원통 격자 하나만. 다른 것은 아무것도 없다.
+   패널 하나 = rotateZ(각도) translateY(-반지름) rotateX(90deg)
+   -> 눕혀 세우면 길이 방향이 Z 를 향하고, 소실점으로 수렴한다.
+   ============================================================ */
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#050507;overflow:hidden;font-family:"JetBrains Mono",monospace}
+
+.scene{position:fixed;inset:0;overflow:hidden;
+  background:radial-gradient(62% 58% at 50% 50%,#0A0B12 0%,#050507 76%)}
+
+.room{position:absolute;inset:0;perspective:var(--p,600px);perspective-origin:50% 50%}
+.tube{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d;
+  animation:roll 90s linear infinite}
+@keyframes roll{to{transform:rotateZ(360deg)}}
+
+.seg{position:absolute;
+  background-image:
+    linear-gradient(rgba(156,170,208,.22) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(156,170,208,.22) 1px,transparent 1px);
+  /* 카메라 코앞과 소실점 부근을 죽여 관이 끝없이 이어져 보이게 한다 */
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 30%,#000 66%,transparent 100%);
+  mask-image:linear-gradient(to bottom,transparent 0%,#000 30%,#000 66%,transparent 100%);
+  animation:travel 14s linear infinite}
+@keyframes travel{to{background-position:0 280px,0 0}}
+
+.hud{position:absolute;left:22px;bottom:20px;z-index:5;
+  font-size:11px;letter-spacing:.14em;color:#55524D;line-height:2}
+.hud b{color:#9AA4BE;font-weight:400}
+.ctl{position:absolute;right:22px;bottom:20px;z-index:5;display:flex;gap:16px;
+  font-size:11px;letter-spacing:.12em;color:#55524D}
+.ctl label{display:flex;align-items:center;gap:7px}
+.ctl input{width:110px}
+</style>
+</head>
+<body>
+
+<div class="scene">
+  <div class="room" id="room"><div class="tube" id="tube"></div></div>
+
+  <div class="hud">
+    SEGMENTS <b id="oN">20</b><br>
+    RADIUS <b id="oR">620</b>px<br>
+    PERSPECTIVE <b id="oP">600</b>px
+  </div>
+
+  <div class="ctl">
+    <label>SEG <input type="range" id="cN" min="8" max="48" step="1" value="20"></label>
+    <label>RAD <input type="range" id="cR" min="300" max="1400" step="20" value="620"></label>
+    <label>PER <input type="range" id="cP" min="300" max="1400" step="20" value="600"></label>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var tube = document.getElementById('tube'), room = document.getElementById('room');
+  var LEN = 5200;                       /* 관의 길이(Z 방향) */
+
+  function build(N, R, P){
+    room.style.setProperty('--p', P + 'px');
+    var stepDeg = 360 / N;
+    /* 패널 하나의 폭 = 원주를 N 등분한 현의 길이. +1 은 패널 사이 실틈 제거 */
+    var W = 2 * R * Math.tan(Math.PI / N) + 1;
+    var cell = W / 3;                   /* 가로 격자 간격 — 원주를 따라 이어지도록 */
+    var html = '';
+    for(var i = 0; i < N; i++){
+      html += '<div class="seg" style="' +
+        'width:' + W.toFixed(2) + 'px;height:' + LEN + 'px;' +
+        'left:' + (-W/2).toFixed(2) + 'px;top:' + (-LEN/2) + 'px;' +
+        'background-size:' + cell.toFixed(2) + 'px 140px,' + cell.toFixed(2) + 'px 140px;' +
+        'transform:rotateZ(' + (i*stepDeg).toFixed(3) + 'deg) translateY(' + (-R) +
+        'px) rotateX(90deg);' +
+        'animation-delay:' + (-i*0.12).toFixed(2) + 's">' +
+      '</div>';
+    }
+    tube.innerHTML = html;
+    document.getElementById('oN').textContent = N;
+    document.getElementById('oR').textContent = R;
+    document.getElementById('oP').textContent = P;
+  }
+
+  var cN = document.getElementById('cN'), cR = document.getElementById('cR'), cP = document.getElementById('cP');
+  function redraw(){ build(+cN.value, +cR.value, +cP.value); }
+  [cN, cR, cP].forEach(function(el){ el.addEventListener('input', redraw); });
+  redraw();
+})();
+</script>
+</body>
+</html>

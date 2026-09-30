@@ -138,7 +138,7 @@ h1 .l2{display:block;color:#cccac8}
   background-image:linear-gradient(rgba(246,244,242,.045) 1px,transparent 1px),
                    linear-gradient(90deg,rgba(246,244,242,.045) 1px,transparent 1px);
   background-size:19px 19px}
-.ed-view video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.ed-view img#rigArt{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
 .rig{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 
 /* 뷰포트 좌상단 HUD */
@@ -277,7 +277,7 @@ h1 .l2{display:block;color:#cccac8}
 
             <div class="ed-title">
               <div class="lights"><i></i><i></i><i></i></div>
-              <div class="name">character<em>.spine</em> — Animate</div>
+              <div class="name">lala<em>.spine</em> — Animate</div>
               <div class="ver">4.2</div>
             </div>
 
@@ -293,17 +293,14 @@ h1 .l2{display:block;color:#cccac8}
 
             <div class="ed-view" data-depth="14">
               <div class="cgrid"></div>
-              <video id="rigVideo" muted playsinline preload="auto">
-                <source src="char1.webm" type="video/webm">
-                <source src="char1.mp4" type="video/mp4">
-              </video>
-              <svg class="rig" id="rig" viewBox="0 0 400 540" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg>
+              <img id="rigArt" src="lala.png?v=2" alt="" decoding="async">
+              <svg class="rig" id="rig" viewBox="0 0 363 589" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg>
               <div class="vhud"><span class="k">Animate</span><span>idle</span><span>100%</span></div>
             </div>
 
             <div class="ed-tree">
               <div class="hd">TREE</div>
-              <div class="tr"><span class="tw">▾</span><span class="ic"></span>character</div>
+              <div class="tr"><span class="tw">▾</span><span class="ic"></span>lala</div>
               <div class="tr"><span class="sw"></span><span class="tw">▸</span><span class="ic"></span>Images<span class="ct">31</span></div>
               <div class="tr"><span class="sw"></span><span class="tw">▾</span><span class="ic"></span>Skeleton</div>
               <div class="tr bone"><span class="sw"></span><span class="sw"></span><span class="tw">▾</span><span class="ic"></span>root</div>
@@ -364,16 +361,18 @@ h1 .l2{display:block;color:#cccac8}
   /* 본 하나 = 시작점이 굵고 끝으로 갈수록 좁아지는 사각형 + 시작점 원 */
   var BONES = [
     /* x1,  y1,   x2,  y2,  base */
-    [200, 462, 200, 372, 13],   // hip
-    [200, 372, 200, 300, 12],   // spine
-    [200, 300, 200, 250, 11],   // chest
-    [200, 250, 199, 198, 10],   // neck→head
-    [188, 288, 163, 332, 8],    // arm_l
-    [163, 332, 153, 386, 6.5],  // forearm_l
-    [212, 288, 237, 330, 8],    // arm_r
-    [237, 330, 249, 384, 6.5],  // forearm_r
-    [191, 470, 186, 528, 8.5],  // leg_l
-    [209, 470, 215, 528, 8.5]   // leg_r
+    [122, 438, 136, 372, 16],   // hip
+    [136, 372, 147, 316, 15],   // spine
+    [147, 316, 156, 276, 13],   // chest
+    [156, 276, 160, 180, 12],   // neck→head
+    [122, 312,  76, 352, 11],   // arm_l
+    [ 76, 352, 104, 378,  9],   // forearm_l
+    [178, 306, 216, 336, 11],   // arm_r
+    [216, 336, 232, 358,  9],   // forearm_r
+    [122, 438, 214, 466, 13],   // thigh_l
+    [214, 466, 298, 518, 11],   // shin_l
+    [128, 452, 190, 502, 12],   // thigh_r
+    [190, 502, 256, 546, 10]    // shin_r
   ];
 
   function bonePath(x1,y1,x2,y2,base){
@@ -392,14 +391,14 @@ h1 .l2{display:block;color:#cccac8}
     var NS='http://www.w3.org/2000/svg', out='';
 
     /* 메쉬 와이어프레임 — 하체/스커트 영역에 삼각분할 */
-    var mx=158, my=356, mw=84, mh=126, cols=4, rows=5, cw=mw/cols, ch=mh/rows, mesh='';
+    var mx=92, my=398, mw=150, mh=96, cols=4, rows=3, cw=mw/cols, ch=mh/rows, mesh='';
     for(var r=0;r<=rows;r++) mesh+='M'+mx+','+(my+r*ch)+'H'+(mx+mw);
     for(var c=0;c<=cols;c++) mesh+='M'+(mx+c*cw)+','+my+'V'+(my+mh);
     for(var r2=0;r2<rows;r2++) for(var c2=0;c2<cols;c2++)
       mesh+='M'+(mx+c2*cw)+','+(my+r2*ch)+'L'+(mx+(c2+1)*cw)+','+(my+(r2+1)*ch);
-    out+='<path d="'+mesh+'" fill="none" stroke="#26f2d5" stroke-width="0.7" opacity="0.34"/>';
+    out+='<path d="'+mesh+'" fill="none" stroke="#26f2d5" stroke-width="0.9" opacity="0.34"/>';
     for(var r3=0;r3<=rows;r3++) for(var c3=0;c3<=cols;c3++)
-      out+='<rect x="'+(mx+c3*cw-1.7)+'" y="'+(my+r3*ch-1.7)+'" width="3.4" height="3.4" fill="#26f2d5" opacity="0.58"/>';
+      out+='<rect x="'+(mx+c3*cw-1.7)+'" y="'+(my+r3*ch-1.7)+'" width="4" height="4" fill="#26f2d5" opacity="0.6"/>';
 
     /* 본 */
     BONES.forEach(function(b){
@@ -409,16 +408,16 @@ h1 .l2{display:block;color:#cccac8}
 
     /* root 본 — Spine 의 원점 축 기즈모 */
     out+='<g opacity="0.9">'+
-         '<circle cx="200" cy="510" r="5.4" fill="none" stroke="#8a5f13" stroke-width="1"/>'+
-         '<path d="M200,510 H231" stroke="#c0392b" stroke-width="1.5"/>'+
-         '<path d="M200,510 V479" stroke="#2e8b3d" stroke-width="1.5"/>'+
-         '<text x="206" y="524" font-family="monospace" font-size="8.5" fill="#85827e">root</text>'+
+         '<circle cx="126" cy="560" r="7" fill="none" stroke="#8a5f13" stroke-width="1.4"/>'+
+         '<path d="M126,560 H168" stroke="#c0392b" stroke-width="2"/>'+
+         '<path d="M126,560 V518" stroke="#2e8b3d" stroke-width="2"/>'+
+         '<text x="134" y="580" font-family="monospace" font-size="13" fill="#85827e">root</text>'+
          '</g>';
 
     /* 선택된 본 라벨 */
-    out+='<g><path d="M200,300 V250" stroke="#26f2d5" stroke-width="1.6"/>'+
-         '<circle cx="200" cy="300" r="3.4" fill="#26f2d5"/>'+
-         '<text x="209" y="278" font-family="monospace" font-size="9" fill="#26f2d5">spine</text></g>';
+    out+='<g><path d="M136,372 L147,316" stroke="#26f2d5" stroke-width="2.4"/>'+
+         '<circle cx="136" cy="372" r="4.6" fill="#26f2d5"/>'+
+         '<text x="152" y="352" font-family="monospace" font-size="13" fill="#26f2d5">spine</text></g>';
 
     svg.innerHTML='<g id="rigG">'+out+'</g>';
   }

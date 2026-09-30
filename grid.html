@@ -31,19 +31,16 @@ body{background:#050507;overflow:hidden;font-family:"JetBrains Mono",monospace}
   -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 26%,#000 74%,transparent 100%);
   mask-image:linear-gradient(to bottom,transparent 0%,#000 26%,#000 74%,transparent 100%)}
 
-/* 벽을 가로로 꽉 채운 표기.
-   홀수 줄과 짝수 줄을 두 겹으로 나눠 서로 반대 방향으로 흘려보낸다. */
-.txt{position:absolute;inset:0;pointer-events:none;background-repeat:repeat;
-  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 24%,#000 76%,transparent 100%);
-  mask-image:linear-gradient(to bottom,transparent 0%,#000 24%,#000 76%,transparent 100%)}
-/* 위로 갈 줄 — 왼쪽으로 */
-.txt.a{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='96'%3E%3Ctext x='0' y='34' fill='%23A8B2CC' fill-opacity='.34' font-family='monospace' font-weight='700' font-size='30' letter-spacing='4'%3EJY STUDIO%3C/text%3E%3C/svg%3E");
-  animation:runL 26s linear infinite}
-/* 아래 줄 — 오른쪽으로 */
-.txt.b{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='96'%3E%3Ctext x='150' y='82' fill='%23A8B2CC' fill-opacity='.34' font-family='monospace' font-weight='700' font-size='30' letter-spacing='4'%3EJY STUDIO%3C/text%3E%3C/svg%3E");
-  animation:runR 26s linear infinite}
-@keyframes runL{to{background-position:-300px 0}}
-@keyframes runR{to{background-position: 300px 0}}
+/* 표기는 격자와 분리된 자체 링이다. 링 전체가 통째로 돌아
+   글씨가 벽을 가로로 지나간다. 격자는 그냥 장식. */
+.ring{position:absolute;left:0;top:0;width:0;height:0;transform-style:preserve-3d;
+  pointer-events:none}
+.ring.a{animation:spinA 80s linear infinite}
+.ring.b{animation:spinB 80s linear infinite}
+@keyframes spinA{to{transform:rotateY(360deg)}}
+@keyframes spinB{to{transform:rotateY(-360deg)}}
+.rseg{position:absolute;backface-visibility:hidden;background-repeat:repeat-x;
+  background-position:center}
 
 /* 은은한 형형색색 광원 */
 .wash{position:absolute;inset:0;z-index:2;pointer-events:none;mix-blend-mode:screen;
@@ -166,11 +163,24 @@ body{background:#050507;overflow:hidden;font-family:"JetBrains Mono",monospace}
         'left:' + (-W/2).toFixed(2) + 'px;top:' + (-H/2) + 'px;' +
         'background-size:' + cell.toFixed(2) + 'px ' + cell.toFixed(2) + 'px;' +
         'transform:rotateY(' + (i*stepDeg).toFixed(3) + 'deg) translateZ(' + (-R) + 'px)">' +
-        /* 표기는 벽 전체에 깔려 가로로 흘러간다. 패널마다 위상을 어긋내 이음매를 숨긴다 */
-        '<div class="txt a" style="animation-delay:' + (-i*1.3).toFixed(2) + 's"></div>' +
-        '<div class="txt b" style="animation-delay:' + (-i*1.3).toFixed(2) + 's"></div>' +
       '</div>';
     }
+
+    /* ---- 표기 링 두 개. 격자와 무관하게 통째로 좌우로 돈다 ---- */
+    var RR = R - 30, TH = 150;
+    function ring(cls, yOff, tile){
+      var h = '<div class="ring ' + cls + '">';
+      for(var j = 0; j < N; j++){
+        h += '<div class="rseg" style="width:' + W.toFixed(2) + 'px;height:' + TH + 'px;' +
+             'left:' + (-W/2).toFixed(2) + 'px;top:' + (yOff - TH/2) + 'px;' +
+             'background-image:url(' + tile + ');background-size:auto ' + TH + 'px;' +
+             'transform:rotateY(' + (j*stepDeg).toFixed(3) + 'deg) translateZ(' + (-RR) + 'px)"></div>';
+      }
+      return h + '</div>';
+    }
+    var tileA = "\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='760' height='150'%3E%3Ctext x='0' y='108' fill='%23A8B2CC' fill-opacity='.32' font-family='monospace' font-weight='700' font-size='104' letter-spacing='6'%3EJY STUDIO%3C/text%3E%3C/svg%3E\"";
+    html += ring('a', -120, tileA) + ring('b', 120, tileA);
+
     tube.innerHTML = html;
     document.getElementById('oN').textContent = N;
     document.getElementById('oR').textContent = R;

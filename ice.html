@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JY — 얼음 (WebGL)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#050507;overflow:hidden;font-family:"JetBrains Mono",monospace;color:#55524D}
+#gl{position:fixed;inset:0;display:block}
+/* 가장자리로 갈수록 어두워진다 */
+.vig{position:fixed;inset:0;z-index:2;pointer-events:none;
+  background:radial-gradient(66% 62% at 50% 50%,transparent 24%,
+             rgba(5,5,7,.55) 70%,#050507 100%)}
+.hud{position:fixed;left:22px;bottom:20px;z-index:3;font-size:11px;letter-spacing:.14em;line-height:2}
+.hud b{color:#9AA4BE;font-weight:400}
+.cue{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:3;
+  font-size:11px;letter-spacing:.2em;display:flex;align-items:center;gap:10px}
+.cue s{display:block;width:34px;height:1px;background:#33312E;text-decoration:none}
+.load{position:fixed;inset:0;z-index:5;display:grid;place-items:center;background:#050507;
+  font-size:11px;letter-spacing:.24em;color:#55524D;transition:opacity .6s}
+.load.off{opacity:0;pointer-events:none}
+</style>
+</head>
+<body>
+<canvas id="gl"></canvas>
+<div class="vig"></div>
+<div class="hud">MATERIAL <b>ICE</b><br>IOR <b>1.31</b><br>TRANSMISSION <b>1.00</b></div>
+<div class="cue"><s></s> <span>SCROLL TO ROTATE</span> <s></s></div>
+<div class="load" id="load">LOADING</div>
+
+<script type="importmap">
+{"imports":{
+  "three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+}}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+/* ---------- 렌더러 ---------- */
+const canvas = document.getElementById('gl');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias:true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.15;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x050507);
+
+const camera = new THREE.PerspectiveCamera(46, innerWidth/innerHeight, 0.1, 200);
+camera.position.set(0, 0, 11);
+
+/* 반사에 쓸 환경맵 — 투과 재질은 환경이 없으면 검게 죽는다 */
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+/* ---------- 격자 텍스처 (캔버스로 직접 그린다) ---------- */
+function gridTexture(){
+  const S = 1024, c = document.createElement('canvas');
+  c.width = c.height = S;
+  const g = c.getContext('2d');
+  g.fillStyle = '#07080C'; g.fillRect(0,0,S,S);
+  const cell = S/4;
+  /* 점선 대각선 */
+  g.save(); g.strokeStyle = 'rgba(154,168,206,.30)'; g.lineWidth = 2; g.setLineDash([9,16]);
+  for(let i=0;i<4;i++) for(let j=0;j<4;j++){
+    const x=i*cell, y=j*cell;
+    g.beginPath(); g.moveTo(x,y); g.lineTo(x+cell,y+cell);
+    g.moveTo(x+cell,y); g.lineTo(x,y+cell); g.stroke();
+  }
+  g.restore();
+  /* 실선 격자 */
+  g.strokeStyle = 'rgba(154,168,206,.42)'; g.lineWidth = 2;
+  for(let i=0;i<=4;i++){
+    g.beginPath(); g.moveTo(i*cell,0); g.lineTo(i*cell,S);
+    g.moveTo(0,i*cell); g.lineTo(S,i*cell); g.stroke();
+  }
+  /* 교차점의 밝은 십자 */
+  g.strokeStyle = 'rgba(224,232,250,.95)'; g.lineWidth = 3;
+  for(let i=0;i<=4;i++) for(let j=0;j<=4;j++){
+    const x=i*cell, y=j*cell, a=17;
+    g.beginPath(); g.moveTo(x-a,y); g.lineTo(x+a,y);
+    g.moveTo(x,y-a); g.lineTo(x,y+a); g.stroke();
+  }
+  const t = new THREE.CanvasTexture(c);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  t.repeat.set(9, 4);
+  t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  return t;
+}
+
+/* ---------- 표기 텍스처 ---------- */
+function textTexture(){
+  const W = 2048, H = 256, c = document.createElement('canvas');
+  c.width = W; c.height = H;
+  const g = c.getContext('2d');
+  g.clearRect(0,0,W,H);
+  g.font = '700 132px ui-monospace, monospace';
+  g.fillStyle = 'rgba(168,178,204,.42)';
+  g.textBaseline = 'middle';
+  g.letterSpacing = '10px';
+  g.fillText('JY STUDIO', 40, H/2);
+  const t = new THREE.CanvasTexture(c);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  t.repeat.set(3, 1);
+  return t;
+}
+
+/* ---------- 원통 벽 (안쪽에서 본다) ---------- */
+const wall = new THREE.Mesh(
+  new THREE.CylinderGeometry(13, 13, 26, 80, 1, true),
+  new THREE.MeshBasicMaterial({ map: gridTexture(), side: THREE.BackSide })
+);
+scene.add(wall);
+
+/* 표기 링 두 개 — 서로 반대로 돈다 */
+function ring(y){
+  const m = new THREE.Mesh(
+    new THREE.CylinderGeometry(12.4, 12.4, 2.1, 80, 1, true),
+    new THREE.MeshBasicMaterial({ map: textTexture(), side: THREE.BackSide,
+      transparent:true, depthWrite:false })
+  );
+  m.position.y = y; scene.add(m); return m;
+}
+const ringA = ring(2.6), ringB = ring(-2.6);
+
+/* ---------- 색 조명 ---------- */
+scene.add(new THREE.AmbientLight(0x8899cc, 0.5));
+const L1 = new THREE.PointLight(0x6c8cff, 260, 60); L1.position.set(-8, 5, 7); scene.add(L1);
+const L2 = new THREE.PointLight(0xff6ca8, 190, 60); L2.position.set(9, -4, 6); scene.add(L2);
+const L3 = new THREE.PointLight(0x5ce0c0, 170, 60); L3.position.set(2, 7, -6); scene.add(L3);
+const key = new THREE.DirectionalLight(0xffffff, 2.2); key.position.set(-4, 6, 9); scene.add(key);
+
+/* ---------- 얼음 JY ---------- */
+const ice = new THREE.MeshPhysicalMaterial({
+  color: 0xffffff,
+  transmission: 1,            /* 빛이 통과한다 — 뒤가 비친다 */
+  thickness: 2.4,             /* 두께. 통과하며 빛이 휜다 */
+  ior: 1.31,                  /* 얼음의 굴절률 */
+  roughness: 0.26,            /* 성에 — 0 이면 맑은 유리가 된다 */
+  metalness: 0,
+  iridescence: 1,             /* 무지개 반사 */
+  iridescenceIOR: 1.36,
+  iridescenceThicknessRange: [120, 560],
+  clearcoat: 1,
+  clearcoatRoughness: 0.14,
+  attenuationColor: new THREE.Color(0xbdd8ff),
+  attenuationDistance: 3.4,
+  envMapIntensity: 1.5
+});
+
+let mark = null;
+new FontLoader().load(
+  'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/fonts/helvetiker_bold.typeface.json',
+  font => {
+    const geo = new TextGeometry('JY', {
+      /* r150 이후는 depth, 그 이전은 height 를 본다 — 둘 다 준다 */
+      font, size: 4.6, depth: 1.5, height: 1.5, curveSegments: 20,
+      bevelEnabled: true, bevelThickness: 0.16, bevelSize: 0.13, bevelSegments: 8
+    });
+    geo.center();
+    mark = new THREE.Mesh(geo, ice);
+    scene.add(mark);
+    document.getElementById('load').classList.add('off');
+  },
+  undefined,
+  () => { document.getElementById('load').textContent = 'FONT LOAD FAILED'; }
+);
+
+/* ---------- 입력: 평소엔 정지, 마우스엔 흔들림, 스크롤엔 회전 ---------- */
+let spin = 0, vel = 0, mx = 0, my = 0, cx = 0, cy = 0;
+addEventListener('wheel', e => { e.preventDefault(); vel += e.deltaY * 0.00042; }, { passive:false });
+addEventListener('mousemove', e => {
+  mx = (e.clientX - innerWidth/2) / (innerWidth/2);
+  my = (e.clientY - innerHeight/2) / (innerHeight/2);
+}, { passive:true });
+addEventListener('resize', () => {
+  camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+let t = 0;
+renderer.setAnimationLoop(() => {
+  t += 0.016;
+  spin += vel; vel *= 0.93;
+  if(Math.abs(vel) < 1e-5) vel = 0;
+
+  cx += (mx - cx) * 0.05;
+  cy += (my - cy) * 0.05;
+
+  wall.rotation.y = spin;
+  if(!reduce){ ringA.rotation.y = spin + t * 0.055; ringB.rotation.y = spin - t * 0.055; }
+
+  /* 카메라가 마우스를 따라 아주 조금 흔들린다 */
+  camera.position.x = cx * 0.9;
+  camera.position.y = -cy * 0.6;
+  camera.lookAt(0, 0, 0);
+
+  if(mark){
+    mark.rotation.y = cx * 0.42 + (reduce ? 0 : Math.sin(t * 0.32) * 0.16);
+    mark.rotation.x = -cy * 0.26;
+  }
+  renderer.render(scene, camera);
+});
+</script>
+</body>
+</html>

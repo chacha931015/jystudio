@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JY STUDIO — 대문 시안 (팝 / 3D)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;600;800;900&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fff3e2;
+  --bg-2:#ffe7c7;
+  --ink:#16140f;
+  --ink-dim:#6d6455;
+  --line:#16140f;
+
+  --pop-1:#ff5c29;   /* 주황 */
+  --pop-2:#12b886;   /* 민트 */
+  --pop-3:#6c5ce7;   /* 보라 */
+  --pop-4:#ffd23f;   /* 노랑 */
+
+  --kr:"Noto Sans KR",sans-serif;
+  --display:"Figtree",sans-serif;
+  --mono:"JetBrains Mono",monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--ink);font-family:var(--kr);line-height:1.6;
+  overflow-x:hidden;-webkit-font-smoothing:antialiased;
+}
+/* 팝한 바탕 — 굵은 도트 그리드 */
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
+  background-image:radial-gradient(var(--line) 1.4px,transparent 1.4px);
+  background-size:26px 26px;
+  -webkit-mask-image:radial-gradient(circle at 50% 30%,#000 10%,transparent 72%);
+  mask-image:radial-gradient(circle at 50% 30%,#000 10%,transparent 72%);
+}
+.wrap{position:relative;z-index:1;width:100%;max-width:1240px;margin:0 auto;padding:0 32px}
+@media(max-width:560px){.wrap{padding:0 18px}}
+
+/* ---- 미리보기 배지 ---- */
+.pvbar{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;align-items:center;gap:10px;
+  padding:8px 20px;background:var(--ink);color:#fff8ee;
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.1em}
+.pvbar i{width:8px;height:8px;background:var(--pop-1);display:block}
+.pvbar a{color:#fff8ee;text-decoration:none;margin-left:auto;opacity:.75}
+.pvbar a:hover{opacity:1}
+
+/* ---- 상단 로고 ---- */
+.topbar{position:fixed;top:30px;left:0;right:0;z-index:55;padding:16px 26px;pointer-events:none}
+.logo{display:inline-flex;align-items:baseline;pointer-events:auto;text-decoration:none;
+  font-family:var(--display);font-size:1.4rem;line-height:1;color:var(--ink);
+  transform:skewX(-11deg);transform-origin:left baseline}
+.logo .jy{font-weight:900;letter-spacing:-.055em}
+.logo .st{font-weight:300;font-size:.7em;letter-spacing:.02em;margin-left:.2em;opacity:.55}
+
+/* ================= HERO ================= */
+header{position:relative;padding:150px 0 40px;overflow:hidden}
+
+.eyebrow{display:inline-flex;align-items:center;gap:9px;
+  font-family:var(--mono);font-size:.66rem;font-weight:500;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--ink);
+  border:2px solid var(--line);border-radius:999px;padding:7px 15px;background:#fff;
+  box-shadow:3px 3px 0 var(--line);margin-bottom:34px}
+.eyebrow b{width:8px;height:8px;border-radius:50%;background:var(--pop-1)}
+
+/* ---- 3D 입체 워드마크 ---- */
+.wordwrap{perspective:900px;perspective-origin:50% 45%;margin:0 0 16px}
+.word{position:relative;transform-style:preserve-3d;will-change:transform;
+  transition:transform .5s cubic-bezier(.22,.61,.36,1)}
+.word.live{transition:none}
+.word .line{position:relative;transform-style:preserve-3d;display:block;
+  font-family:var(--display);font-weight:900;
+  font-size:clamp(3.3rem,11.5vw,9.2rem);line-height:.86;letter-spacing:-.055em;
+  white-space:nowrap}
+.word .line + .line{margin-top:.02em}
+/* 두께는 JS 가 레이어를 쌓아서 만든다 */
+.word .layer{position:absolute;left:0;top:0;color:#c8462a;-webkit-text-stroke:0}
+.word .face{position:relative;color:var(--pop-1);
+  -webkit-text-stroke:3px var(--line);paint-order:stroke fill}
+.word .l2 .face{color:var(--pop-4)}
+.word .l2 .layer{color:#c9a017}
+
+.lead{max-width:520px;margin-top:26px;color:var(--ink-dim);font-size:1.02rem;line-height:1.85}
+.lead b{color:var(--ink);font-weight:700}
+
+.cta{display:flex;gap:13px;flex-wrap:wrap;margin-top:32px}
+.btn{font-family:var(--kr);font-weight:700;font-size:.94rem;padding:15px 28px;
+  border:2px solid var(--line);border-radius:999px;text-decoration:none;cursor:pointer;
+  display:inline-flex;align-items:center;gap:9px;transition:transform .16s,box-shadow .16s;
+  box-shadow:4px 4px 0 var(--line)}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--line)}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--line)}
+.btn-1{background:var(--pop-1);color:#fff}
+.btn-2{background:#fff;color:var(--ink)}
+
+/* ---- 회전 포폴 캐러셀 ---- */
+.stage{position:relative;margin-top:14px;height:430px;perspective:1250px;perspective-origin:50% 48%}
+.ring{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d;
+  animation:spin 34s linear infinite}
+.stage:hover .ring{animation-play-state:paused}
+@keyframes spin{to{transform:rotateY(-360deg)}}
+.card{position:absolute;width:230px;height:290px;left:-115px;top:-145px;
+  border:3px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;
+  box-shadow:7px 7px 0 var(--line);backface-visibility:hidden}
+.card img,.card video{width:100%;height:100%;object-fit:cover;display:block;background:#e9e2d6}
+.card .tag{position:absolute;left:0;bottom:0;right:0;padding:8px 11px;
+  background:var(--ink);color:#fff8ee;font-family:var(--mono);font-size:.6rem;letter-spacing:.12em}
+.card:nth-child(3n+1){box-shadow:7px 7px 0 var(--pop-3)}
+.card:nth-child(3n+2){box-shadow:7px 7px 0 var(--pop-2)}
+.card:nth-child(3n+3){box-shadow:7px 7px 0 var(--pop-1)}
+
+.stagehint{position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;color:var(--ink-dim)}
+
+/* ---- 강점 3개 ---- */
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:64px 0 10px}
+.pillar{border:2px solid var(--line);border-radius:16px;background:#fff;padding:22px 20px;
+  box-shadow:5px 5px 0 var(--line)}
+.pillar .no{display:inline-flex;align-items:center;justify-content:center;
+  width:30px;height:30px;border-radius:50%;border:2px solid var(--line);
+  font-family:var(--mono);font-size:.68rem;margin-bottom:12px}
+.pillar:nth-child(1) .no{background:var(--pop-4)}
+.pillar:nth-child(2) .no{background:var(--pop-2);color:#fff}
+.pillar:nth-child(3) .no{background:var(--pop-3);color:#fff}
+.pillar .t{font-weight:900;font-size:1.02rem;letter-spacing:-.02em}
+.pillar .d{font-size:.87rem;color:var(--ink-dim);margin-top:5px}
+
+@media(max-width:900px){
+  .pillars{grid-template-columns:1fr}
+  .stage{height:340px}
+  .card{width:180px;height:230px;left:-90px;top:-115px}
+}
+@media(prefers-reduced-motion:reduce){
+  .ring{animation:none}
+  .word{transition:none!important;transform:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="pvbar"><i></i> 팝 / 3D 시안 — 최종본 아님
+  <a href="https://jystudio98.com" target="_blank" rel="noopener">현재 사이트 ↗</a>
+</div>
+
+<div class="topbar">
+  <a class="logo" href="#"><span class="jy">JY</span><span class="st">STUDIO</span></a>
+</div>
+
+<header>
+  <div class="wrap">
+
+    <div class="eyebrow"><b></b> Spine 2D Animation Outsourcing</div>
+
+    <div class="wordwrap">
+      <div class="word" id="word">
+        <span class="line l1" data-text="JY STUDIO"></span>
+        <span class="line l2" data-text="RIGS &amp; MOTION"></span>
+      </div>
+    </div>
+
+    <p class="lead">
+      게임을 위한 <b>SPINE 2D 리소스 외주 전문 스튜디오</b>.
+      전 제작 과정을 직접 관리하며, 일정과 수량에 따른 안정적인 납품으로
+      신뢰할 수 있는 파트너가 되겠습니다.
+    </p>
+
+    <div class="cta">
+      <a href="#" class="btn btn-1">포트폴리오 보기 →</a>
+      <a href="#" class="btn btn-2">견적 문의 →</a>
+    </div>
+
+    <div class="stage">
+      <div class="ring" id="ring"></div>
+      <div class="stagehint">마우스를 올리면 멈춥니다</div>
+    </div>
+
+    <div class="pillars">
+      <div class="pillar"><div class="no">01</div>
+        <div class="t">대량 수주 대응</div><div class="d">프로젝트 규모에 맞춘 유연한 제작</div></div>
+      <div class="pillar"><div class="no">02</div>
+        <div class="t">일관된 품질 관리</div><div class="d">전 과정을 직접 관리하는 제작 시스템</div></div>
+      <div class="pillar"><div class="no">03</div>
+        <div class="t">안정적인 일정 대응</div><div class="d">주어진 기간과 물량에 맞춘 체계적인 운영</div></div>
+    </div>
+
+  </div>
+</header>
+
+<script>
+(function(){
+  'use strict';
+  var reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  /* ---------- 1. 3D 입체 글자 ----------
+     같은 글자를 뒤로 여러 장 쌓아 두께를 만든다. 뒤로 갈수록 어둡게.  */
+  var DEPTH = 16;
+  document.querySelectorAll('.word .line').forEach(function(line){
+    var txt = line.dataset.text, html = '';
+    for(var i = DEPTH; i >= 1; i--){
+      html += '<span class="layer" style="transform:translate3d(0,0,' + (-i*2) + 'px);' +
+              'opacity:' + (0.55 + 0.45*(1 - i/DEPTH)).toFixed(3) + '">' + txt + '</span>';
+    }
+    html += '<span class="face">' + txt + '</span>';
+    line.innerHTML = html;
+  });
+
+  /* ---------- 2. 회전 포폴 링 ---------- */
+  var ITEMS = [
+    {src:'game2.png',  type:'img', tag:'KEY ART'},
+    {src:'p6.mp4',     type:'vid', tag:'ATTACK'},
+    {src:'game3.png',  type:'img', tag:'KEY ART'},
+    {src:'p15.mp4',    type:'vid', tag:'IDLE'},
+    {src:'game1.png',  type:'img', tag:'KEY ART'},
+    {src:'p21.mp4',    type:'vid', tag:'SKILL'},
+    {src:'lala.png',   type:'img', tag:'CHARACTER'},
+    {src:'p22.mp4',    type:'vid', tag:'MOTION'}
+  ];
+  var ring = document.getElementById('ring');
+  if(ring){
+    var n = ITEMS.length, R = 330;
+    ITEMS.forEach(function(it, i){
+      var el = document.createElement('div');
+      el.className = 'card';
+      el.style.transform = 'rotateY(' + (i*360/n) + 'deg) translateZ(' + R + 'px)';
+      var media = it.type === 'img'
+        ? '<img src="' + it.src + '" alt="" loading="lazy" decoding="async">'
+        : '<video src="' + it.src + '" autoplay loop muted playsinline></video>';
+      el.innerHTML = media + '<div class="tag">' + it.tag + '</div>';
+      ring.appendChild(el);
+    });
+    /* 화면 밖에서는 회전을 멈춰 불필요한 렌더를 막는다 */
+    if('IntersectionObserver' in window){
+      new IntersectionObserver(function(es){
+        es.forEach(function(e){
+          ring.style.animationPlayState = e.isIntersecting ? 'running' : 'paused';
+          ring.querySelectorAll('video').forEach(function(v){
+            if(e.isIntersecting){ v.play().catch(function(){}); } else { v.pause(); }
+          });
+        });
+      },{threshold:0}).observe(ring.parentNode);
+    }
+  }
+
+  /* ---------- 3. 워드마크가 마우스를 따라 기울어짐 ---------- */
+  var word = document.getElementById('word');
+  if(word && !reduce && matchMedia('(hover:hover)').matches){
+    var tx=0,ty=0,cx=0,cy=0,raf=null,active=false;
+    function frame(){
+      cx += (tx-cx)*0.08; cy += (ty-cy)*0.08;
+      word.style.transform = 'rotateX(' + (-cy*9).toFixed(2) + 'deg) rotateY(' + (cx*13).toFixed(2) + 'deg)';
+      if(Math.abs(tx-cx) > 0.0005 || Math.abs(ty-cy) > 0.0005){ raf = requestAnimationFrame(frame); }
+      else { raf = null; if(!active) word.classList.remove('live'); }
+    }
+    function kick(){ if(!raf) raf = requestAnimationFrame(frame); }
+    window.addEventListener('mousemove', function(e){
+      var r = word.getBoundingClientRect();
+      if(r.bottom < 0 || r.top > innerHeight) return;
+      active = true; word.classList.add('live');
+      tx = Math.max(-1, Math.min(1, (e.clientX - (r.left + r.width/2)) / (innerWidth/2)));
+      ty = Math.max(-1, Math.min(1, (e.clientY - (r.top + r.height/2)) / (innerHeight/2)));
+      kick();
+    }, {passive:true});
+    document.addEventListener('mouseleave', function(){ active = false; tx = 0; ty = 0; kick(); });
+  }
+})();
+</script>
+</body>
+</html>

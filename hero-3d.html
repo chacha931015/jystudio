@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JY STUDIO — 대문 시안 (격자 공간 · 대각 공전)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;700;900&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   격자 공간 + 대각선 공전
+   배경은 순흑에 가깝게. 색은 작업물 평면 안에서만 나온다.
+   ============================================================ */
+:root{
+  --void:#050506;
+  --ink:#EDEAE4;
+  --dim:#8E8A83;
+  --faint:#55524D;
+  --rule:#1C1B1A;
+  --rule-lit:#33312E;
+  --mono:"JetBrains Mono",monospace;
+  --kr:"Noto Sans KR",sans-serif;
+  --display:"Figtree",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--void);color:var(--dim);font-family:var(--kr);
+  overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+.pvbar{position:fixed;top:0;left:0;right:0;z-index:90;display:flex;align-items:center;gap:10px;
+  padding:7px 18px;background:#000;border-bottom:1px solid var(--rule);
+  font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--faint)}
+.pvbar i{width:5px;height:5px;background:#6C6AF5;display:block;transform:rotate(45deg)}
+.pvbar a{color:var(--faint);text-decoration:none;margin-left:auto}
+.pvbar a:hover{color:var(--ink)}
+
+/* ================= 무대 ================= */
+.scene{position:relative;height:100svh;min-height:640px;overflow:hidden;
+  background:radial-gradient(70% 60% at 50% 45%,#0B0B0F 0%,var(--void) 70%)}
+
+/* ---- 격자 방 ----
+   다섯 장의 평면을 세워 방을 만든다. 원근 안에서 격자가 휘어 보인다. */
+.room{position:absolute;inset:0;perspective:760px;perspective-origin:50% 48%;z-index:0}
+.room-in{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d;
+  animation:drift 48s ease-in-out infinite}
+@keyframes drift{
+  0%,100%{transform:rotateX(0deg) rotateY(-2.2deg) translateZ(0)}
+  50%    {transform:rotateX(1.6deg) rotateY(2.2deg) translateZ(40px)}
+}
+.wall{position:absolute;left:-1100px;top:-760px;width:2200px;height:1520px;
+  background-image:
+    linear-gradient(rgba(150,160,190,.13) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(150,160,190,.13) 1px,transparent 1px);
+  background-size:74px 74px;
+  -webkit-mask-image:radial-gradient(60% 55% at 50% 50%,#000 20%,transparent 78%);
+  mask-image:radial-gradient(60% 55% at 50% 50%,#000 20%,transparent 78%)}
+.wall.back  {transform:translateZ(-620px)}
+.wall.floor {width:2200px;height:2200px;top:-1100px;transform:rotateX(90deg) translateZ(-430px)}
+.wall.ceil  {width:2200px;height:2200px;top:-1100px;transform:rotateX(-90deg) translateZ(-430px)}
+.wall.left  {width:2200px;left:-1100px;transform:rotateY(90deg) translateZ(-780px)}
+.wall.right {width:2200px;left:-1100px;transform:rotateY(-90deg) translateZ(-780px)}
+
+/* ---- 3D 워드마크 (중앙 오브젝트) ---- */
+.markzone{position:absolute;inset:0;z-index:1;display:grid;place-items:center;
+  perspective:1000px;pointer-events:none}
+.mark{transform-style:preserve-3d;will-change:transform;
+  animation:markspin 26s linear infinite}
+@keyframes markspin{
+  0%  {transform:rotateX(11deg) rotateY(-24deg)}
+  50% {transform:rotateX(-6deg) rotateY(24deg)}
+  100%{transform:rotateX(11deg) rotateY(-24deg)}
+}
+.mark .line{position:relative;display:block;transform-style:preserve-3d;text-align:center;
+  font-family:var(--display);font-weight:900;
+  font-size:clamp(3.4rem,12vw,10rem);line-height:.88;letter-spacing:-.06em;white-space:nowrap}
+.mark .layer{position:absolute;left:0;right:0;top:0;color:#17181C}
+.mark .face{position:relative;color:var(--ink)}
+.mark .l2 .line-in{font-weight:300;font-size:.26em;letter-spacing:.34em;color:var(--dim)}
+
+/* ---- 대각선 공전하는 작업물 평면 ---- */
+.orbitzone{position:absolute;inset:0;z-index:2;perspective:1180px;perspective-origin:50% 46%}
+.tilt{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d;
+  transform:rotateX(14deg) rotateZ(-9deg)}      /* 궤도면을 기울여 대각선으로 돈다 */
+.orbit{position:absolute;transform-style:preserve-3d;animation:orbit 30s linear infinite}
+.scene:hover .orbit,.scene:hover .mark,.scene:hover .room-in{animation-play-state:paused}
+@keyframes orbit{to{transform:rotateY(-360deg)}}
+.plane{position:absolute;width:min(46vw,620px);aspect-ratio:16/10;
+  left:calc(min(46vw,620px) / -2);top:calc(min(46vw,620px) * -0.3125);
+  border:1px solid rgba(255,255,255,.14);overflow:hidden;background:#0A0A0C;
+  box-shadow:0 60px 90px -50px rgba(0,0,0,1)}
+.plane img,.plane video{width:100%;height:100%;object-fit:cover;display:block}
+.plane::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(160deg,rgba(150,160,220,.10),transparent 46%)}
+
+/* ---- HUD ---- */
+.hud{position:absolute;z-index:6;font-family:var(--mono);font-size:11px;
+  letter-spacing:.1em;color:var(--faint)}
+.hud.tr{right:34px;top:96px;text-align:right}
+.hud.tr .k{color:var(--dim)}
+.hud.tr .nums{margin-top:7px;display:flex;gap:12px;justify-content:flex-end;color:var(--ink)}
+.hud.tr .nums span{font-variant-numeric:tabular-nums;min-width:46px}
+.gizmo{margin:14px 0 0 auto;width:74px;height:74px;border:1px solid var(--rule-lit);
+  border-radius:50%;position:relative;perspective:200px}
+.gizmo .ax{position:absolute;left:50%;top:50%;width:1px;height:30px;transform-origin:50% 0;
+  background:var(--rule-lit)}
+.gizmo .ball{position:absolute;left:50%;top:50%;width:7px;height:7px;border-radius:50%;
+  background:var(--ink);transform:translate(-50%,-50%)}
+.hud.tr .reset{margin-top:10px;color:var(--faint)}
+
+.hud.bl{left:40px;bottom:44px;text-align:left;max-width:52vw}
+.hud.bl .date{color:var(--faint)}
+.hud.bl .ttl{font-family:var(--kr);font-weight:700;font-size:clamp(1.3rem,2.6vw,2.05rem);
+  color:var(--ink);letter-spacing:-.02em;margin:9px 0 4px;line-height:1.25}
+.hud.bl .sub{color:var(--dim);font-size:11px}
+.tags{display:flex;gap:8px;margin-top:13px;flex-wrap:wrap}
+.tags b{font-weight:400;border:1px solid var(--rule-lit);padding:5px 11px;color:var(--dim)}
+.hud.br{right:40px;bottom:44px}
+.hud.br a{color:var(--ink);text-decoration:none;font-size:14px;letter-spacing:.06em}
+.hud.br a:hover{opacity:.7}
+
+/* ---- 상단 내비 ---- */
+.nav{position:absolute;left:0;right:0;top:0;z-index:8;display:flex;align-items:center;
+  padding:38px 40px;gap:38px}
+.logo{display:inline-flex;align-items:baseline;text-decoration:none;
+  font-family:var(--display);font-size:1.28rem;color:var(--ink);
+  transform:skewX(-11deg);transform-origin:left baseline}
+.logo .jy{font-weight:900;letter-spacing:-.055em}
+.logo .st{font-weight:300;font-size:.7em;letter-spacing:.02em;margin-left:.2em;color:var(--dim)}
+.nav .links{display:flex;gap:30px;margin:0 auto;font-family:var(--mono);font-size:12px;letter-spacing:.08em}
+.nav .links a{color:var(--dim);text-decoration:none}
+.nav .links a:hover{color:var(--ink)}
+.nav .contact{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--ink);
+  border:1px solid var(--rule-lit);border-radius:999px;padding:10px 20px;text-decoration:none}
+.nav .contact:hover{border-color:var(--ink)}
+
+@media(max-width:980px){
+  .nav .links{display:none}
+  .hud.tr{display:none}
+  .hud.bl{left:20px;bottom:30px;max-width:76vw}
+  .hud.br{right:20px;bottom:30px}
+  .plane{width:74vw;left:-37vw;top:-23.2vw}
+}
+@media(prefers-reduced-motion:reduce){
+  .orbit,.mark,.room-in{animation:none}
+}
+</style>
+</head>
+<body>
+
+<div class="pvbar"><i></i> 격자 공간 · 대각 공전 — 시안, 최종본 아님
+  <a href="https://jystudio98.com" target="_blank" rel="noopener">현재 사이트 ↗</a>
+</div>
+
+<div class="scene" id="scene">
+
+  <!-- 격자 방 -->
+  <div class="room"><div class="room-in">
+    <div class="wall back"></div><div class="wall floor"></div><div class="wall ceil"></div>
+    <div class="wall left"></div><div class="wall right"></div>
+  </div></div>
+
+  <!-- 중앙 3D 워드마크 -->
+  <div class="markzone"><div class="mark" id="mark">
+    <span class="line l1" data-text="JY STUDIO"></span>
+    <span class="line l2"><span class="line-in">SPINE 2D ANIMATION</span></span>
+  </div></div>
+
+  <!-- 대각선으로 공전하는 작업물 -->
+  <div class="orbitzone">
+    <div class="tilt"><div class="orbit" id="orbit"></div></div>
+  </div>
+
+  <!-- 상단 내비 -->
+  <nav class="nav">
+    <a class="logo" href="#"><span class="jy">JY</span><span class="st">STUDIO</span></a>
+    <div class="links">
+      <a href="#">Works</a><a href="#">Process</a><a href="#">Team</a><a href="#">Career</a>
+    </div>
+    <a class="contact" href="#">Contact / Quote</a>
+  </nav>
+
+  <!-- HUD : 궤도 계기 -->
+  <div class="hud tr">
+    <div class="k">ORBIT TELEMETRY</div>
+    <div class="nums">
+      <span id="hx">0.00</span><span id="hy">0.00</span><span id="hz">0.00</span>
+    </div>
+    <div class="gizmo"><div class="ax" id="gax"></div><div class="ball"></div></div>
+    <div class="reset" id="hint">HOVER TO HOLD</div>
+  </div>
+
+  <!-- HUD : 현재 작업물 -->
+  <div class="hud bl">
+    <div class="date" id="wDate">—</div>
+    <div class="ttl" id="wTtl">—</div>
+    <div class="sub" id="wSub">—</div>
+    <div class="tags" id="wTags"></div>
+  </div>
+
+  <div class="hud br"><a href="#">More Works ↗</a></div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  /* ---------- 1. 3D 워드마크 — 외곽선 없이 명암만으로 두께 ---------- */
+  var DEPTH = 26;
+  var l1 = document.querySelector('.mark .l1');
+  if(l1){
+    var txt = l1.dataset.text, html = '';
+    for(var i = DEPTH; i >= 1; i--){
+      html += '<span class="layer" style="transform:translate3d(0,0,' + (-i*1.7) + 'px);opacity:'
+            + (0.34 + 0.66*(1 - i/DEPTH)).toFixed(3) + '">' + txt + '</span>';
+    }
+    l1.innerHTML = html + '<span class="face">' + txt + '</span>';
+  }
+
+  /* ---------- 2. 대각선 공전 ----------
+     가벼운 파일만 고른다 — 과거 전송량 초과의 재발을 막는다. */
+  var WORKS = [
+    {src:'game1.png', v:0, date:'2024', ttl:'승리의 여신: 니케',
+     sub:'SPINE 2D · RIG + ANIMATION · 6 CUTS', tags:['Rigging','Animation','Live Ops']},
+    {src:'media/1785166126489-Idle.webm', v:1, date:'2024', ttl:'트릭컬 리바이브',
+     sub:'SD CHARACTER · 18 CUTS', tags:['SD Character','Idle / Move','Skill']},
+    {src:'game3.png', v:0, date:'2023', ttl:'디패스트 임팩트',
+     sub:'KEY ART · CHARACTER', tags:['Key Art','Character']},
+    {src:'media/1785483415024-__skill1_2.webm', v:1, date:'2024', ttl:'에픽세븐',
+     sub:'LD CHARACTER · 6 CUTS', tags:['LD Character','Skill Motion']},
+    {src:'game2.png', v:0, date:'2025', ttl:'별의 여행자 라라',
+     sub:'KEY ART · RIG · 3 CUTS', tags:['Key Art','Rigging','Mesh']}
+  ];
+  var orbit = document.getElementById('orbit'), scene = document.getElementById('scene');
+  if(orbit){
+    var n = WORKS.length, R = 640;
+    WORKS.forEach(function(w, i){
+      var el = document.createElement('div');
+      el.className = 'plane';
+      el.style.transform = 'rotateY(' + (i*360/n) + 'deg) translateZ(' + R + 'px)';
+      el.innerHTML = w.v
+        ? '<video src="' + w.src + '" autoplay loop muted playsinline preload="none"></video>'
+        : '<img src="' + w.src + '" alt="" loading="lazy" decoding="async">';
+      orbit.appendChild(el);
+    });
+  }
+
+  /* ---------- 3. HUD — 정면에 온 작업물을 읽어 표시 ---------- */
+  var wDate=document.getElementById('wDate'), wTtl=document.getElementById('wTtl'),
+      wSub=document.getElementById('wSub'), wTags=document.getElementById('wTags'),
+      hx=document.getElementById('hx'), hy=document.getElementById('hy'), hz=document.getElementById('hz'),
+      gax=document.getElementById('gax');
+  var curW=-1;
+  function showWork(i){
+    if(i===curW) return; curW=i;
+    var w=WORKS[i];
+    wDate.textContent=w.date; wTtl.textContent=w.ttl; wSub.textContent=w.sub;
+    wTags.innerHTML=w.tags.map(function(t){return '<b>'+t+'</b>'}).join('');
+  }
+  showWork(0);
+
+  var visible=true, raf=null;
+  function tick(){
+    if(!visible || reduce){ raf=null; return; }
+    var a = orbit && orbit.getAnimations()[0];
+    if(a && a.currentTime!=null){
+      var p=(a.currentTime%30000)/30000;         // 0~1 한 바퀴
+      var deg=p*360;
+      /* 정면에 온 면 = 회전각으로 역산 */
+      showWork(Math.round(p*WORKS.length) % WORKS.length);
+      hx.textContent=(Math.sin(deg*Math.PI/180)).toFixed(2);
+      hy.textContent=(-deg%360/360).toFixed(2);
+      hz.textContent=(Math.cos(deg*Math.PI/180)).toFixed(2);
+      if(gax) gax.style.transform='rotate('+deg.toFixed(1)+'deg)';
+    }
+    raf=requestAnimationFrame(tick);
+  }
+  if('IntersectionObserver' in window && scene){
+    new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        visible=e.isIntersecting;
+        orbit.querySelectorAll('video').forEach(function(v){
+          if(visible){ v.play().catch(function(){}); } else { v.pause(); }
+        });
+        if(visible && !raf && !reduce) raf=requestAnimationFrame(tick);
+      });
+    },{threshold:0}).observe(scene);
+  }
+  if(!reduce) raf=requestAnimationFrame(tick);
+
+  /* ---------- 4. 마우스에 따라 공간 전체가 미세하게 기울어짐 ---------- */
+  var roomIn=document.querySelector('.room-in'), mark=document.getElementById('mark');
+  if(!reduce && matchMedia('(hover:hover)').matches){
+    var tx=0,ty=0,cx=0,cy=0,praf=null;
+    function pf(){
+      cx+=(tx-cx)*0.06; cy+=(ty-cy)*0.06;
+      if(mark) mark.style.translate=(cx*26).toFixed(1)+'px '+(cy*14).toFixed(1)+'px';
+      if(roomIn) roomIn.style.translate=(cx*-16).toFixed(1)+'px '+(cy*-9).toFixed(1)+'px';
+      if(Math.abs(tx-cx)>0.0005||Math.abs(ty-cy)>0.0005){ praf=requestAnimationFrame(pf); } else { praf=null; }
+    }
+    addEventListener('mousemove', function(e){
+      tx=Math.max(-1,Math.min(1,(e.clientX-innerWidth/2)/(innerWidth/2)));
+      ty=Math.max(-1,Math.min(1,(e.clientY-innerHeight/2)/(innerHeight/2)));
+      if(!praf) praf=requestAnimationFrame(pf);
+    },{passive:true});
+  }
+})();
+</script>
+</body>
+</html>

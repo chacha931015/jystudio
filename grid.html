@@ -6,7 +6,7 @@
 <title>원통 격자 — 기초</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
    원통 격자 하나만. 다른 것은 아무것도 없다.
@@ -31,10 +31,71 @@ body{background:#050507;overflow:hidden;font-family:"JetBrains Mono",monospace}
   -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 26%,#000 74%,transparent 100%);
   mask-image:linear-gradient(to bottom,transparent 0%,#000 26%,#000 74%,transparent 100%)}
 
-/* 격자 사이사이에 박히는 표기 */
-.lbl{position:absolute;left:0;right:0;text-align:center;
-  font-size:13px;letter-spacing:.34em;color:#9AA4BE;opacity:.30;
-  white-space:nowrap;pointer-events:none}
+/* 벽을 가로로 꽉 채운 채 흘러가는 표기 (지그재그로 어긋나게 배치) */
+.txt{position:absolute;inset:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='440' height='180'%3E%3Cg fill='%23A8B2CC' font-family='monospace' font-size='15' letter-spacing='6'%3E%3Ctext x='8' y='52' fill-opacity='.30'%3EJY STUDIO%3C/text%3E%3Ctext x='228' y='128' fill-opacity='.30'%3EJY STUDIO%3C/text%3E%3C/g%3E%3C/svg%3E");
+  background-repeat:repeat;
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 26%,#000 74%,transparent 100%);
+  mask-image:linear-gradient(to bottom,transparent 0%,#000 26%,#000 74%,transparent 100%);
+  animation:txtrun 30s linear infinite}
+@keyframes txtrun{to{background-position:440px 0}}
+
+/* 은은한 형형색색 광원 */
+.wash{position:absolute;inset:0;z-index:2;pointer-events:none;mix-blend-mode:screen;
+  background:
+    radial-gradient(38% 46% at 22% 30%,rgba(92,120,255,.26),transparent 70%),
+    radial-gradient(34% 42% at 78% 26%,rgba(255,92,172,.18),transparent 70%),
+    radial-gradient(40% 44% at 62% 76%,rgba(78,228,200,.17),transparent 70%),
+    radial-gradient(30% 36% at 34% 74%,rgba(255,196,88,.13),transparent 72%);
+  animation:washdrift 34s ease-in-out infinite alternate}
+@keyframes washdrift{
+  from{transform:translate3d(-2.5%,-1.5%,0) scale(1.04)}
+  to  {transform:translate3d(2.5%,1.5%,0) scale(1.10)}
+}
+
+/* 가장자리로 갈수록 어두워진다 */
+.vig{position:absolute;inset:0;z-index:4;pointer-events:none;
+  background:radial-gradient(66% 62% at 50% 50%,transparent 26%,
+             rgba(5,5,7,.52) 70%,#050507 100%)}
+
+/* ================= 얼음 JY =================
+   글자 모양으로 잘라낸 backdrop-filter 가 뒤 격자를 뿌옇게 번지게 한다.
+   그 위에 성에 입자 · 무지개 분광 · 흐르는 반사광을 겹치고,
+   뒤로 레이어를 쌓아 두께를 만든다. */
+.markzone{position:absolute;inset:0;z-index:3;display:grid;place-items:center;
+  perspective:1300px;pointer-events:none}
+.mark{transform-style:preserve-3d;will-change:transform}
+.prism{position:relative;width:820px;height:440px;transform-style:preserve-3d;
+  transform:scale(var(--k,1))}
+.prism .lay{position:absolute;inset:0;clip-path:url(#jyClip)}
+
+/* 뒤가 비치되 얼음처럼 번진다 */
+.ice{backdrop-filter:blur(14px) saturate(1.55) brightness(1.26);
+  -webkit-backdrop-filter:blur(14px) saturate(1.55) brightness(1.26);
+  background:linear-gradient(146deg,rgba(228,241,255,.30),rgba(150,180,225,.13) 40%,
+             rgba(244,250,255,.26) 58%,rgba(132,162,212,.16) 100%)}
+/* 성에 입자 */
+.frost{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='170' height='170' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E");
+  mix-blend-mode:overlay;opacity:.5}
+/* 무지개 분광 — 가장자리에서 강하게 */
+.rain{background:linear-gradient(112deg,#ff4d6d 0%,#ffb84d 15%,#f7ff5c 29%,
+      #4dff9e 45%,#4dd2ff 60%,#7a6bff 76%,#ff5ce0 100%);
+  mix-blend-mode:screen;opacity:.30;
+  -webkit-mask-image:radial-gradient(76% 70% at 50% 50%,transparent 34%,#000 92%);
+  mask-image:radial-gradient(76% 70% at 50% 50%,transparent 34%,#000 92%)}
+/* RGB 어긋남 */
+.ch{mix-blend-mode:screen;opacity:.34;filter:blur(1.5px)}
+.ch.r{background:linear-gradient(118deg,#ff3b57,transparent 40%);translate:-9px -3px}
+.ch.b{background:linear-gradient(118deg,transparent 52%,#5b6bff);translate:9px 3px}
+/* 표면을 훑는 반사광 */
+.spec{background:linear-gradient(104deg,transparent 36%,rgba(255,255,255,.92) 47%,
+      rgba(255,255,255,.24) 53%,transparent 62%);
+  background-size:300% 100%;mix-blend-mode:screen;
+  animation:specmove 6s ease-in-out infinite}
+@keyframes specmove{0%,100%{background-position:-150% 0}50%{background-position:250% 0}}
+/* 두께 */
+.dep{background:rgba(152,180,226,.07)}
+.jysvg{position:absolute;width:0;height:0}
 
 .hud{position:absolute;left:22px;bottom:20px;z-index:5;
   font-size:11px;letter-spacing:.14em;color:#55524D;line-height:2}
@@ -49,6 +110,22 @@ body{background:#050507;overflow:hidden;font-family:"JetBrains Mono",monospace}
 
 <div class="scene">
   <div class="room" id="room"><div class="tube" id="tube"></div></div>
+  <div class="wash"></div>
+
+  <div class="markzone"><div class="mark" id="mark">
+    <div class="prism" id="prism">
+      <svg class="jysvg" aria-hidden="true">
+        <defs><clipPath id="jyClip"></clipPath></defs>
+      </svg>
+      <div class="lay ice"></div>
+      <div class="lay frost"></div>
+      <div class="lay rain"></div>
+      <div class="lay ch r"></div><div class="lay ch b"></div>
+      <div class="lay spec"></div>
+    </div>
+  </div></div>
+
+  <div class="vig"></div>
 
   <div class="hud">
     SEGMENTS <b id="oN">20</b><br>
@@ -74,7 +151,9 @@ body{background:#050507;overflow:hidden;font-family:"JetBrains Mono",monospace}
     var stepDeg = 360 / N;
     /* 패널 하나의 폭 = 원주를 N 등분한 현의 길이. +1 은 패널 사이 실틈 제거 */
     var W = 2 * R * Math.tan(Math.PI / N) + 1;
-    var cell = W / 3;                   /* 가로 격자 간격 — 원주를 따라 이어지도록 */
+    /* 타일을 패널 폭 그대로 그린다. 축소하면 1px 선이 서브픽셀이 되어 뭉갠다.
+       패널당 정확히 1장이므로 이음매도 자연히 맞는다. */
+    var cell = W;
     var html = '';
     for(var i = 0; i < N; i++){
       html += '<div class="seg" style="' +
@@ -82,10 +161,8 @@ body{background:#050507;overflow:hidden;font-family:"JetBrains Mono",monospace}
         'left:' + (-W/2).toFixed(2) + 'px;top:' + (-H/2) + 'px;' +
         'background-size:' + cell.toFixed(2) + 'px ' + cell.toFixed(2) + 'px;' +
         'transform:rotateY(' + (i*stepDeg).toFixed(3) + 'deg) translateZ(' + (-R) + 'px)">' +
-        /* 세 칸마다 한 번씩, 높이를 바꿔가며 표기를 박는다 */
-        (i % 3 === 0
-          ? '<span class="lbl" style="top:' + (H*0.5 + (((i/3)%4)-1.5)*cell*1.6).toFixed(0) + 'px">JY STUDIO</span>'
-          : '') +
+        /* 표기는 벽 전체에 깔려 가로로 흘러간다. 패널마다 위상을 어긋내 이음매를 숨긴다 */
+        '<div class="txt" style="animation-delay:' + (-i*1.5).toFixed(2) + 's"></div>' +
       '</div>';
     }
     tube.innerHTML = html;
@@ -98,6 +175,44 @@ body{background:#050507;overflow:hidden;font-family:"JetBrains Mono",monospace}
   function redraw(){ build(+cN.value, +cR.value, +cP.value); }
   [cN, cR, cP].forEach(function(el){ el.addEventListener('input', redraw); });
   redraw();
+
+  /* ---------- 얼음 JY ---------- */
+  var prism = document.getElementById('prism'), mark = document.getElementById('mark');
+  var PW = 820, PH = 440;
+
+  function buildClip(){
+    var clip = document.getElementById('jyClip');
+    if(!clip) return;
+    /* clipPathUnits 을 쓰지 않고 실제 좌표로 둬야 폰트 크기를 그대로 쓸 수 있다 */
+    clip.innerHTML = '<text x="' + (PW/2) + '" y="348" text-anchor="middle" ' +
+      'font-family="Figtree, sans-serif" font-weight="900" font-size="400" ' +
+      'letter-spacing="-22">JY</text>';
+  }
+  /* 폰트가 오기 전에 만들면 글자 폭이 어긋나 한 글자가 잘려나간다 */
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(buildClip);
+    if(document.fonts.load) document.fonts.load('900 400px Figtree', 'JY').then(buildClip);
+  }
+  buildClip();
+
+  if(prism){
+    var D = 26, frag = document.createDocumentFragment();
+    for(var d = D; d >= 1; d--){
+      var el = document.createElement('div');
+      el.className = 'lay dep';
+      el.style.transform = 'translateZ(' + (-d*3) + 'px)';
+      el.style.opacity = (0.16 + 0.84*(1 - d/D)).toFixed(3);
+      frag.appendChild(el);
+    }
+    prism.insertBefore(frag, prism.querySelector('.ice'));
+  }
+  function fitPrism(){
+    if(!prism) return;
+    var k = Math.min(innerWidth/980, innerHeight/660, 1.2);
+    prism.style.setProperty('--k', Math.max(0.4, k).toFixed(3));
+  }
+  fitPrism();
+  addEventListener('resize', fitPrism);
 
   /* ---------- 평소엔 가만히. 마우스엔 살짝 흔들리고, 스크롤에만 실제로 돈다 ---------- */
   var reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -129,6 +244,10 @@ body{background:#050507;overflow:hidden;font-family:"JetBrains Mono",monospace}
     tube.style.transform =
       'rotateX(' + (cy * 2.6).toFixed(3) + 'deg) rotateY(' + (spin - cx * 3.4).toFixed(3) + 'deg)';
     room.style.perspectiveOrigin = (50 - cx*3).toFixed(2) + '% ' + (50 - cy*3).toFixed(2) + '%';
+
+    /* 얼음 JY 도 같은 카메라를 따라 기울되, 벽보다 더 크게 반응해 앞에 있는 느낌을 준다 */
+    if(mark) mark.style.transform =
+      'rotateX(' + (cy * -5).toFixed(3) + 'deg) rotateY(' + (cx * 7).toFixed(3) + 'deg)';
 
     var moving = vel !== 0 || Math.abs(mx-cx) > 0.0008 || Math.abs(my-cy) > 0.0008;
     raf = moving ? requestAnimationFrame(frame) : null;

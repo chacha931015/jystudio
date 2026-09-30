@@ -3,18 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JY STUDIO — 대문 시안 (유리 원통 · 스크롤 회전)</title>
+<title>JY STUDIO — 대문 시안 (얼음 유리 · 스크롤)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;700;900&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-/* ============================================================
-   유리 원통 + 스크롤 회전
-   작업물을 세로 띠로 쪼개 원통 표면에 휘어 붙인다.
-   배경은 순흑에 가깝게, 색은 작업물 안에서만.
-   ============================================================ */
 :root{
-  --void:#050506;
+  --void:#050507;
   --ink:#EDEAE4;
   --dim:#8E8A83;
   --faint:#55524D;
@@ -33,14 +28,12 @@ body{background:var(--void);color:var(--dim);font-family:var(--kr);
   font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--faint)}
 .pvbar i{width:5px;height:5px;background:#6C6AF5;display:block;transform:rotate(45deg)}
 .pvbar a{color:var(--faint);text-decoration:none;margin-left:auto}
-.pvbar a:hover{color:var(--ink)}
 
-/* ================= 무대 ================= */
 .scene{position:relative;height:100svh;min-height:640px;overflow:hidden;
-  background:radial-gradient(72% 62% at 50% 46%,#0B0B10 0%,var(--void) 72%);
+  background:radial-gradient(72% 62% at 50% 46%,#0A0B11 0%,var(--void) 74%);
   touch-action:pan-y}
 
-/* ---- 격자 터널 ---- */
+/* ================= 휘어진 격자 배경 + 그 위의 글자 ================= */
 .room{position:absolute;inset:0;perspective:1150px;perspective-origin:50% 50%;z-index:0}
 .room-in{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d}
 .wall{position:absolute;background-image:
@@ -57,86 +50,72 @@ body{background:var(--void);color:var(--dim);font-family:var(--kr);
   mask-image:linear-gradient(to right,transparent 4%,#000 32%,#000 64%,transparent 94%)}
 .wall.left {transform:rotateY(90deg) translateZ(-780px)}
 .wall.right{transform:rotateY(-90deg) translateZ(-780px)}
-.wall.back {left:-1100px;top:-700px;width:2200px;height:1400px;transform:translateZ(-1450px);
-  -webkit-mask-image:radial-gradient(52% 52% at 50% 50%,#000 8%,transparent 74%);
-  mask-image:radial-gradient(52% 52% at 50% 50%,#000 8%,transparent 74%)}
+.wall.back {left:-1100px;top:-700px;width:2200px;height:1400px;transform:translateZ(-1300px);
+  -webkit-mask-image:radial-gradient(54% 54% at 50% 50%,#000 8%,transparent 76%);
+  mask-image:radial-gradient(54% 54% at 50% 50%,#000 8%,transparent 76%)}
 
-/* ---- 중앙: 유리 프리즘 J + 그 뒤의 워드마크 ---- */
-.markzone{position:absolute;inset:0;z-index:1;display:grid;place-items:center;
-  perspective:1100px;pointer-events:none}
-.mark{position:relative;display:grid;place-items:center;
-  transform-style:preserve-3d;will-change:transform}
+/* 격자에 붙어 있는 글자 — 돌지 않는다. 스크롤에 따라 바뀐다. */
+.gridtext{position:absolute;left:-900px;top:-170px;width:1800px;text-align:center;
+  transform:translateZ(-1180px)}
+.gridtext .w{font-family:var(--display);font-weight:900;
+  font-size:190px;letter-spacing:-.05em;line-height:1;color:#2C3038;white-space:nowrap}
+.gridtext .s{display:block;margin-top:26px;font-family:var(--mono);font-size:26px;
+  letter-spacing:.42em;color:#373B45;white-space:nowrap}
+.gridtext.flick{animation:flick .42s steps(3) both}
+@keyframes flick{
+  0%  {opacity:0;transform:translateZ(-1180px) translateX(-16px) skewX(9deg);filter:blur(2px)}
+  35% {opacity:.5;transform:translateZ(-1180px) translateX(11px) skewX(-6deg)}
+  70% {opacity:.85;transform:translateZ(-1180px) translateX(-5px)}
+  100%{opacity:1;transform:translateZ(-1180px);filter:none}
+}
 
-/* J 뒤에 놓이는 워드마크 */
-.behind{position:absolute;transform:translateZ(-260px);text-align:center;white-space:nowrap}
-.behind .w{font-family:var(--display);font-weight:900;
-  font-size:clamp(1.8rem,5.4vw,4.2rem);letter-spacing:-.05em;color:#31343C}
-.behind .s{display:block;margin-top:11px;font-family:var(--mono);font-weight:400;
-  font-size:clamp(.56rem,.98vw,.7rem);letter-spacing:.42em;color:#3C3F48}
-
-/* 유리 프리즘 J — 깊이 레이어 + 분광 + 스펙큘러 */
-.prism{position:relative;transform-style:preserve-3d;
-  width:1em;height:1em;
-  font-family:var(--display);font-weight:900;
-  font-size:clamp(6rem,19vw,15rem);line-height:1;letter-spacing:0}
-.prism span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
-/* 두께 — 뒤로 갈수록 어두운 반투명 유리 */
-.prism .dep{color:rgba(132,152,220,.10)}
-/* 분광 — RGB 를 미세하게 어긋나게 겹친다 */
-.prism .ch{mix-blend-mode:screen;opacity:.5;filter:blur(.7px)}
-.prism .ch.r{color:#ff4a5c;transform:translate(calc(-50% - 6px),calc(-50% - 2px))}
-.prism .ch.g{color:#48ffb4;transform:translate(-50%,-50%)}
-.prism .ch.b{color:#6a7cff;transform:translate(calc(-50% + 6px),calc(-50% + 2px))}
-/* 앞면 유리 */
-.prism .face{
-  background:linear-gradient(142deg,#ffffff 0%,#d4e3ff 20%,#93a9e0 42%,
-             #eef3ff 56%,#7f93cc 74%,#ffffff 100%);
-  -webkit-background-clip:text;background-clip:text;color:transparent;
-  filter:drop-shadow(0 0 30px rgba(150,180,255,.32))}
-/* 표면을 훑고 지나가는 반사광 */
-.prism .spec{
-  background:linear-gradient(104deg,transparent 33%,rgba(255,255,255,.95) 47%,
-             rgba(255,255,255,.24) 53%,transparent 64%);
-  background-size:280% 100%;
-  -webkit-background-clip:text;background-clip:text;color:transparent;
+/* ================= 얼음 유리 JY ================= */
+.markzone{position:absolute;inset:0;z-index:2;display:grid;place-items:center;
+  perspective:1200px;pointer-events:none}
+.mark{transform-style:preserve-3d;will-change:transform}
+.prism{position:relative;width:760px;height:420px;transform-style:preserve-3d;
+  transform:scale(var(--k,1))}
+.prism .lay{position:absolute;inset:0;clip-path:url(#jyClip)}
+/* 뒤가 비치되 성에처럼 번진다 */
+.ice{backdrop-filter:blur(13px) saturate(1.5) brightness(1.24);
+  -webkit-backdrop-filter:blur(13px) saturate(1.5) brightness(1.24);
+  background:linear-gradient(146deg,rgba(228,241,255,.32),rgba(150,180,225,.15) 42%,
+             rgba(242,249,255,.28) 60%,rgba(132,162,212,.17) 100%)}
+/* 성에 입자 */
+.frost{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+  mix-blend-mode:overlay;opacity:.55}
+/* 안쪽 모서리 분광 */
+.ch{mix-blend-mode:screen;opacity:.4;filter:blur(1.4px)}
+.ch.r{background:linear-gradient(118deg,#ff3b57,transparent 42%);translate:-8px -3px}
+.ch.g{background:linear-gradient(118deg,transparent 26%,#3bffb4,transparent 64%)}
+.ch.b{background:linear-gradient(118deg,transparent 50%,#5b6bff);translate:8px 3px}
+/* 표면을 훑는 반사광 */
+.spec{background:linear-gradient(104deg,transparent 35%,rgba(255,255,255,.9) 47%,
+      rgba(255,255,255,.22) 53%,transparent 62%);
+  background-size:300% 100%;mix-blend-mode:screen;
   animation:specmove 5.6s ease-in-out infinite}
 @keyframes specmove{0%,100%{background-position:-150% 0}50%{background-position:250% 0}}
+/* 두께 */
+.dep{background:rgba(150,178,224,.075)}
+.jysvg{position:absolute;width:0;height:0}
 
-/* ================= 유리 원통 ================= */
-.cyl-zone{position:absolute;inset:0;z-index:2;perspective:1150px;perspective-origin:50% 50%;
+/* ================= 유리 원통 포트폴리오 ================= */
+.cyl-zone{position:absolute;inset:0;z-index:3;perspective:1150px;perspective-origin:50% 50%;
   cursor:grab}
 .cyl-zone:active{cursor:grabbing}
 .cyl{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d;
-  will-change:transform}
-/* 세로 띠 — 각자 원통 각도에 맞춰 세워지면 이미지가 휘어 보인다 */
-/* --sx = 이 띠가 잘라 쓰는 이미지 위치, --par = 스크롤에 따라 사진 속이 밀리는 시차 */
+  will-change:transform;opacity:0}
 .strip{position:absolute;top:0;overflow:hidden;backface-visibility:hidden;
   background-repeat:no-repeat;
   background-position:calc(var(--sx,0px) + var(--par,0px)) 0}
-/* TV 주사선 + 지직거림 */
-.strip::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
-  background:repeating-linear-gradient(to bottom,
-    rgba(0,0,0,.26) 0 1px, transparent 1px 3px);
-  opacity:.5;animation:scan 7s linear infinite}
-@keyframes scan{to{background-position:0 300px}}
-@keyframes glitchIn{
-  0%  {opacity:0;transform:translateX(-7px) skewX(11deg);filter:blur(1.6px)}
-  30% {opacity:.55;transform:translateX(5px) skewX(-7deg)}
-  60% {opacity:.8;transform:translateX(-3px) skewX(3deg)}
-  100%{opacity:1;transform:none;filter:none}
-}
 .strip::after{content:"";position:absolute;inset:0;
   background:linear-gradient(103deg,rgba(214,226,255,.20) 0%,rgba(214,226,255,.04) 26%,
               transparent 48%,rgba(120,140,200,.05) 74%,rgba(190,205,255,.13) 100%)}
-/* 패널 양 끝의 유리 모서리 */
+.strip::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:repeating-linear-gradient(to bottom,rgba(0,0,0,.24) 0 1px,transparent 1px 3px);
+  opacity:.5}
 .strip.edge-l{box-shadow:inset 1px 0 0 rgba(226,236,255,.34)}
 .strip.edge-r{box-shadow:inset -1px 0 0 rgba(226,236,255,.34)}
-
-/* 원통 위를 지나가는 고정 스펙큘러 — 띠가 그 아래를 지날 때 빛을 받는다 */
-.specular{position:absolute;inset:0;z-index:3;pointer-events:none;
-  background:linear-gradient(100deg,transparent 30%,rgba(198,214,255,.10) 46%,
-             rgba(255,255,255,.16) 50%,rgba(198,214,255,.09) 55%,transparent 70%);
-  mix-blend-mode:screen}
 
 /* ---- HUD ---- */
 .hud{position:absolute;z-index:6;font-family:var(--mono);font-size:11px;
@@ -152,8 +131,8 @@ body{background:var(--void);color:var(--dim);font-family:var(--kr);
 .gizmo .ball{position:absolute;left:50%;top:50%;width:7px;height:7px;border-radius:50%;
   background:var(--ink);transform:translate(-50%,-50%)}
 .hud.tr .hint{margin-top:10px}
-
-.hud.bl{left:40px;bottom:44px;max-width:52vw}
+.hud.bl{left:40px;bottom:44px;max-width:52vw;opacity:0;transition:opacity .4s}
+.hud.bl.on{opacity:1}
 .hud.bl .date{color:var(--faint)}
 .hud.bl .ttl{font-family:var(--kr);font-weight:700;font-size:clamp(1.3rem,2.6vw,2.05rem);
   color:var(--ink);letter-spacing:-.02em;margin:9px 0 4px;line-height:1.25}
@@ -162,15 +141,11 @@ body{background:var(--void);color:var(--dim);font-family:var(--kr);
 .tags b{font-weight:400;border:1px solid var(--rule-lit);padding:5px 11px;color:var(--dim)}
 .hud.br{right:40px;bottom:44px}
 .hud.br a{color:var(--ink);text-decoration:none;font-size:14px;letter-spacing:.06em}
-.hud.br a:hover{opacity:.7}
-
-/* 스크롤 안내 */
 .scrollcue{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:6;
   font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--faint);
   display:flex;align-items:center;gap:10px}
 .scrollcue s{display:block;width:34px;height:1px;background:var(--rule-lit);text-decoration:none}
 
-/* ---- 상단 내비 ---- */
 .nav{position:absolute;left:0;right:0;top:0;z-index:8;display:flex;align-items:center;
   padding:38px 40px;gap:38px}
 .logo{display:inline-flex;align-items:baseline;text-decoration:none;
@@ -181,9 +156,8 @@ body{background:var(--void);color:var(--dim);font-family:var(--kr);
 .nav .links{display:flex;gap:30px;margin:0 auto;font-family:var(--mono);font-size:12px;letter-spacing:.08em}
 .nav .links a{color:var(--dim);text-decoration:none}
 .nav .links a:hover{color:var(--ink)}
-.nav .contact{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--ink);
+.nav .contact{font-family:var(--mono);font-size:12px;color:var(--ink);
   border:1px solid var(--rule-lit);border-radius:999px;padding:10px 20px;text-decoration:none}
-.nav .contact:hover{border-color:var(--ink)}
 
 @media(max-width:980px){
   .nav .links{display:none}
@@ -195,44 +169,54 @@ body{background:var(--void);color:var(--dim);font-family:var(--kr);
 </head>
 <body>
 
-<div class="pvbar"><i></i> 유리 원통 · 스크롤 회전 — 시안, 최종본 아님
+<div class="pvbar"><i></i> 얼음 유리 · 스크롤 — 시안, 최종본 아님
   <a href="https://jystudio98.com" target="_blank" rel="noopener">현재 사이트 ↗</a>
 </div>
 
 <div class="scene" id="scene">
 
+  <!-- 휘어진 격자 + 그 위의 글자 (돌지 않는다) -->
   <div class="room"><div class="room-in" id="roomIn">
     <div class="wall back"></div><div class="wall floor"></div><div class="wall ceil"></div>
     <div class="wall left"></div><div class="wall right"></div>
-  </div></div>
-
-  <div class="markzone"><div class="mark" id="mark">
-    <div class="behind">
-      <div class="w">JY STUDIO</div>
-      <span class="s">SPINE 2D ANIMATION OUTSOURCING</span>
+    <div class="gridtext" id="gridtext">
+      <div class="w" id="gtW">JY STUDIO</div>
+      <span class="s" id="gtS">SPINE 2D ANIMATION OUTSOURCING</span>
     </div>
-    <div class="prism" id="prismJ"></div>
   </div></div>
 
+  <!-- 얼음 유리 JY -->
+  <div class="markzone"><div class="mark" id="mark">
+    <div class="prism" id="prism">
+      <svg class="jysvg" viewBox="0 0 760 420" aria-hidden="true">
+        <defs><clipPath id="jyClip" clipPathUnits="objectBoundingBox">
+          <path id="jyPath" d="M0,0"/>
+        </clipPath></defs>
+      </svg>
+      <div class="lay ice"></div>
+      <div class="lay frost"></div>
+      <div class="lay ch r"></div><div class="lay ch g"></div><div class="lay ch b"></div>
+      <div class="lay spec"></div>
+    </div>
+  </div></div>
+
+  <!-- 유리 원통 -->
   <div class="cyl-zone" id="zone"><div class="cyl" id="cyl"></div></div>
-  <div class="specular"></div>
 
   <nav class="nav">
     <a class="logo" href="#"><span class="jy">JY</span><span class="st">STUDIO</span></a>
-    <div class="links">
-      <a href="#">Works</a><a href="#">Process</a><a href="#">Team</a><a href="#">Career</a>
-    </div>
+    <div class="links"><a href="#">Works</a><a href="#">Process</a><a href="#">Team</a><a href="#">Career</a></div>
     <a class="contact" href="#">Contact / Quote</a>
   </nav>
 
   <div class="hud tr">
-    <div class="k">CYLINDER θ / ω / PANEL</div>
-    <div class="nums"><span id="hA">0.0</span><span id="hW">0.00</span><span id="hP">1/4</span></div>
+    <div class="k">SCROLL / θ / PANEL</div>
+    <div class="nums"><span id="hS">0</span><span id="hA">0.0</span><span id="hP">—</span></div>
     <div class="gizmo"><div class="ax" id="gax"></div><div class="ball"></div></div>
     <div class="hint">SCROLL OR DRAG</div>
   </div>
 
-  <div class="hud bl">
+  <div class="hud bl" id="wBox">
     <div class="date" id="wDate">—</div>
     <div class="ttl" id="wTtl">—</div>
     <div class="sub" id="wSub">—</div>
@@ -240,8 +224,7 @@ body{background:var(--void);color:var(--dim);font-family:var(--kr);
   </div>
 
   <div class="hud br"><a href="#">More Works ↗</a></div>
-
-  <div class="scrollcue"><s></s> SCROLL TO ROTATE <s></s></div>
+  <div class="scrollcue"><s></s> <span id="cueTxt">SCROLL</span> <s></s></div>
 </div>
 
 <script>
@@ -249,23 +232,39 @@ body{background:var(--void);color:var(--dim);font-family:var(--kr);
   'use strict';
   var reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
 
-  /* ---------- 1. 유리 프리즘 J ----------
-     깊이 레이어로 두께를 쌓고, 그 앞에 RGB 를 어긋나게 겹쳐 분광을 만든다. */
-  var prism = document.getElementById('prismJ');
-  if(prism){
-    var DEPTH = 30, h = '';
-    for(var i = DEPTH; i >= 1; i--){
-      h += '<span class="dep" style="transform:translate(-50%,-50%) translateZ(' + (-i*2.6)
-         + 'px);opacity:' + (0.16 + 0.84*(1 - i/DEPTH)).toFixed(3) + '">J</span>';
-    }
-    h += '<span class="ch r">J</span><span class="ch g">J</span><span class="ch b">J</span>'
-       + '<span class="face">J</span><span class="spec">J</span>';
-    prism.innerHTML = h;
+  /* ---------- 1. JY 글자 모양을 clipPath 로 만든다 ----------
+     캔버스에 글자를 그려 외곽을 따는 대신, SVG text 를 그대로 clipPath 에 넣는다.
+     (clipPathUnits 을 쓰지 않고 실제 좌표로 둬야 폰트 크기를 그대로 쓸 수 있다) */
+  var clip = document.getElementById('jyClip');
+  if(clip){
+    clip.removeAttribute('clipPathUnits');
+    clip.innerHTML = '<text x="380" y="330" text-anchor="middle" ' +
+      'font-family="Figtree, sans-serif" font-weight="900" font-size="380" ' +
+      'letter-spacing="-18">JY</text>';
   }
 
-  /* ---------- 2. 유리 원통 ----------
-     한 작업물을 세로 띠 N장으로 쪼개고, 각 띠를 원통 각도에 맞춰 세운다.
-     띠마다 배경 위치를 옮겨 붙이면 이미지가 원통 표면을 따라 휘어 보인다. */
+  /* 두께 레이어를 뒤로 쌓는다 */
+  var prism = document.getElementById('prism');
+  if(prism){
+    var D = 26, frag = document.createDocumentFragment();
+    for(var i = D; i >= 1; i--){
+      var d = document.createElement('div');
+      d.className = 'lay dep';
+      d.style.transform = 'translateZ(' + (-i*2.8) + 'px)';
+      d.style.opacity = (0.18 + 0.82*(1 - i/D)).toFixed(3);
+      frag.appendChild(d);
+    }
+    prism.insertBefore(frag, prism.querySelector('.ice'));
+  }
+
+  function fitPrism(){
+    if(!prism) return;
+    var k = Math.min(innerWidth/900, innerHeight/620, 1.15);
+    prism.style.setProperty('--k', Math.max(0.42, k).toFixed(3));
+  }
+  fitPrism();
+
+  /* ---------- 2. 유리 원통 ---------- */
   var WORKS = [
     {src:'game1.png', date:'2024', ttl:'승리의 여신: 니케',
      sub:'SPINE 2D · RIG + ANIMATION · 6 CUTS', tags:['Rigging','Animation','Live Ops']},
@@ -276,48 +275,42 @@ body{background:var(--void);color:var(--dim);font-family:var(--kr);
     {src:'lala.png?v=3', date:'2025', ttl:'별의 여행자 라라 — 캐릭터',
      sub:'CHARACTER · RIG + MESH',              tags:['Character','Rigging']}
   ];
-  var N = WORKS.length;
-  var SPAN = 62;                 /* 패널 하나가 차지하는 각도 */
-  var STRIPS = 14;               /* 패널당 세로 띠 수 — 많을수록 매끄럽게 휜다 */
+  var N = WORKS.length, SPAN = 62, STRIPS = 14;
   var cyl = document.getElementById('cyl'), zone = document.getElementById('zone');
-  var R = 0, panelW = 0, panelH = 0;
+  var R = 0;
 
   function build(){
     if(!cyl) return;
-    var vw = innerWidth, vh = innerHeight;
-    R = Math.min(Math.max(vw * 0.46, 520), 900);
-    panelH = Math.min(Math.max(vh * 0.46, 260), 460);
+    R = Math.min(Math.max(innerWidth * 0.46, 520), 900);
+    var panelH = Math.min(Math.max(innerHeight * 0.44, 250), 440);
     var stepDeg = SPAN / STRIPS;
-    var stripW = 2 * R * Math.tan(stepDeg/2 * Math.PI/180) + 1;   /* +1 로 띠 사이 실틈 제거 */
-    panelW = stripW * STRIPS;
+    var stripW = 2 * R * Math.tan(stepDeg/2 * Math.PI/180) + 1;
+    var panelW = stripW * STRIPS;
     cyl.innerHTML = '';
     WORKS.forEach(function(w, wi){
       var base = wi * (360/N) - SPAN/2;
       for(var s = 0; s < STRIPS; s++){
         var el = document.createElement('div');
         el.className = 'strip' + (s===0?' edge-l':'') + (s===STRIPS-1?' edge-r':'');
-        el.style.width = stripW + 'px';
-        el.style.height = panelH + 'px';
-        el.style.left = (-stripW/2) + 'px';
-        el.style.top = (-panelH/2) + 'px';
-        el.style.backgroundImage = 'url(' + w.src + ')';
-        el.style.backgroundSize = panelW + 'px ' + panelH + 'px';
+        el.style.cssText = 'width:' + stripW + 'px;height:' + panelH + 'px;left:' + (-stripW/2) +
+          'px;top:' + (-panelH/2) + 'px;background-image:url(' + w.src + ');background-size:' +
+          panelW + 'px ' + panelH + 'px;transform:rotateY(' + (base + s*stepDeg + stepDeg/2) +
+          'deg) translateZ(' + R + 'px)';
         el.style.setProperty('--sx', (-s * stripW) + 'px');
-        el.style.transform = 'rotateY(' + (base + s*stepDeg + stepDeg/2) + 'deg) translateZ(' + R + 'px)';
-        el.dataset.w = wi;
         cyl.appendChild(el);
       }
     });
   }
   build();
-  addEventListener('resize', (function(){var t;return function(){clearTimeout(t);t=setTimeout(build,180)}})());
+  addEventListener('resize', (function(){var t;return function(){
+    clearTimeout(t); t=setTimeout(function(){ build(); fitPrism(); },180);
+  }})());
 
-  /* ---------- 3. 스크롤 / 드래그로 회전 ---------- */
-  /* 스크롤 진행도로 단계를 나눈다.
-       0 ~ T1 : JY STUDIO
-      T1 ~ T2 : SPINE ANIMATION
-      T2 ~    : 포트폴리오가 흐른다 */
-  var T1 = 420, T2 = 900;
+  /* ---------- 3. 스크롤 단계 ----------
+       0  ~ T1 : JY STUDIO
+      T1  ~ T2 : SPINE ANIMATION
+      T2  ~    : 포트폴리오가 흐른다 */
+  var T1 = 380, T2 = 820;
   var scrollAmt = 0, angle = 0, vel = 0, dragging = false, lastX = 0;
 
   if(zone){
@@ -332,7 +325,7 @@ body{background:var(--void);color:var(--dim);font-family:var(--kr);
     zone.addEventListener('pointermove', function(e){
       if(!dragging) return;
       var dx = lastX - e.clientX;
-      scrollAmt = Math.max(0, scrollAmt + Math.abs(dx) * 2);
+      scrollAmt = Math.max(0, scrollAmt + Math.abs(dx)*2);
       if(scrollAmt > T2) vel += dx * 0.22;
       lastX = e.clientX;
     });
@@ -341,70 +334,65 @@ body{background:var(--void);color:var(--dim);font-family:var(--kr);
     zone.addEventListener('pointercancel', up);
   }
 
-  /* ---------- 4. 렌더 루프 (화면에 보일 때만) ---------- */
-  var hA=document.getElementById('hA'), hW=document.getElementById('hW'), hP=document.getElementById('hP'),
+  /* ---------- 4. 루프 ---------- */
+  var gt=document.getElementById('gridtext'), gtW=document.getElementById('gtW'), gtS=document.getElementById('gtS'),
+      hS=document.getElementById('hS'), hA=document.getElementById('hA'), hP=document.getElementById('hP'),
       gax=document.getElementById('gax'), mark=document.getElementById('mark'), roomIn=document.getElementById('roomIn'),
-      wDate=document.getElementById('wDate'), wTtl=document.getElementById('wTtl'),
-      wSub=document.getElementById('wSub'), wTags=document.getElementById('wTags');
-  var curW = -1, visible = true, raf = null;
-  var mx=0,my=0,cmx=0,cmy=0;
+      wBox=document.getElementById('wBox'), wDate=document.getElementById('wDate'), wTtl=document.getElementById('wTtl'),
+      wSub=document.getElementById('wSub'), wTags=document.getElementById('wTags'), cueTxt=document.getElementById('cueTxt');
+  var STAGES = [
+    {w:'JY STUDIO',       s:'SPINE 2D ANIMATION OUTSOURCING'},
+    {w:'SPINE ANIMATION', s:'RIGGING · SKINNING · MESH · MOTION'}
+  ];
+  var stage=-1, curW=-1, cScroll=0, spin=0, mx=0,my=0,cmx=0,cmy=0, visible=true, raf=null;
 
+  function setStage(st){
+    if(st===stage || !STAGES[st]) return; stage=st;
+    gtW.textContent = STAGES[st].w; gtS.textContent = STAGES[st].s;
+    gt.classList.remove('flick'); void gt.offsetWidth; gt.classList.add('flick');
+  }
   function showWork(i){
     if(i===curW || !WORKS[i]) return; curW=i;
     var w=WORKS[i];
     wDate.textContent=w.date; wTtl.textContent=w.ttl; wSub.textContent=w.sub;
     wTags.innerHTML=w.tags.map(function(t){return '<b>'+t+'</b>'}).join('');
-    if(hP) hP.textContent = (i+1)+'/'+N;
-  }
-
-  var spin = 0, cScroll = 0, stage = -1;
-  var behindW = document.querySelector('.behind .w');
-  var behindS = document.querySelector('.behind .s');
-
-  function setStage(st){
-    if(st===stage) return; stage=st;
-    if(!behindW) return;
-    behindW.textContent = st===0 ? 'JY STUDIO' : 'SPINE ANIMATION';
-    behindS.textContent = st===0 ? 'SPINE 2D ANIMATION OUTSOURCING' : 'RIGGING · SKINNING · MOTION';
-    behindW.style.animation='none'; void behindW.offsetWidth;
-    behindW.style.animation='glitchIn .42s steps(3) both';
+    if(hP) hP.textContent=(i+1)+'/'+N;
   }
 
   function loop(){
     if(!visible){ raf=null; return; }
+    cScroll += (scrollAmt - cScroll) * 0.10;
+    setStage(cScroll < T1 ? 0 : 1);
 
-    cScroll += (scrollAmt - cScroll) * 0.10;        /* 스크롤 감쇠 */
-    var st = cScroll < T1 ? 0 : 1;
-    setStage(st);
-
-    /* 포폴은 T2 를 넘겨야 흐른다 */
     var live = cScroll > T2;
-    angle += vel;
-    vel *= 0.92;
+    angle += vel; vel *= 0.92;
     if(Math.abs(vel) < 0.001) vel = 0;
 
-    /* 등장 진행도 — 원통이 멀리서 다가오며 드러난다 */
-    var app = Math.max(0, Math.min(1, (cScroll - T2 + 260) / 620));
+    var app = Math.max(0, Math.min(1, (cScroll - T2 + 220) / 640));
+    cmx += (mx-cmx)*0.06; cmy += (my-cmy)*0.06;
+
     if(cyl){
       cyl.style.opacity = app.toFixed(3);
-      cyl.style.setProperty('--par', (-angle * 0.45).toFixed(1) + 'px');
+      cyl.style.setProperty('--par', (-angle*0.45).toFixed(1) + 'px');
+      cyl.style.transform = 'translateZ(' + (-560 + 560*app).toFixed(0) + 'px) rotateX(' +
+        (cmy*-5).toFixed(2) + 'deg) rotateY(' + (-angle).toFixed(2) + 'deg)';
     }
-
-    cmx += (mx-cmx)*0.06; cmy += (my-cmy)*0.06;
-    if(cyl) cyl.style.transform =
-      'translateZ(' + (-520 + 520*app).toFixed(0) + 'px) rotateX(' + (cmy*-5).toFixed(2) +
-      'deg) rotateY(' + (-angle).toFixed(2) + 'deg)';
-
-    spin += reduce ? 0 : 0.22;
-    if(mark) mark.style.transform =
-      'rotateX(' + (6 - cmy*6).toFixed(2) + 'deg) rotateY(' + (spin + cmx*10).toFixed(2) + 'deg)';
+    /* 얼음 JY 는 계속 돈다. 포폴이 나오면 옆으로 비켜 준다. */
+    spin += reduce ? 0 : 0.2;
+    if(mark){
+      mark.style.opacity = (1 - app*0.72).toFixed(3);
+      mark.style.transform = 'translateX(' + (-app*20).toFixed(1) + 'vw) rotateX(' +
+        (6 - cmy*6).toFixed(2) + 'deg) rotateY(' + (spin + cmx*10).toFixed(2) + 'deg)';
+    }
     if(roomIn) roomIn.style.translate = (cmx*-14).toFixed(1)+'px '+(cmy*-8).toFixed(1)+'px';
+    if(gt) gt.style.opacity = (1 - app*0.8).toFixed(3);
+    if(wBox) wBox.classList.toggle('on', live);
+    if(cueTxt) cueTxt.textContent = live ? 'DRAG TO ROTATE' : 'SCROLL';
 
     var a = ((angle % 360) + 360) % 360;
     if(live) showWork(Math.round(a / (360/N)) % N);
-
+    if(hS) hS.textContent = Math.round(cScroll);
     if(hA) hA.textContent = a.toFixed(1);
-    if(hW) hW.textContent = vel.toFixed(2);
     if(gax) gax.style.transform = 'rotate(' + a.toFixed(1) + 'deg)';
 
     raf = requestAnimationFrame(loop);
@@ -424,7 +412,7 @@ body{background:var(--void);color:var(--dim);font-family:var(--kr);
     },{threshold:0}).observe(document.getElementById('scene'));
   }
   raf = requestAnimationFrame(loop);
-  showWork(0);
+  setStage(0); showWork(0);
 })();
 </script>
 </body>

@@ -52,10 +52,28 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
 /* ================= 가운데 평면 글자 ================= */
 .markzone{position:absolute;inset:0;z-index:3;display:grid;place-items:center;
   pointer-events:none;padding:0 6vw}
-.mark{will-change:transform}
-.title{font-family:"Figtree",sans-serif;font-weight:900;color:#0e1014;text-align:center;
-  font-size:clamp(2.4rem,7.2vw,7rem);line-height:.96;letter-spacing:-.045em;
-  text-wrap:balance}
+.mark{will-change:transform;display:grid;place-items:center}
+/* 두 글자를 같은 칸에 겹쳐 두고 transform 으로만 움직인다 (레이아웃 재계산 없음) */
+.mark > *{grid-area:1/1;font-family:"Figtree",sans-serif;font-weight:900;color:#0e1014;
+  text-align:center;letter-spacing:-.045em;white-space:nowrap;will-change:transform,opacity}
+
+/* 1단계: SPINE ANIMATION STUDIO 가 가운데 크게 */
+.title{font-size:clamp(2.4rem,7.2vw,7rem);line-height:.96;
+  transition:transform 900ms cubic-bezier(.77,0,.175,1)}
+/* 2단계: 한 단계 위로 올라가며 작아진다. 화면 내 이동이므로 강한 ease-in-out */
+.mark.stage2 .title{transform:translateY(-150%) scale(.36)}
+
+/* JY STUDIO — 아래에서 등장. 등장이므로 ease-out, scale(0) 금지 */
+.brand{font-size:clamp(3.2rem,10vw,10rem);line-height:.9;letter-spacing:-.055em;
+  opacity:0;transform:translateY(14%) scale(.95);
+  transition:opacity 650ms cubic-bezier(.23,1,.32,1) 260ms,
+             transform 700ms cubic-bezier(.23,1,.32,1) 260ms}
+.mark.stage2 .brand{opacity:1;transform:translateY(12%) scale(1)}
+
+@media(prefers-reduced-motion:reduce){
+  /* 움직임은 빼고, 최종 상태만 즉시 보여준다 */
+  .title,.brand{transition:opacity 200ms ease}
+}
 
 .hud{position:absolute;left:22px;bottom:20px;z-index:5;
   font-size:11px;letter-spacing:.14em;color:#8a8e99;line-height:2}
@@ -76,6 +94,7 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
 
   <div class="markzone"><div class="mark" id="mark">
     <h1 class="title">SPINE ANIMATION STUDIO</h1>
+    <div class="brand">JY STUDIO</div>
   </div></div>
 
   <div class="vig"></div>
@@ -130,6 +149,9 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
   /* ---------- 평소엔 가만히. 마우스엔 살짝 흔들리고, 스크롤에만 실제로 돈다 ---------- */
   var mark = document.getElementById('mark');
   var reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  /* 인트로: 큰 제목을 잠깐 보여준 뒤 위로 올리며 줄이고, 아래에 JY STUDIO 를 띄운다 */
+  setTimeout(function(){ mark.classList.add('stage2'); }, reduce ? 0 : 1400);
   var spin = 0, vel = 0;                     /* 스크롤 회전 */
   var mx = 0, my = 0, cx = 0, cy = 0;        /* 마우스 흔들림 */
   var raf = null;

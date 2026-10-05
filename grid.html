@@ -76,7 +76,7 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
   -webkit-background-clip:text;background-clip:text;
   transition:clip-path 700ms cubic-bezier(.23,1,.32,1) 120ms, opacity 200ms ease 1700ms}
 .brand{transition:clip-path 700ms cubic-bezier(.23,1,.32,1) 950ms}
-.mark.stage2 .brandwrap > *{clip-path:polygon(-40% 0,140% 0,110% 100%,80% 100%)}
+.mark.stage2 .brandwrap > *{clip-path:polygon(-40% 0,140% 0,110% 100%,-70% 100%)}
 .mark.stage2 .brand-hatch{opacity:0}
 
 /* ---- 곰 + 아이 리그 ----
@@ -162,7 +162,7 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
 .copy .num{position:absolute;left:0;top:0;transform-origin:0 0 0;backface-visibility:hidden;opacity:0;
   will-change:transform,opacity;clip-path:polygon(-40% 0,-10% 0,-40% 100%,-70% 100%);
   transition:clip-path 800ms cubic-bezier(.23,1,.32,1)}
-.copy .num.in{clip-path:polygon(-40% 0,140% 0,110% 100%,80% 100%)}
+.copy .num.in{clip-path:polygon(-40% 0,140% 0,110% 100%,-70% 100%)}
 .copy .num svg{display:block}
 .copy.flat .num{display:none}
 @media(prefers-reduced-motion:reduce){.copy .num{transition:none}}
@@ -524,9 +524,9 @@ body.dev .ctl{display:flex}
       num.innerHTML = '<svg viewBox="0 0 ' + NW + ' ' + NH + '" width="' + NW + '" height="' + NH + '"><defs>' +
         '<pattern id="' + id + '" width="11" height="11" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">' +
         '<line x1="0" y1="0" x2="0" y2="11" stroke="#a3a8b4" stroke-width="2.4"/></pattern></defs>' +
-        '<text x="50%" y="50%" dy=".35em" text-anchor="middle" font-family="Figtree,sans-serif" font-weight="900" font-size="460" ' +
+        '<text x="50%" y="50%" dy=".35em" text-anchor="middle" font-family="Figtree,sans-serif" font-weight="900" font-size="400" ' +
         'letter-spacing="-.04em" fill="url(#' + id + ')" stroke="#c9cdd6" stroke-width="2">' + num.getAttribute('data-n') + '</text></svg>';
-      var nx = innerWidth <= 900 ? -120 : -240;
+      var nx = innerWidth <= 900 ? -100 : -170;
       num.style.transform = 'translateZ(' + (-R2 - 70) + 'px) translate3d(' + (-NW/2 + nx) + 'px,' + (-NH/2 + 30) + 'px,0)';
       P.CH.push({el:num, th:0, a:1, num:true});
       if(!P.video){

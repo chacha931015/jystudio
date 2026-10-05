@@ -77,32 +77,22 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
 .brand{
   color:transparent;-webkit-background-clip:text;background-clip:text;
   background-color:#0e1014;background-repeat:no-repeat;
-  background-image:
-    radial-gradient(closest-side,#ff5c29 68%,transparent 72%),
-    radial-gradient(closest-side,#ff8a3d 68%,transparent 72%),
-    radial-gradient(closest-side,#ffd23f 68%,transparent 72%),
-    radial-gradient(closest-side,#ff5c29 68%,transparent 72%),
-    radial-gradient(closest-side,#12b886 68%,transparent 72%),
-    radial-gradient(closest-side,#6c5ce7 68%,transparent 72%),
-    radial-gradient(closest-side,#4d8dff 68%,transparent 72%),
-    radial-gradient(closest-side,#12b886 68%,transparent 72%);
-  background-position:6% 50%,19% 74%,14% 20%,28% 42%, 94% 50%,81% 26%,86% 80%,72% 60%;
-  background-size:0 0,0 0,0 0,0 0, 0 0,0 0,0 0,0 0}
+  /* 물감 두 장(왼쪽/오른쪽)은 JS 가 생성해 inline 으로 넣는다 */
+  background-position:4% 50%, 96% 50%;
+  background-size:auto 0%, auto 0%}
 .mark.splat .brand{animation:splat 1150ms linear forwards}
 @keyframes splat{
-  0%  {background-size:0 0,0 0,0 0,0 0, 0 0,0 0,0 0,0 0}
-  /* 탁 — 왼쪽. 빠르게 커졌다가 */
-  22% {background-size:34% 64%,18% 38%,12% 26%,7% 14%, 0 0,0 0,0 0,0 0}
-  34% {background-size:30% 58%,16% 34%,11% 24%,6% 12%, 0 0,0 0,0 0,0 0}
-  /* 잠깐 사이 */
-  52% {background-size:30% 58%,16% 34%,11% 24%,6% 12%, 0 0,0 0,0 0,0 0}
+  0%  {background-size:auto 0%,   auto 0%}
+  /* 탁 — 왼쪽. 빠르게 커졌다가 살짝 물러난다 */
+  22% {background-size:auto 165%, auto 0%}
+  34% {background-size:auto 148%, auto 0%}
+  52% {background-size:auto 148%, auto 0%}
   /* 탁 — 오른쪽 */
-  74% {background-size:30% 58%,16% 34%,11% 24%,6% 12%, 34% 64%,18% 38%,12% 26%,7% 14%}
-  86%,100%{background-size:30% 58%,16% 34%,11% 24%,6% 12%, 30% 58%,16% 34%,11% 24%,6% 12%}
+  74% {background-size:auto 148%, auto 165%}
+  86%,100%{background-size:auto 148%, auto 148%}
 }
 @media(prefers-reduced-motion:reduce){
-  .mark.splat .brand{animation:none;
-    background-size:30% 58%,16% 34%,11% 24%,6% 12%, 30% 58%,16% 34%,11% 24%,6% 12%}
+  .mark.splat .brand{animation:none;background-size:auto 148%,auto 148%}
 }
 
 @media(prefers-reduced-motion:reduce){
@@ -187,6 +177,55 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
 
   /* 인트로: 큰 제목을 잠깐 보여준 뒤 위로 올리며 줄이고, 아래에 JY STUDIO 를 띄운다 */
   setTimeout(function(){ mark.classList.add('stage2'); }, reduce ? 0 : 1400);
+  /* ---------- 물감 생성 ----------
+     불규칙한 몸통 + 사방으로 튄 가닥 + 흩어진 방울. 시드로 모양이 정해진다. */
+  function splatSVG(color, seed){
+    var s = seed;
+    function rnd(){ s = (s * 1664525 + 1013904223) % 4294967296; return s / 4294967296; }
+    var C = 200, R = 78, d = '';
+    /* 몸통 — 반지름이 들쭉날쭉한 12각형을 곡선으로 잇는다 */
+    var n = 12, pts = [];
+    for(var i = 0; i < n; i++){
+      var a = i/n*Math.PI*2 + (rnd()-.5)*.34, r = R*(.72 + rnd()*.42);
+      pts.push([C + Math.cos(a)*r, C + Math.sin(a)*r]);
+    }
+    d += 'M' + ((pts[0][0]+pts[n-1][0])/2).toFixed(1) + ',' + ((pts[0][1]+pts[n-1][1])/2).toFixed(1);
+    for(var k = 0; k < n; k++){
+      var p = pts[k], q = pts[(k+1)%n];
+      d += 'Q' + p[0].toFixed(1) + ',' + p[1].toFixed(1) + ' ' +
+           ((p[0]+q[0])/2).toFixed(1) + ',' + ((p[1]+q[1])/2).toFixed(1);
+    }
+    d += 'Z';
+    var out = '<path d="' + d + '"/>';
+    /* 가닥 — 몸통에서 바깥으로 가늘어지는 혀 */
+    var spikes = 7 + Math.floor(rnd()*3);
+    for(var j = 0; j < spikes; j++){
+      var a2 = rnd()*Math.PI*2, L = R*(.55 + rnd()*.95), w = R*(.07 + rnd()*.09);
+      var cx = C + Math.cos(a2)*R*.72, cy = C + Math.sin(a2)*R*.72;
+      var tx = C + Math.cos(a2)*(R*.72 + L), ty = C + Math.sin(a2)*(R*.72 + L);
+      var nx = -Math.sin(a2)*w, ny = Math.cos(a2)*w;
+      out += '<path d="M' + (cx+nx).toFixed(1) + ',' + (cy+ny).toFixed(1) +
+             ' Q' + ((cx+tx)/2 + nx*.4).toFixed(1) + ',' + ((cy+ty)/2 + ny*.4).toFixed(1) +
+             ' ' + tx.toFixed(1) + ',' + ty.toFixed(1) +
+             ' Q' + ((cx+tx)/2 - nx*.4).toFixed(1) + ',' + ((cy+ty)/2 - ny*.4).toFixed(1) +
+             ' ' + (cx-nx).toFixed(1) + ',' + (cy-ny).toFixed(1) + 'Z"/>';
+      /* 가닥 끝의 방울 */
+      if(rnd() > .35) out += '<circle cx="' + (tx + Math.cos(a2)*w*2).toFixed(1) + '" cy="' +
+        (ty + Math.sin(a2)*w*2).toFixed(1) + '" r="' + (w*1.2).toFixed(1) + '"/>';
+    }
+    /* 흩어진 방울 */
+    var drops = 9 + Math.floor(rnd()*6);
+    for(var m = 0; m < drops; m++){
+      var a3 = rnd()*Math.PI*2, dist = R*(1.15 + rnd()*.95), rr = R*(.025 + rnd()*.085);
+      out += '<circle cx="' + (C + Math.cos(a3)*dist).toFixed(1) + '" cy="' +
+             (C + Math.sin(a3)*dist).toFixed(1) + '" r="' + rr.toFixed(1) + '"/>';
+    }
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><g fill="' + color + '">' + out + '</g></svg>';
+    return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+  }
+  var brand = document.querySelector('.brand');
+  if(brand) brand.style.backgroundImage = splatSVG('#ffb400', 7) + ',' + splatSVG('#3d7bff', 23);
+
   /* JY STUDIO 가 자리 잡은 뒤 글자 안에 물감을 탁·탁 */
   setTimeout(function(){ mark.classList.add('splat'); }, reduce ? 0 : 2500);
   var spin = 0, vel = 0;                     /* 스크롤 회전 */

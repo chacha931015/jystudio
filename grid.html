@@ -122,10 +122,38 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
   .title,.brand{transition:opacity 200ms ease}
 }
 
+/* ================= 파트너 마퀴 (메인 사이트와 같은 연출) =================
+   등속 흐름이므로 linear. 호버 멈춤은 포인터 있는 기기에서만. 등장은 JY STUDIO 뒤에 ease-out */
+.partners{position:absolute;left:0;right:0;bottom:clamp(26px,6vh,60px);z-index:3;
+  opacity:0;transform:translateY(10px);
+  transition:opacity 600ms cubic-bezier(.23,1,.32,1) 1100ms, transform 600ms cubic-bezier(.23,1,.32,1) 1100ms}
+body.stage2 .partners{opacity:1;transform:none}
+.plabel{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:#8a8e99;text-align:center;margin-bottom:14px}
+.prow{overflow:hidden;width:min(980px,88vw);margin:0 auto;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+/* 카드 폭+여백이 일정해야 -50% 에서 이음매가 정확히 맞는다 (gap 대신 margin) */
+.ptrack{display:flex;align-items:center;width:max-content;animation:pscroll 34s linear infinite}
+@keyframes pscroll{to{transform:translateX(-50%)}}
+.pcard{flex:0 0 auto;width:140px;height:48px;margin:0 20px;display:flex;align-items:center;justify-content:center}
+.pcard img{max-width:100%;max-height:100%;object-fit:contain;display:block;opacity:.42;transition:opacity 200ms ease}
+@media(hover:hover) and (pointer:fine){
+  .prow:hover .ptrack{animation-play-state:paused}
+  .pcard:hover img{opacity:.9}
+}
+@media(prefers-reduced-motion:reduce){
+  .ptrack{animation:none;flex-wrap:wrap;justify-content:center;width:auto}
+  .partners{transform:none;transition:opacity 200ms ease}
+}
+
+/* 개발용 조절판 — 평소엔 숨기고 D 키로 켠다 (파트너 줄과 겹치므로) */
+.hud,.ctl{display:none}
+body.dev .hud{display:block}
+body.dev .ctl{display:flex}
 .hud{position:absolute;left:22px;bottom:20px;z-index:5;
   font-size:11px;letter-spacing:.14em;color:#8a8e99;line-height:2}
 .hud b{color:#1a1d26;font-weight:400}
-.ctl{position:absolute;right:22px;bottom:20px;z-index:5;display:flex;gap:16px;
+.ctl{position:absolute;right:22px;bottom:20px;z-index:5;gap:16px;
   font-size:11px;letter-spacing:.12em;color:#8a8e99}
 .ctl label{display:flex;align-items:center;gap:7px}
 .ctl input{width:110px}
@@ -146,6 +174,25 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
   </div></div>
 
   <div class="vig"></div>
+
+  <div class="partners">
+    <div class="plabel">함께한 파트너 / Trusted by</div>
+    <div class="prow"><div class="ptrack">
+        <span class="pcard"><img src="partners/krafton.png" alt="KRAFTON" loading="lazy"></span>
+        <span class="pcard"><img src="partners/joycity.png" alt="JOYCITY" loading="lazy"></span>
+        <span class="pcard"><img src="partners/studiomyo.png" alt="STUDIO MYO" loading="lazy"></span>
+        <span class="pcard"><img src="partners/rascallab.png" alt="RASCAL LAB" loading="lazy"></span>
+        <span class="pcard"><img src="partners/vagames.png" alt="VA GAMES" loading="lazy"></span>
+        <span class="pcard"><img src="partners/etoylab.png" alt="eTOY Lab" loading="lazy"></span>
+        <!-- 이음매 없는 반복을 위한 복제 -->
+        <span class="pcard"><img src="partners/krafton.png" alt="" loading="lazy"></span>
+        <span class="pcard"><img src="partners/joycity.png" alt="" loading="lazy"></span>
+        <span class="pcard"><img src="partners/studiomyo.png" alt="" loading="lazy"></span>
+        <span class="pcard"><img src="partners/rascallab.png" alt="" loading="lazy"></span>
+        <span class="pcard"><img src="partners/vagames.png" alt="" loading="lazy"></span>
+        <span class="pcard"><img src="partners/etoylab.png" alt="" loading="lazy"></span>
+    </div></div>
+  </div>
 
   <div class="hud">
     SEGMENTS <b id="oN">20</b><br>
@@ -199,7 +246,8 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
   var reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
 
   /* 인트로: 큰 제목을 잠깐 보여준 뒤 위로 올리며 줄이고, 아래에 JY STUDIO 를 띄운다 */
-  setTimeout(function(){ mark.classList.add('stage2'); }, reduce ? 0 : 1400);
+  setTimeout(function(){ mark.classList.add('stage2'); document.body.classList.add('stage2'); }, reduce ? 0 : 1400);
+  addEventListener('keydown', function(e){ if(e.key === 'd' || e.key === 'D') document.body.classList.toggle('dev'); });
 
 
   /* ---------- 곰 + 아이 리그 ----------

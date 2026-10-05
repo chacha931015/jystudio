@@ -142,7 +142,9 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
 .copy.flat .ch{position:static;transform:none!important}
 /* 예시 영상 카드 — .card 는 평면 측정용 상자. 실제로는 세로 조각(canvas.strip)으로 잘라 조각마다 제 각도에 붙여
    둥근 사각형 마스크를 조각별로 나눠 쓴다 → 카드가 글자처럼 벽을 따라 휜다 */
-.copy .card{display:block;margin:0 0 22px}
+.copy .card{display:block;margin:0 auto 22px}
+/* 서비스 패널은 좁고 가운데 정렬 — 왼쪽 끝으로 뻗으면 카메라 옆(가까운 쪽)에서 너무 커지고 화면 밖으로 밀린다 */
+.copy.svc{width:520px;text-align:center}
 .copy:not(.flat) .card{visibility:hidden}
 .copy .strip{position:absolute;left:0;top:0;transform-origin:0 0 0;backface-visibility:hidden;opacity:0;
   will-change:transform,opacity}
@@ -157,6 +159,7 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
   line-height:1.75;color:#5b6070;margin-top:20px;word-break:keep-all}
 @media(max-width:900px){
   .copy{width:640px;text-align:center}
+  .copy.svc{width:440px}
   .copy .card{margin:0 auto 20px}
   .copy h2{font-size:2.6rem}
   .copy p{font-size:1.3rem}

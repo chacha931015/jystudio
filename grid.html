@@ -112,7 +112,6 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
 .rig img.book{animation:bookbob 5.4s ease-in-out infinite}
 @keyframes bookbob{0%,100%{rotate:0deg;translate:0 0}40%{rotate:-.7deg;translate:0 2px}70%{rotate:.4deg;translate:0 -1px}}
 @media(max-width:900px){
-  .rigpos{--rx:0;--ry:-14vw;--rk:.16}
   .title{white-space:normal;text-wrap:balance}      /* 좁은 화면에선 첫 제목이 줄바꿈되게 */
 }
 @media(prefers-reduced-motion:reduce){
@@ -258,8 +257,8 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
     if(!pos || !br) return;
     var W = br.offsetWidth, H = br.offsetHeight;
     var rk = Math.max(0.12, Math.min(0.42, H * 2.7 / 1209));
-    var narrow = innerWidth <= 900;
-    var rx = narrow ? 0 : W * 0.36;                       /* 오른쪽으로 치우쳐 작은 제목을 피한다 */
+    /* 어느 폭에서나 같은 구도: 캐릭터는 오른쪽(STUDIO), 작은 제목은 왼쪽 끝. 캐릭터를 가운데 두면 제목이 얼굴 위에 얹힌다 */
+    var rx = W * 0.36;
     /* 칸 가운데 기준: 브랜드는 translateY(6%) 만큼 내려와 있고, 리그 캔버스 바닥은 점에서 604.5*rk 아래 */
     var ry = (0.06 + 0.35) * H - 604.5 * rk;
     pos.style.setProperty('--rk', rk.toFixed(4));
@@ -269,7 +268,7 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
     var tt = document.querySelector('.title');
     if(tt){
       var ts = parseFloat(getComputedStyle(tt).getPropertyValue('--ts')) || .3;   /* 2단계 축소 배율(CSS 와 한 곳) */
-      tt.style.setProperty('--tx', (narrow ? 0 : -(W - tt.offsetWidth * ts) / 2).toFixed(1) + 'px');
+      tt.style.setProperty('--tx', (-(W - tt.offsetWidth * ts) / 2).toFixed(1) + 'px');
     }
   }
   fitRig(); addEventListener('resize', fitRig);

@@ -3,109 +3,69 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>원통 격자 — 기초</title>
+<title>원통 격자 — 화이트</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
-   원통 격자 하나만. 다른 것은 아무것도 없다.
    세워진 원통의 안쪽에서 벽을 본다.
    패널 하나 = rotateY(각도) translateZ(-반지름)
    -> 세로축 둘레로 둘러서면 좌우로 휘어지는 벽이 된다.
+   흰 배경, 격자는 장식, 가운데는 평면 글자 하나.
    ============================================================ */
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#050507;overflow:hidden;font-family:"JetBrains Mono",monospace}
+body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
 
 .scene{position:fixed;inset:0;overflow:hidden;
-  background:radial-gradient(62% 58% at 50% 50%,#0A0B12 0%,#050507 76%)}
+  background:radial-gradient(62% 58% at 50% 50%,#ffffff 0%,#f3f4f7 76%)}
 
 .room{position:absolute;inset:0;perspective:var(--p,700px);perspective-origin:50% 50%}
 .tube{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d;
   will-change:transform}
 
-/* 실선 격자 + 점선 대각선 + 교차점의 밝은 십자 */
+/* 실선 격자 + 점선 대각선 + 교차점의 진한 십자 (흰 바탕이라 선은 어둡게) */
 .seg{position:absolute;backface-visibility:hidden;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cg fill='none' stroke='%239AA4BE'%3E%3Cpath d='M0 0H200M0 0V200' stroke-opacity='.20'/%3E%3Cpath d='M0 0L200 200M200 0L0 200' stroke-opacity='.13' stroke-dasharray='5 9'/%3E%3Cg stroke='%23D9E0F2' stroke-opacity='.9' stroke-width='1.5'%3E%3Cpath d='M-9 0H9M0 -9V9'/%3E%3Cpath d='M191 0H209M200 -9V9'/%3E%3Cpath d='M-9 200H9M0 191V209'/%3E%3Cpath d='M191 200H209M200 191V209'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  /* 벽의 위아래를 죽여 어둠 속으로 사라지게 한다 */
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cg fill='none' stroke='%23161922'%3E%3Cpath d='M0 0H200M0 0V200' stroke-opacity='.16'/%3E%3Cpath d='M0 0L200 200M200 0L0 200' stroke-opacity='.10' stroke-dasharray='5 9'/%3E%3Cg stroke='%23111318' stroke-opacity='.78' stroke-width='1.5'%3E%3Cpath d='M-9 0H9M0 -9V9'/%3E%3Cpath d='M191 0H209M200 -9V9'/%3E%3Cpath d='M-9 200H9M0 191V209'/%3E%3Cpath d='M191 200H209M200 191V209'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  /* 벽의 위아래를 죽여 흰 바탕으로 사라지게 한다 */
   -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 26%,#000 74%,transparent 100%);
   mask-image:linear-gradient(to bottom,transparent 0%,#000 26%,#000 74%,transparent 100%)}
 
-/* 표기는 격자와 분리된 자체 링이다. 링 전체가 통째로 돌아
-   글씨가 벽을 가로로 지나간다. 격자는 그냥 장식. */
-.ring{position:absolute;left:0;top:0;width:0;height:0;transform-style:preserve-3d;
-  pointer-events:none}
-.ring.a{animation:spinA 80s linear infinite}
-.ring.b{animation:spinB 80s linear infinite}
-@keyframes spinA{to{transform:rotateY(360deg)}}
-@keyframes spinB{to{transform:rotateY(-360deg)}}
-.rseg{position:absolute;backface-visibility:hidden;background-repeat:repeat-x;
-  background-position:center}
-
-/* 은은한 형형색색 광원 */
-.wash{position:absolute;inset:0;z-index:2;pointer-events:none;mix-blend-mode:screen;
+/* 은은한 형형색색 광원 — 흰 바탕에서는 multiply 로 옅게 물들인다 */
+.wash{position:absolute;inset:0;z-index:2;pointer-events:none;mix-blend-mode:multiply;
   background:
-    radial-gradient(38% 46% at 22% 30%,rgba(92,120,255,.26),transparent 70%),
-    radial-gradient(34% 42% at 78% 26%,rgba(255,92,172,.18),transparent 70%),
-    radial-gradient(40% 44% at 62% 76%,rgba(78,228,200,.17),transparent 70%),
-    radial-gradient(30% 36% at 34% 74%,rgba(255,196,88,.13),transparent 72%);
+    radial-gradient(38% 46% at 22% 30%,rgba(92,120,255,.10),transparent 70%),
+    radial-gradient(34% 42% at 78% 26%,rgba(255,92,172,.07),transparent 70%),
+    radial-gradient(40% 44% at 62% 76%,rgba(78,228,200,.08),transparent 70%),
+    radial-gradient(30% 36% at 34% 74%,rgba(255,196,88,.06),transparent 72%);
   animation:washdrift 34s ease-in-out infinite alternate}
 @keyframes washdrift{
   from{transform:translate3d(-2.5%,-1.5%,0) scale(1.04)}
   to  {transform:translate3d(2.5%,1.5%,0) scale(1.10)}
 }
 
-/* 가장자리로 갈수록 어두워진다 */
+/* 가장자리로 갈수록 흰색으로 잠긴다 */
 .vig{position:absolute;inset:0;z-index:4;pointer-events:none;
-  background:radial-gradient(66% 62% at 50% 50%,transparent 26%,
-             rgba(5,5,7,.52) 70%,#050507 100%)}
+  background:radial-gradient(66% 62% at 50% 50%,transparent 30%,
+             rgba(255,255,255,.55) 72%,#ffffff 100%)}
 
-/* ================= 얼음 JY =================
-   글자 모양으로 잘라낸 backdrop-filter 가 뒤 격자를 뿌옇게 번지게 한다.
-   그 위에 성에 입자 · 무지개 분광 · 흐르는 반사광을 겹치고,
-   뒤로 레이어를 쌓아 두께를 만든다. */
+/* ================= 가운데 평면 글자 ================= */
 .markzone{position:absolute;inset:0;z-index:3;display:grid;place-items:center;
-  perspective:1300px;pointer-events:none}
-.mark{transform-style:preserve-3d;will-change:transform}
-.prism{position:relative;width:820px;height:440px;transform-style:preserve-3d;
-  transform:scale(var(--k,1))}
-.prism .lay{position:absolute;inset:0;clip-path:url(#jyClip)}
-
-/* 뒤가 비치되 얼음처럼 번진다 */
-.ice{backdrop-filter:blur(14px) saturate(1.55) brightness(1.26);
-  -webkit-backdrop-filter:blur(14px) saturate(1.55) brightness(1.26);
-  background:linear-gradient(146deg,rgba(228,241,255,.30),rgba(150,180,225,.13) 40%,
-             rgba(244,250,255,.26) 58%,rgba(132,162,212,.16) 100%)}
-/* 성에 입자 */
-.frost{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='170' height='170' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E");
-  mix-blend-mode:overlay;opacity:.5}
-/* 무지개 분광 — 가장자리에서 강하게 */
-.rain{background:linear-gradient(112deg,#ff4d6d 0%,#ffb84d 15%,#f7ff5c 29%,
-      #4dff9e 45%,#4dd2ff 60%,#7a6bff 76%,#ff5ce0 100%);
-  mix-blend-mode:screen;opacity:.30;
-  -webkit-mask-image:radial-gradient(76% 70% at 50% 50%,transparent 34%,#000 92%);
-  mask-image:radial-gradient(76% 70% at 50% 50%,transparent 34%,#000 92%)}
-/* RGB 어긋남 */
-.ch{mix-blend-mode:screen;opacity:.34;filter:blur(1.5px)}
-.ch.r{background:linear-gradient(118deg,#ff3b57,transparent 40%);translate:-9px -3px}
-.ch.b{background:linear-gradient(118deg,transparent 52%,#5b6bff);translate:9px 3px}
-/* 표면을 훑는 반사광 */
-.spec{background:linear-gradient(104deg,transparent 36%,rgba(255,255,255,.92) 47%,
-      rgba(255,255,255,.24) 53%,transparent 62%);
-  background-size:300% 100%;mix-blend-mode:screen;
-  animation:specmove 6s ease-in-out infinite}
-@keyframes specmove{0%,100%{background-position:-150% 0}50%{background-position:250% 0}}
-/* 두께 */
-.dep{background:rgba(152,180,226,.07)}
-.jysvg{position:absolute;width:0;height:0}
+  pointer-events:none;padding:0 6vw}
+.mark{will-change:transform}
+.title{font-family:"Figtree",sans-serif;font-weight:900;color:#0e1014;text-align:center;
+  font-size:clamp(2.4rem,7.2vw,7rem);line-height:.96;letter-spacing:-.045em;
+  text-wrap:balance}
 
 .hud{position:absolute;left:22px;bottom:20px;z-index:5;
-  font-size:11px;letter-spacing:.14em;color:#55524D;line-height:2}
-.hud b{color:#9AA4BE;font-weight:400}
+  font-size:11px;letter-spacing:.14em;color:#8a8e99;line-height:2}
+.hud b{color:#1a1d26;font-weight:400}
 .ctl{position:absolute;right:22px;bottom:20px;z-index:5;display:flex;gap:16px;
-  font-size:11px;letter-spacing:.12em;color:#55524D}
+  font-size:11px;letter-spacing:.12em;color:#8a8e99}
 .ctl label{display:flex;align-items:center;gap:7px}
 .ctl input{width:110px}
+
+@media(prefers-reduced-motion:reduce){.wash{animation:none}}
 </style>
 </head>
 <body>
@@ -115,16 +75,7 @@ body{background:#050507;overflow:hidden;font-family:"JetBrains Mono",monospace}
   <div class="wash"></div>
 
   <div class="markzone"><div class="mark" id="mark">
-    <div class="prism" id="prism">
-      <svg class="jysvg" aria-hidden="true">
-        <defs><clipPath id="jyClip"></clipPath></defs>
-      </svg>
-      <div class="lay ice"></div>
-      <div class="lay frost"></div>
-      <div class="lay rain"></div>
-      <div class="lay ch r"></div><div class="lay ch b"></div>
-      <div class="lay spec"></div>
-    </div>
+    <h1 class="title">SPINE ANIMATION STUDIO</h1>
   </div></div>
 
   <div class="vig"></div>
@@ -165,22 +116,6 @@ body{background:#050507;overflow:hidden;font-family:"JetBrains Mono",monospace}
         'transform:rotateY(' + (i*stepDeg).toFixed(3) + 'deg) translateZ(' + (-R) + 'px)">' +
       '</div>';
     }
-
-    /* ---- 표기 링 두 개. 격자와 무관하게 통째로 좌우로 돈다 ---- */
-    var RR = R - 30, TH = 150;
-    function ring(cls, yOff, tile){
-      var h = '<div class="ring ' + cls + '">';
-      for(var j = 0; j < N; j++){
-        h += '<div class="rseg" style="width:' + W.toFixed(2) + 'px;height:' + TH + 'px;' +
-             'left:' + (-W/2).toFixed(2) + 'px;top:' + (yOff - TH/2) + 'px;' +
-             'background-image:url(' + tile + ');background-size:auto ' + TH + 'px;' +
-             'transform:rotateY(' + (j*stepDeg).toFixed(3) + 'deg) translateZ(' + (-RR) + 'px)"></div>';
-      }
-      return h + '</div>';
-    }
-    var tileA = "\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='760' height='150'%3E%3Ctext x='0' y='108' fill='%23A8B2CC' fill-opacity='.32' font-family='monospace' font-weight='700' font-size='104' letter-spacing='6'%3EJY STUDIO%3C/text%3E%3C/svg%3E\"";
-    html += ring('a', -120, tileA) + ring('b', 120, tileA);
-
     tube.innerHTML = html;
     document.getElementById('oN').textContent = N;
     document.getElementById('oR').textContent = R;
@@ -192,47 +127,10 @@ body{background:#050507;overflow:hidden;font-family:"JetBrains Mono",monospace}
   [cN, cR, cP].forEach(function(el){ el.addEventListener('input', redraw); });
   redraw();
 
-  /* ---------- 얼음 JY ---------- */
-  var prism = document.getElementById('prism'), mark = document.getElementById('mark');
-  var PW = 820, PH = 440;
-
-  function buildClip(){
-    var clip = document.getElementById('jyClip');
-    if(!clip) return;
-    /* clipPathUnits 을 쓰지 않고 실제 좌표로 둬야 폰트 크기를 그대로 쓸 수 있다 */
-    clip.innerHTML = '<text x="' + (PW/2) + '" y="348" text-anchor="middle" ' +
-      'font-family="Figtree, sans-serif" font-weight="900" font-size="400" ' +
-      'letter-spacing="-22">JY</text>';
-  }
-  /* 폰트가 오기 전에 만들면 글자 폭이 어긋나 한 글자가 잘려나간다 */
-  if(document.fonts && document.fonts.ready){
-    document.fonts.ready.then(buildClip);
-    if(document.fonts.load) document.fonts.load('900 400px Figtree', 'JY').then(buildClip);
-  }
-  buildClip();
-
-  if(prism){
-    var D = 26, frag = document.createDocumentFragment();
-    for(var d = D; d >= 1; d--){
-      var el = document.createElement('div');
-      el.className = 'lay dep';
-      el.style.transform = 'translateZ(' + (-d*3) + 'px)';
-      el.style.opacity = (0.16 + 0.84*(1 - d/D)).toFixed(3);
-      frag.appendChild(el);
-    }
-    prism.insertBefore(frag, prism.querySelector('.ice'));
-  }
-  function fitPrism(){
-    if(!prism) return;
-    var k = Math.min(innerWidth/980, innerHeight/660, 1.2);
-    prism.style.setProperty('--k', Math.max(0.4, k).toFixed(3));
-  }
-  fitPrism();
-  addEventListener('resize', fitPrism);
-
   /* ---------- 평소엔 가만히. 마우스엔 살짝 흔들리고, 스크롤에만 실제로 돈다 ---------- */
+  var mark = document.getElementById('mark');
   var reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
-  var spinT = 0, spin = 0, vel = 0;          /* 스크롤 회전 */
+  var spin = 0, vel = 0;                     /* 스크롤 회전 */
   var mx = 0, my = 0, cx = 0, cy = 0;        /* 마우스 흔들림 */
   var raf = null;
 
@@ -261,9 +159,9 @@ body{background:#050507;overflow:hidden;font-family:"JetBrains Mono",monospace}
       'rotateX(' + (cy * 2.6).toFixed(3) + 'deg) rotateY(' + (spin - cx * 3.4).toFixed(3) + 'deg)';
     room.style.perspectiveOrigin = (50 - cx*3).toFixed(2) + '% ' + (50 - cy*3).toFixed(2) + '%';
 
-    /* 얼음 JY 도 같은 카메라를 따라 기울되, 벽보다 더 크게 반응해 앞에 있는 느낌을 준다 */
+    /* 글자는 평면 그대로 두고, 벽과 반대로 아주 조금만 밀려 앞에 떠 있는 느낌을 준다 */
     if(mark) mark.style.transform =
-      'rotateX(' + (cy * -5).toFixed(3) + 'deg) rotateY(' + (cx * 7).toFixed(3) + 'deg)';
+      'translate3d(' + (cx * 10).toFixed(2) + 'px,' + (cy * 6).toFixed(2) + 'px,0)';
 
     var moving = vel !== 0 || Math.abs(mx-cx) > 0.0008 || Math.abs(my-cy) > 0.0008;
     raf = moving ? requestAnimationFrame(frame) : null;

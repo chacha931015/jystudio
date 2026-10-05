@@ -136,10 +136,13 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
    .flat 은 측정용: 평면으로 흘려 놓고 각 글자의 자리를 잰 뒤 그 자리를 각도로 바꾼다.
    조상에 opacity/overflow 가 있으면 3D 가 평면으로 눌리므로 불투명도는 글자마다 준다 */
 .copy{position:absolute;left:0;top:0;width:820px;transform-style:preserve-3d}
-.copy h2,.copy p,.copy .sub,.copy .txt{transform-style:preserve-3d}
-.copy .ch{position:absolute;left:0;top:0;transform-origin:0 0 0;backface-visibility:hidden;
+/* .ch = 원본 글자(평면 측정용, 3D 모드에선 숨김). .c3 = 3D 복제본 — 같은 태그의 빈 래퍼(.c3w, 축점 0x0) 안에
+   절대배치한다. 원본 h2/p 안에 절대배치하면 preserve-3d 가 걸린 h2/p 가 기준 상자가 되어 그 위치만큼 밀린다 */
+.copy .ch{white-space:pre}
+.copy:not(.flat) .ch{visibility:hidden}
+.copy .c3{position:absolute;left:0;top:0;transform-origin:0 0 0;backface-visibility:hidden;
   white-space:pre;opacity:0;will-change:transform,opacity}
-.copy.flat .ch{position:static;transform:none!important}
+.copy.flat .c3w{display:none}
 /* 예시 영상 카드 — .card 는 평면 측정용 상자. 실제로는 세로 조각(canvas.strip)으로 잘라 조각마다 제 각도에 붙여
    둥근 사각형 마스크를 조각별로 나눠 쓴다 → 카드가 글자처럼 벽을 따라 휜다 */
 .copy .card{display:block;margin:0 auto 22px}
@@ -421,7 +424,7 @@ body.dev .ctl{display:flex}
      R2 는 격자 원통(780)보다 안쪽. X 는 궤도 축을 왼쪽으로 조금 민 것, Y/Ys 는 궤도 높이(본문/서비스) */
   var C = {};
   var PANELS = [].slice.call(document.querySelectorAll('.deck .orbit')).map(function(o){
-    return {el:o, copy:o.querySelector('.copy'), k:+o.dataset.k, CH:[], strips:[], card:null, video:null, lastBase:null, on:false};
+    return {el:o, copy:o.querySelector('.copy'), k:+o.dataset.k, CH:[], wraps:[], strips:[], card:null, video:null, lastBase:null, on:false};
   });
   function layoutCopy(){
     var W = innerWidth, Hh = innerHeight, narrow = W <= 900;
@@ -449,16 +452,28 @@ body.dev .ctl{display:flex}
     var W = copy.offsetWidth, Hc = copy.offsetHeight, R2 = C.R2;
     /* preserve-3d 가 걸린 요소가 offsetParent 가 되므로 copy 까지 offset 을 누적한다 */
     function pos(el){ var x = 0, y = 0, e = el; while(e && e !== copy){ x += e.offsetLeft; y += e.offsetTop; e = e.offsetParent; } return [x, y]; }
-    P.CH = [].slice.call(copy.querySelectorAll('.ch')).map(function(s){
-      var q = pos(s); return {el:s, x:q[0] + s.offsetWidth/2 - W/2, y:q[1] - Hc/2, w:s.offsetWidth, a:0.85};
+    var texts = [].slice.call(copy.querySelectorAll('h2,p,.sub'));
+    var meas = texts.map(function(T){
+      return [].slice.call(T.querySelectorAll('.ch')).map(function(s){
+        var q = pos(s); return {c:s.textContent, x:q[0] + s.offsetWidth/2 - W/2, y:q[1] - Hc/2, w:s.offsetWidth};
+      });
     });
     var card = copy.querySelector('.card'), cq = card ? pos(card) : null,
         cw = card ? card.offsetWidth : 0, chh = card ? card.offsetHeight : 0;
     copy.classList.remove('flat');
-    P.CH.forEach(function(c){
-      c.th = -c.x / R2 * 180 / Math.PI;                               /* 오른쪽 글자일수록 작은 각 */
-      c.el.style.transform = 'rotateY(' + c.th.toFixed(3) + 'deg) translateZ(' + (-R2) + 'px) translate3d(' +
-        (-c.w/2).toFixed(1) + 'px,' + c.y.toFixed(1) + 'px,0)';
+    /* 3D 복제본 — 글자마다 rotateY(θ_i) translateZ(-R2). 래퍼는 원본과 같은 태그·클래스라 글꼴이 그대로 상속된다 */
+    (P.wraps || []).forEach(function(w){ w.parentNode.removeChild(w); }); P.wraps = []; P.CH = [];
+    texts.forEach(function(T, ti){
+      var w = T.cloneNode(false); w.removeAttribute('id'); w.className = (T.className ? T.className + ' ' : '') + 'c3w';
+      w.style.cssText = 'position:absolute;left:0;top:0;width:0;height:0;margin:0;transform-style:preserve-3d';
+      meas[ti].forEach(function(m){
+        var s = document.createElement('span'); s.className = 'c3'; s.textContent = m.c;
+        m.th = -m.x / R2 * 180 / Math.PI;                             /* 오른쪽 글자일수록 작은 각 */
+        s.style.transform = 'rotateY(' + m.th.toFixed(3) + 'deg) translateZ(' + (-R2) + 'px) translate3d(' +
+          (-m.w/2).toFixed(1) + 'px,' + m.y.toFixed(1) + 'px,0)';
+        w.appendChild(s); P.CH.push({el:s, th:m.th, a:0.85});
+      });
+      copy.appendChild(w); P.wraps.push(w);
     });
     /* 둥근 사각형 카드 — 24px 세로 조각으로 잘라 조각마다 제 각도에. 마스크는 카드 크기의 둥근 사각형을 조각 위치만큼 밀어 쓴다 */
     P.strips.forEach(function(s){ s.el.parentNode.removeChild(s.el); }); P.strips = []; P.card = null;

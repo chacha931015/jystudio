@@ -511,17 +511,18 @@ body.dev .ctl{display:flex}
       P.card = {w:cw, h:chh, n:n, sw:sw, ov:ov};
       P.CH = P.CH.concat(P.strips);                                   /* 불투명도는 글자와 같은 규칙 */
     }
-    /* 큰 번호 — 빗금 패턴으로 채운 SVG 글자. 패널 가운데, 글자 쪽으로 살짝 아래 */
+    /* 큰 번호 — 빗금 패턴으로 채운 SVG 글자. 카드에 가려지지 않게 왼쪽으로 비켜 두고(nx), 글자 쪽으로 살짝 아래 */
     var num = copy.querySelector('.num');
     if(num){
       var NW = W, NH = 560, id = 'hatch' + P.k;
       num.style.width = NW + 'px'; num.style.height = NH + 'px';
       num.innerHTML = '<svg viewBox="0 0 ' + NW + ' ' + NH + '" width="' + NW + '" height="' + NH + '"><defs>' +
         '<pattern id="' + id + '" width="11" height="11" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">' +
-        '<line x1="0" y1="0" x2="0" y2="11" stroke="#b3b8c3" stroke-width="2.2"/></pattern></defs>' +
+        '<line x1="0" y1="0" x2="0" y2="11" stroke="#a3a8b4" stroke-width="2.4"/></pattern></defs>' +
         '<text x="50%" y="50%" dy=".35em" text-anchor="middle" font-family="Figtree,sans-serif" font-weight="900" font-size="460" ' +
         'letter-spacing="-.04em" fill="url(#' + id + ')" stroke="#c9cdd6" stroke-width="2">' + num.getAttribute('data-n') + '</text></svg>';
-      num.style.transform = 'translateZ(' + (-R2 - 70) + 'px) translate3d(' + (-NW/2) + 'px,' + (-NH/2 + 30) + 'px,0)';
+      var nx = innerWidth <= 900 ? -120 : -240;
+      num.style.transform = 'translateZ(' + (-R2 - 70) + 'px) translate3d(' + (-NW/2 + nx) + 'px,' + (-NH/2 + 30) + 'px,0)';
       P.CH.push({el:num, th:0, a:1, num:true});
       if(!P.video){
         var v = document.createElement('video');

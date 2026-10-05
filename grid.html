@@ -44,8 +44,9 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
   to  {transform:translate3d(2.5%,1.5%,0) scale(1.10)}
 }
 
-/* 가장자리로 갈수록 흰색으로 잠긴다 */
-.vig{position:absolute;inset:0;z-index:4;pointer-events:none;
+/* 가장자리로 갈수록 흰색으로 잠긴다 — 격자(배경)에만. 글자·캐릭터(z:3)는 이 위에 그린다.
+   z:4 로 두면 오른쪽 위에 앉은 캐릭터의 머리가 흰색에 묻혀 사라진다 */
+.vig{position:absolute;inset:0;z-index:2;pointer-events:none;
   background:radial-gradient(66% 62% at 50% 50%,transparent 30%,
              rgba(255,255,255,.55) 72%,#ffffff 100%)}
 

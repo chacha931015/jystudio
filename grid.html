@@ -297,14 +297,14 @@ body.dev .ctl{display:flex}
     });
   }
   /* 리그 크기·위치 — JY STUDIO 의 레이아웃 박스를 기준으로 잡는다.
-     높이는 글자의 2.7배, 발바닥이 글자 상자의 85%(베이스라인 바로 위)에 오게, 가로는 오른쪽(STUDIO 쪽)으로.
+     높이는 글자의 2.3배, 발바닥이 글자 상자의 85%(베이스라인 바로 위)에 오게, 가로는 오른쪽(STUDIO 쪽)으로.
      글자 뒤에 서 있으므로 하체는 글자에 가려지고 머리·어깨가 글자 위로 솟는다.
      브랜드 박스는 transform 과 무관한 offset 값을 쓰므로 등장 애니메이션 중에도 흔들리지 않는다. */
   function fitRig(){
     var pos = document.getElementById('rigpos'), br = document.querySelector('.brand');
     if(!pos || !br) return;
     var W = br.offsetWidth, H = br.offsetHeight;
-    var rk = Math.max(0.12, Math.min(0.42, H * 2.7 / 1209));
+    var rk = Math.max(0.12, Math.min(0.42, H * 2.3 / 1209));
     /* 어느 폭에서나 같은 구도: 캐릭터는 오른쪽(STUDIO), 작은 제목은 왼쪽 끝. 캐릭터를 가운데 두면 제목이 얼굴 위에 얹힌다 */
     var rx = W * 0.36;
     /* 칸 가운데 기준: 브랜드는 translateY(6%) 만큼 내려와 있고, 리그 캔버스 바닥은 점에서 604.5*rk 아래 */

@@ -154,6 +154,7 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
 .copy .card,.copy .row{display:block;margin:0 auto 22px}      /* .row = 포트폴리오 줄의 측정 상자(카드 한 장 크기) */
 /* 서비스 패널은 좁고 가운데 정렬 — 왼쪽 끝으로 뻗으면 카메라 옆(가까운 쪽)에서 너무 커지고 화면 밖으로 밀린다 */
 .copy.svc,.copy.pf{width:840px;text-align:center}
+.copy.svc{width:1000px}
 .copy:not(.flat) .card,.copy:not(.flat) .row{visibility:hidden}
 /* 포트폴리오 카드 j 의 축 — 궤도 축점에 매달아 rotateY 로만 줄을 돌린다 */
 .copy .pfcard{position:absolute;left:0;top:0;width:0;height:0;transform-origin:0 0 0;transform-style:preserve-3d}
@@ -172,7 +173,9 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
 @media(prefers-reduced-motion:reduce){.copy .num{transition:none}}
 .copy.svc h2,.copy.pf h2{font-family:"Figtree",sans-serif;font-size:3.75rem;letter-spacing:-.03em;line-height:1.1}
 .copy.svc .sub,.copy.pf .sub{font-family:"Noto Sans KR",sans-serif;font-weight:700;font-size:1.75rem;color:#3a3f4c;margin-top:12px}
-.copy.svc p{font-size:1.85rem;line-height:1.6;margin-top:8px}
+.copy.svc h2{font-size:4.8rem}
+.copy.svc .sub{font-size:2.2rem;margin-top:14px}
+.copy.svc p{font-size:2.3rem;line-height:1.6;margin-top:10px}
 .vsrc{position:absolute;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none}
 /* 왼쪽 벽의 큰 스크린 — room 안, tube 앞 순서라 격자 뒤에 그려진다. 세로 조각으로 격자 원통(R+2)에 붙는다 */
 .tv{position:absolute;left:50%;top:50%;width:0;height:0;transform-origin:0 0 0;transform-style:preserve-3d}
@@ -189,6 +192,9 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
   .copy.svc,.copy.pf{width:560px}
   .copy.svc h2,.copy.pf h2{font-size:2.8rem}
   .copy.svc .sub,.copy.pf .sub{font-size:1.35rem}
+  .copy.svc{width:640px}
+  .copy.svc h2{font-size:3.3rem}
+  .copy.svc .sub{font-size:1.6rem}
   .copy.svc p{font-size:1.4rem}
   .copy .card{margin:0 auto 20px}
   .copy h2{font-size:2.6rem}
@@ -519,8 +525,8 @@ body.dev .ctl{display:flex}
     var W = innerWidth, Hh = innerHeight, narrow = W <= 900;
     /* Y/Ys/Yp = 본문·서비스·포트폴리오 궤도 높이, k = 카드 축소율 */
     /* R2 는 반드시 원근 거리(600)보다 커야 한다 — 작으면 카메라가 안쪽 원통 밖에 있게 되어 글줄·카드가 격자와 반대로 휜다 */
-    if(narrow){ C = {R2:700, th0:-143, X:0,       Y:Hh*0.18, Ys:Hh*0.14, Yp:Hh*0.3,  mx:0,      my:-Hh*0.16, k:.77}; }
-    else      { C = {R2:700, th0:-117, X:-W*0.06, Y:Hh*0.16, Ys:Hh*0.12, Yp:Hh*0.34, mx:W*0.16, my:0,        k:1.1}; }
+    if(narrow){ C = {R2:700, th0:-143, X:0,       Y:Hh*0.18, Ys:Hh*0.14, Yp:Hh*0.3,  mx:0,      my:-Hh*0.16, k:.77, ks:1.0}; }
+    else      { C = {R2:700, th0:-117, X:-W*0.06, Y:Hh*0.16, Ys:Hh*0.12, Yp:Hh*0.34, mx:W*0.16, my:0,        k:1.1, ks:1.5}; }
     PANELS.forEach(curvePanel); buildTV();
     /* 복제본이 새로 생겼으니(불투명도 0) 다음 프레임에 각도별 불투명도를 다시 입힌다 — 폰트 도착·리사이즈 뒤에도 글이 남아 있게 */
     PANELS.forEach(function(P){ P.lastBase = null; });
@@ -576,8 +582,9 @@ body.dev .ctl{display:flex}
     var copy = P.copy;
     /* 카드 크기 — 모두 같은 크기(data-w/h), 좁은 화면은 C.k 로 축소 */
     [].slice.call(copy.querySelectorAll('.card,.row')).forEach(function(el){
-      el.style.width = Math.round(+el.getAttribute('data-w') * C.k) + 'px';
-      el.style.height = Math.round(+el.getAttribute('data-h') * C.k) + 'px';
+      var kk = el.classList.contains('row') ? C.k : C.ks;              /* 서비스 예시 카드는 더 크게 */
+      el.style.width = Math.round(+el.getAttribute('data-w') * kk) + 'px';
+      el.style.height = Math.round(+el.getAttribute('data-h') * kk) + 'px';
     });
     copy.classList.add('flat');
     var W = copy.offsetWidth, Hc = copy.offsetHeight, R2 = C.R2;
@@ -631,15 +638,15 @@ body.dev .ctl{display:flex}
     /* 큰 번호 — 빗금 패턴으로 채운 SVG 글자. 카드에 가려지지 않게 왼쪽으로 비켜 두고(nx), 글자 쪽으로 살짝 아래 */
     var num = copy.querySelector('.num');
     if(num){
-      var NW = W, NH = 560, id = 'hatch' + P.k;
+      var NW = W, NH = 720, id = 'hatch' + P.k;
       num.style.width = NW + 'px'; num.style.height = NH + 'px';
       num.innerHTML = '<svg viewBox="0 0 ' + NW + ' ' + NH + '" width="' + NW + '" height="' + NH + '"><defs>' +
         '<pattern id="' + id + '" width="11" height="11" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">' +
         '<line x1="0" y1="0" x2="0" y2="11" stroke="#a3a8b4" stroke-width="2.4"/></pattern></defs>' +
-        '<text x="50%" y="50%" dy=".35em" text-anchor="middle" font-family="Figtree,sans-serif" font-weight="900" font-size="400" ' +
+        '<text x="50%" y="50%" dy=".35em" text-anchor="middle" font-family="Figtree,sans-serif" font-weight="900" font-size="' + Math.round(400 * C.ks / 1.1) + '" ' +
         'letter-spacing="-.04em" fill="url(#' + id + ')" stroke="#c9cdd6" stroke-width="2">' + num.getAttribute('data-n') + '</text></svg>';
       /* 카드가 아니라 문구와 겹치게: 세로는 문구 블록(카드 아래 ~ 패널 끝)의 가운데, 가로는 왼쪽으로 */
-      var nx = innerWidth <= 900 ? -120 : -200;
+      var nx = innerWidth <= 900 ? -120 : -270;
       var ny = card ? (cq[1] + chh + Hc) / 2 - Hc / 2 : 0;
       num.style.transform = 'translateZ(' + (-R2 - 70) + 'px) translate3d(' + (-NW/2 + nx) + 'px,' + (-NH/2 + ny).toFixed(1) + 'px,0)';
       P.CH.push({el:num, th:0, a:1, num:true});

@@ -607,7 +607,7 @@ body.dev .ctl{display:flex}
     }
   }
   /* 보이는 패널의 카드만 매 프레임 그린다. 포트폴리오는 문구 위 카드만 선명, 멀수록 저해상도 판을 덮어 흐리게 */
-  var mediaRaf = null;
+  var mediaRaf = null, mwd = null;
   function drawCards(){
     var any = false, now = performance.now();
     PANELS.forEach(function(P){
@@ -633,6 +633,7 @@ body.dev .ctl{display:flex}
     });
     if(tvA > 0 || glitchUntil > now){ any = true; drawTV(now); }
     mediaRaf = any ? requestAnimationFrame(drawCards) : null;
+    clearTimeout(mwd); if(any) mwd = setTimeout(function(){ if(mediaRaf){ cancelAnimationFrame(mediaRaf); mediaRaf = null; drawCards(); } }, 300);
   }
   function setOn(P, on){
     if(P.on === on) return; P.on = on;
@@ -744,7 +745,9 @@ body.dev .ctl{display:flex}
     kick();
   }, {passive:true});
 
-  function kick(){ if(!raf) raf = requestAnimationFrame(frame); }
+  var wd = null;
+  function armWd(){ clearTimeout(wd); wd = setTimeout(function(){ if(raf){ cancelAnimationFrame(raf); raf = null; frame(); } }, 300); }
+  function kick(){ if(!raf){ raf = requestAnimationFrame(frame); armWd(); } }
   function ss(a, b, x){ var t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); }   /* smoothstep */
 
   function frame(){
@@ -856,7 +859,7 @@ body.dev .ctl{display:flex}
 
     var moving = !!anim || settling || Math.abs(mx-cx) > 0.0008 || Math.abs(my-cy) > 0.0008;
     raf = moving ? requestAnimationFrame(frame) : null;
-    if(!moving) lastT = 0;
+    if(moving) armWd(); else { clearTimeout(wd); lastT = 0; }
   }
   frame(); ready = true;
 })();

@@ -195,7 +195,16 @@ h1.hero-h1 .l2{display:block;color:#b9c0d0}
   background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),
                    linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);
   background-size:19px 19px}
-.ed-view img#rigArt{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.ed-view img#rigArt{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
+  transform-origin:50% 74%;will-change:transform;
+  /* 가만히 있을 때의 호흡 — translate/scale 은 transform 과 따로 합성되므로
+     마우스 반응(transform)과 충돌하지 않는다 */
+  animation:breathe 4.6s ease-in-out infinite}
+@keyframes breathe{
+  0%,100%{translate:0 0;scale:1}
+  50%    {translate:0 -3px;scale:1.012}
+}
+@media(prefers-reduced-motion:reduce){.ed-view img#rigArt{animation:none}}
 .rig{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 .vhud{position:absolute;left:9px;top:8px;display:flex;gap:6px;
   font-family:var(--mono);font-size:.55rem;letter-spacing:.07em;color:#8c92a6}
@@ -1541,6 +1550,7 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
   var stage=document.getElementById('stage'), deck=document.getElementById('deck');
   if(stage&&deck&&!reduce&&matchMedia('(hover:hover)').matches){
     var layers=[].slice.call(deck.querySelectorAll('[data-depth]'));
+    var art=document.getElementById('rigArt');
     var tx=0,ty=0,cx=0,cy=0,raf=null,active=false;
     function frame(){
       cx+=(tx-cx)*0.075; cy+=(ty-cy)*0.075;
@@ -1550,6 +1560,9 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
         var dp=+el.dataset.depth;
         el.style.transform='translate3d('+(cx*dp*-0.5).toFixed(2)+'px,'+(cy*dp*-0.5).toFixed(2)+'px,'+dp+'px)';
       });
+      /* 캐릭터는 패널보다 한 번 더 움직인다 — 마우스 쪽으로 몸을 살짝 틀고 고개를 기울인다 */
+      if(art) art.style.transform='translate3d('+(cx*14).toFixed(2)+'px,'+(cy*8).toFixed(2)+'px,0) '+
+        'rotate('+(cx*-1.6).toFixed(3)+'deg)';
       if(Math.abs(tx-cx)>0.0004||Math.abs(ty-cy)>0.0004) raf=requestAnimationFrame(frame);
       else { raf=null; if(!active) stage.classList.remove('live'); }
     }

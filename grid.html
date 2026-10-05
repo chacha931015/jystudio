@@ -572,7 +572,7 @@ body.dev .ctl{display:flex}
         var pv = document.createElement('div'); pv.className = 'pfcard'; copy.appendChild(pv);
         var m = makeStrips(pv, rw, rh, -rw/2, rq[1] - Hc/2, R2);
         if(!it.video) it.video = makeVideo(it.src);
-        if(!it.lo){ it.lo = document.createElement('canvas'); it.lo.width = 48; it.lo.height = 32; }   /* 흐린 판용 저해상도 */
+        if(!it.lo){ it.lo = document.createElement('canvas'); it.lo.width = 96; it.lo.height = 64; }   /* 흐린 판용 저해상도 */
         return {pivot:pv, strips:m.strips, mk:m, it:it, j:j, th:null, hidden:true};
       });
       P.pf = {cards:cards, pitch:(rw + 30) / R2 * 180 / Math.PI};
@@ -623,9 +623,9 @@ body.dev .ctl{display:flex}
           var d = Math.min(1, Math.abs(c.j - pfF));
           if(d < 1) drawCover(c.strips, c.mk, v, v.videoWidth, v.videoHeight, 1);
           if(d > 0){
-            var lo = c.it.lo, lh = Math.max(2, Math.round(48 * v.videoHeight / v.videoWidth));
-            if(lo.height !== lh){ lo.width = 48; lo.height = lh; }
-            lo.getContext('2d').drawImage(v, 0, 0, lo.width, lo.height);
+            var lo = c.it.lo, lh = Math.max(2, Math.round(96 * v.videoHeight / v.videoWidth));
+            if(lo.height !== lh){ lo.width = 96; lo.height = lh; }
+            var lx = lo.getContext('2d'); lx.filter = 'blur(1.6px)'; lx.drawImage(v, 0, 0, lo.width, lo.height); lx.filter = 'none';
             drawCover(c.strips, c.mk, lo, lo.width, lo.height, d);
           }
         });
@@ -648,7 +648,7 @@ body.dev .ctl{display:flex}
     if(!tvEl) return;
     tvEl.innerHTML = '';
     var narrow = innerWidth <= 900, R = +cR.value + 2;
-    var w = narrow ? 620 : 1000, h = narrow ? 400 : 640, ang = narrow ? 58 : 62, y = narrow ? -90 : -130;
+    var w = narrow ? 620 : 1000, h = narrow ? 400 : 640, ang = narrow ? 54 : 57, y = narrow ? -90 : -130;
     TV = makeStrips(tvEl, w, h, -w/2, y - h/2, R); TV.scan = null; TV.shown = false;
     tvEl.style.transform = 'rotateY(' + ang + 'deg)';              /* 스크린 중심각 — 왼쪽 벽 */
   }
@@ -828,6 +828,7 @@ body.dev .ctl{display:flex}
           var th = -(c.j - pfF) * F.pitch;
           if(th !== c.th){ c.th = th; c.pivot.style.transform = 'rotateY(' + th.toFixed(3) + 'deg)'; }
           var ramp = P.nt ? ss(0, 1, (stag - 220 - c.j * 70) / 300) : 0, anyv = false;
+          ramp *= 1 - Math.min(1, Math.max(0, pfF - c.j));            /* 지나간 카드는 한 칸 가는 동안 사라진다 (왼쪽에서 커지지 않게) */
           for(var i2 = 0; i2 < c.strips.length; i2++){
             var s = c.strips[i2], a2 = base + th + s.th, o = P.ca * ramp * ss(-75, -5, a2) * (1 - ss(80, 120, a2));
             if(o > 0.002) anyv = true;

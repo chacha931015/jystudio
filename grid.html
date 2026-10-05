@@ -6,7 +6,7 @@
 <title>원통 격자 — 화이트</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@900&family=Noto+Sans+KR:wght@400;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;900&family=Noto+Sans+KR:wght@400;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
    세워진 원통의 안쪽에서 벽을 본다.
@@ -237,6 +237,23 @@ body.stage2 .partners{opacity:1;transform:none}
   .partners{transform:none;transition:opacity 200ms ease}
 }
 
+/* ================= 상단 바 — 왼쪽 로고(원래 홈페이지의 것), 가운데 내비 ================= */
+.top{position:absolute;left:0;right:0;top:0;height:72px;z-index:6;display:grid;grid-template-columns:1fr auto 1fr;
+  align-items:center;padding:0 28px}
+.logo{justify-self:start;font-family:"Figtree",sans-serif;font-size:1.32rem;line-height:1;color:#0e1014;
+  display:inline-flex;align-items:baseline;text-decoration:none;transform:skewX(-11deg);transform-origin:left baseline}
+.logo .jy{font-weight:900;letter-spacing:-.055em}
+.logo .st{font-weight:300;font-size:.7em;letter-spacing:.02em;margin-left:.2em;color:rgba(14,16,20,.5)}
+.nav{justify-self:center;display:flex;gap:34px;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase}
+.nav a{color:#8a8e99;text-decoration:none;position:relative;padding:8px 0;transition:color 200ms ease}
+.nav a.on{color:#0e1014}
+.nav a::after{content:"";position:absolute;left:0;right:0;bottom:2px;height:1px;background:#0e1014;
+  transform:scaleX(0);transform-origin:left;transition:transform 200ms cubic-bezier(.23,1,.32,1)}
+.nav a.on::after{transform:scaleX(1)}
+@media(hover:hover) and (pointer:fine){.nav a:hover{color:#0e1014}}
+@media(max-width:900px){.top{padding:0 16px;height:60px}.nav{gap:18px;font-size:10px;letter-spacing:.14em}}
+@media(prefers-reduced-motion:reduce){.nav a,.nav a::after{transition:none}}
+
 /* 개발용 조절판 — 평소엔 숨기고 D 키로 켠다 (파트너 줄과 겹치므로) */
 .hud,.ctl{display:none}
 body.dev .hud{display:block}
@@ -309,6 +326,16 @@ body.dev .ctl{display:flex}
         <span class="pcard"><img src="partners/etoylab.png" alt="" loading="lazy"></span>
     </div></div>
   </div>
+
+  <header class="top">
+    <a class="logo" href="./" aria-label="JY STUDIO"><span class="jy">JY</span><span class="st">STUDIO</span></a>
+    <nav class="nav" aria-label="주요 메뉴">
+      <a href="#main" data-go="0" class="on">Main</a>
+      <a href="#portfolio" data-go="4">Portfolio</a>
+      <a href="index-site.html#career">Members</a>
+      <a href="index-site.html#contact">Contact</a>
+    </nav>
+  </header>
 
   <div class="hud">
     SEGMENTS <b id="oN">20</b><br>
@@ -751,6 +778,17 @@ body.dev .ctl{display:flex}
     anim = {from:spin, to:to * SPAN, t0:now, dur:reduce ? 0 : 1000};
     kick();
   }
+  /* 상단 내비 — Main/Portfolio 는 해당 단계로 바로 점프(멀수록 조금 길게), 활성 표시는 가는 중이면 목적지 기준 */
+  var navLinks = [].slice.call(document.querySelectorAll('.nav a[data-go]'));
+  function jumpTo(to){
+    var now = performance.now();
+    if(anim || panim || to === stage) return;
+    target = to;
+    if(to === PF_STAGE){ pfIdx = 0; pfF = 0; tvItem = 0; }
+    anim = {from:spin, to:to * SPAN, t0:now, dur:reduce ? 0 : 900 + 180 * Math.abs(to - stage)};
+    kick();
+  }
+  navLinks.forEach(function(a){ a.addEventListener('click', function(e){ e.preventDefault(); jumpTo(+a.getAttribute('data-go')); }); });
   addEventListener('wheel', function(e){
     e.preventDefault();
     if(Math.abs(e.deltaY) < 6) return;
@@ -876,6 +914,8 @@ body.dev .ctl{display:flex}
       cur.style.transform = 'translateY(' + (prog / LAST * ruler.clientHeight).toFixed(1) + 'px)';
       var near = Math.round(spin / SPAN);
       stEls.forEach(function(el, i){ el.classList.toggle('on', i === near); });
+      var ns = (anim ? target : stage) >= PF_STAGE ? PF_STAGE : 0;
+      navLinks.forEach(function(a){ a.classList.toggle('on', +a.getAttribute('data-go') === ns); });
     }
 
     /* 리그 — 값은 1300px 캔버스 기준. 표시 배율(약 0.3)을 곱하면 화면에서는 1/3 로 줄어들므로

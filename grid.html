@@ -90,13 +90,27 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
 .rig img{position:absolute;display:block;will-change:transform}
 /* 깜빡임 — 눈 이미지 자체를 세로로 접는다. 마우스 이동은 바깥 span 이 맡는다 */
 .rig .eye{position:absolute;will-change:transform}
-.rig .eye img{position:static;animation:blink 5.2s ease-in-out infinite;transform-origin:50% 55%}
-@keyframes blink{0%,91%,100%{transform:scaleY(1)}94%{transform:scaleY(.08)}}
+.rig .eye img{position:static;animation:blink 3.8s ease-in-out infinite;transform-origin:50% 55%}
+@keyframes blink{0%,88%,100%{transform:scaleY(1)}91%{transform:scaleY(.08)}94%{transform:scaleY(1)}}
+/* 가만히 있을 때의 동작 — rotate/translate 개별 속성은 JS 의 transform 과 합성되어 충돌하지 않는다.
+   곰 머리는 느리게 갸웃거리다 한 번씩 귀를 들썩(머리째 위로 톡), 아이는 책 읽으며 끄덕, 책은 따라 흔들림 */
+.rig img.head{animation:headidle 7s ease-in-out infinite}
+@keyframes headidle{
+  0%,100%{rotate:0deg;translate:0 0}
+  30%{rotate:-.9deg;translate:0 0}
+  52%{rotate:.7deg;translate:0 0}
+  60%{rotate:.7deg;translate:0 -9px}        /* 쫑긋 — 짧게 들렸다가 */
+  66%{rotate:.4deg;translate:0 0}
+}
+.rig img.hhead{animation:readnod 5.4s ease-in-out infinite}
+@keyframes readnod{0%,100%{rotate:0deg}40%{rotate:.9deg}70%{rotate:-.5deg}}
+.rig img.book{animation:bookbob 5.4s ease-in-out infinite}
+@keyframes bookbob{0%,100%{rotate:0deg;translate:0 0}40%{rotate:-.7deg;translate:0 2px}70%{rotate:.4deg;translate:0 -1px}}
 @media(max-width:900px){.rigpos{--rx:0;--ry:-14vw;--rk:.16}}
 @media(prefers-reduced-motion:reduce){
   .rigpos{transition:opacity 200ms ease}
   .mark.stage2 .rigpos{transform:translate(var(--rx),var(--ry)) scale(var(--rk))}
-  .rig-breathe,.rig .eye img{animation:none}
+  .rig-breathe,.rig .eye img,.rig img.head,.rig img.hhead,.rig img.book{animation:none}
 }
 
 /* ---- 글자 안의 물감 ----
@@ -338,7 +352,8 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
     ['human_eye_left',       921,801, 935, 823, 928, 814,'eye'],
     ['human_eye_right',     1004,804,1017, 828,1010, 818,'eye']
   ];
-  var rigRoot = document.getElementById('rigb'), RIG = {head:[],pawL:[],pawR:[],hhead:[],book:[],eye:[]};
+  var rigRoot = document.getElementById('rigb'), rigEl = document.getElementById('rig'),
+      RIG = {head:[],pawL:[],pawR:[],hhead:[],book:[],eye:[]};
   if(rigRoot){
     LAYERS.forEach(function(L){
       var name=L[0], x0=L[1], y0=L[2], x1=L[3], y1=L[4], px=L[5], py=L[6], role=L[7];
@@ -353,6 +368,7 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
         img.style.cssText = 'width:100%;height:100%';
         wrap.appendChild(img); rigRoot.appendChild(wrap); RIG.eye.push(wrap);
       } else {
+        if(role) img.className = role;              /* CSS 의 대기 동작(끄덕임 등)이 역할별로 붙는다 */
         rigRoot.appendChild(img);
         if(role) RIG[role].push(img);
       }
@@ -411,16 +427,20 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
     if(mark) mark.style.transform =
       'translate3d(' + (cx * 10).toFixed(2) + 'px,' + (cy * 6).toFixed(2) + 'px,0)';
 
-    /* 리그 — manifest 의 한계값 안에서만: 눈 ±4/±3px, 머리 0.4°, 앞발 0.8°, 책 0.6° */
+    /* 리그 — 값은 1300px 캔버스 기준. 표시 배율(약 0.3)을 곱하면 화면에서는 1/3 로 줄어들므로
+       눈 ±16px(화면 ±5px), 머리 1.6°, 앞발 2.2°, 책 1.5° 정도여야 눈에 띈다 */
     if(rigRoot){
-      var ex = (cx * 4).toFixed(2), ey = (cy * 3).toFixed(2);
+      var ex = (cx * 16).toFixed(2), ey = (cy * 10).toFixed(2);
       RIG.eye.forEach(function(el){ el.style.transform = 'translate3d(' + ex + 'px,' + ey + 'px,0)'; });
-      var hr = (cx * 0.4).toFixed(3), hy = (cy * -2).toFixed(2);
+      var hr = (cx * 1.6).toFixed(3), hy = (cy * -6).toFixed(2);
       RIG.head.forEach(function(el){ el.style.transform = 'translate3d(0,' + hy + 'px,0) rotate(' + hr + 'deg)'; });
-      RIG.hhead.forEach(function(el){ el.style.transform = 'rotate(' + (cx * 0.4).toFixed(3) + 'deg)'; });
-      RIG.pawL.forEach(function(el){ el.style.transform = 'rotate(' + (cx * -0.8).toFixed(3) + 'deg)'; });
-      RIG.pawR.forEach(function(el){ el.style.transform = 'rotate(' + (cx * 0.8).toFixed(3) + 'deg)'; });
-      RIG.book.forEach(function(el){ el.style.transform = 'rotate(' + (cy * 0.6).toFixed(3) + 'deg)'; });
+      RIG.hhead.forEach(function(el){ el.style.transform = 'rotate(' + (cx * 1.4).toFixed(3) + 'deg)'; });
+      RIG.pawL.forEach(function(el){ el.style.transform = 'rotate(' + (cx * -2.2).toFixed(3) + 'deg)'; });
+      RIG.pawR.forEach(function(el){ el.style.transform = 'rotate(' + (cx * 2.2).toFixed(3) + 'deg)'; });
+      RIG.book.forEach(function(el){ el.style.transform = 'rotate(' + (cy * 1.5).toFixed(3) + 'deg)'; });
+      /* 몸 전체가 마우스 쪽으로 살짝 기운다 (숨쉬기는 자식 래퍼의 translate 라 충돌 없음) */
+      if(rigEl) rigEl.style.transform = 'translate3d(' + (cx * 22).toFixed(1) + 'px,' + (cy * 12).toFixed(1) +
+        'px,0) rotate(' + (cx * 1.2).toFixed(2) + 'deg)';
     }
 
     var moving = vel !== 0 || Math.abs(mx-cx) > 0.0008 || Math.abs(my-cy) > 0.0008;

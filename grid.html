@@ -55,7 +55,7 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
   pointer-events:none;padding:0 6vw}
 /* width:100% — 자식이 칸보다 넓으면 그리드가 가운데 정렬을 포기하고(safe) 왼쪽에 붙여 전체가 오른쪽으로 밀린다.
    마크를 칸 폭으로 고정해 두면 글자는 항상 화면 가운데에 온다 */
-.mark{will-change:transform;display:grid;place-items:center;width:100%}
+.mark{will-change:transform;display:grid;place-items:center;width:100%;transform-origin:50% 0}   /* 축소는 위쪽 기준 */
 /* 두 글자를 같은 칸에 겹쳐 두고 transform 으로만 움직인다 (레이아웃 재계산 없음) */
 .mark > *{grid-area:1/1;font-family:"Figtree",sans-serif;font-weight:900;color:#0e1014;
   text-align:center;letter-spacing:-.045em;white-space:nowrap;will-change:transform,opacity}
@@ -140,14 +140,14 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
 .copy .ch{position:absolute;left:0;top:0;transform-origin:0 0 0;backface-visibility:hidden;
   white-space:pre;opacity:0;will-change:transform,opacity}
 .copy.flat .ch{position:static;transform:none!important}
-.copy h2{font-family:"Noto Sans KR",sans-serif;font-weight:900;font-size:3.5rem;
+.copy h2{font-family:"Noto Sans KR",sans-serif;font-weight:900;font-size:3rem;
   line-height:1.3;letter-spacing:-.02em;color:#0e1014;word-break:keep-all}
-.copy p{font-family:"Noto Sans KR",sans-serif;font-weight:400;font-size:1.65rem;
-  line-height:1.8;color:#5b6070;margin-top:26px;word-break:keep-all}
+.copy p{font-family:"Noto Sans KR",sans-serif;font-weight:400;font-size:1.45rem;
+  line-height:1.75;color:#5b6070;margin-top:20px;word-break:keep-all}
 @media(max-width:900px){
   .copy{width:640px;text-align:center}
-  .copy h2{font-size:2.9rem}
-  .copy p{font-size:1.45rem}
+  .copy h2{font-size:2.6rem}
+  .copy p{font-size:1.3rem}
 }
 
 /* 눈금자 — 오른쪽 벽에 붙은 자. 오른쪽 끝을 축으로 안쪽으로 꺾여 벽을 따라간다.
@@ -171,7 +171,7 @@ body.stage2 .ruler{opacity:1}
 
 /* ================= 파트너 마퀴 (메인 사이트와 같은 연출) =================
    등속 흐름이므로 linear. 호버 멈춤은 포인터 있는 기기에서만. 등장은 JY STUDIO 뒤에 ease-out */
-.partners{position:absolute;left:0;right:0;bottom:clamp(26px,6vh,60px);z-index:3;
+.partners{position:absolute;left:0;right:0;bottom:clamp(18px,3vh,30px);z-index:3;
   opacity:0;transform:translateY(10px);
   transition:opacity 600ms cubic-bezier(.23,1,.32,1) 1100ms, transform 600ms cubic-bezier(.23,1,.32,1) 1100ms}
 body.stage2 .partners{opacity:1;transform:none}
@@ -393,7 +393,7 @@ body.dev .ctl{display:flex}
   function layoutCopy(){
     var W = innerWidth, Hh = innerHeight, narrow = W <= 900;
     if(narrow){ C = {R2:560, th0:-143, Y:Hh*0.22, mx:0,      my:-Hh*0.16}; }
-    else      { C = {R2:560, th0:-123, Y:Hh*0.32, mx:W*0.12, my:0}; }
+    else      { C = {R2:560, th0:-123, Y:Hh*0.27, mx:W*0.12, my:0}; }
     curveText();
   }
   /* 글자 하나 = span 하나. 공백은 텍스트 노드로 남겨 줄바꿈 자리를 지킨다 */
@@ -474,9 +474,10 @@ body.dev .ctl{display:flex}
       'rotateX(' + (cy * 2.6).toFixed(3) + 'deg) rotateY(' + (spin - cx * 3.4).toFixed(3) + 'deg)';
     scene.style.setProperty('--po', (50 - cx*3).toFixed(2) + '% ' + (50 - cy*3).toFixed(2) + '%');
 
-    /* 글자는 평면 그대로 두고, 벽과 반대로 아주 조금만 밀린다. 스크롤하면 본문에 자리를 내주며 살짝 비켜난다 */
+    /* 글자는 평면 그대로 두고, 벽과 반대로 아주 조금만 밀린다. 스크롤하면 본문에 자리를 내주며 살짝 비켜나고 15% 작아진다 */
     if(mark) mark.style.transform =
-      'translate3d(' + (cx * 10 + p * C.mx).toFixed(2) + 'px,' + (cy * 6 + p * C.my).toFixed(2) + 'px,0)';
+      'translate3d(' + (cx * 10 + p * C.mx).toFixed(2) + 'px,' + (cy * 6 + p * C.my).toFixed(2) + 'px,0) scale(' +
+      (1 - 0.15 * p).toFixed(4) + ')';
 
     /* 본문 — 원통과 같은 각도(spin)만큼 축 둘레를 돈다. 글자는 각자 제 각도로 벽에 붙어 있으므로
        궤도 전체만 돌린다. 불투명도는 글자의 절대 각도로: 오른쪽(-75°)에선 0, 왼쪽으로 올수록(-5°) .85 */

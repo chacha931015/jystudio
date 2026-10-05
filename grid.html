@@ -377,8 +377,8 @@ body.dev .ctl{display:flex}
   var copy = document.getElementById('copy'), C = {};
   function layoutCopy(){
     var W = innerWidth, Hh = innerHeight, narrow = W <= 900, cw = copy ? copy.offsetWidth : 0;
-    if(narrow){ C = {x0:W*0.6,  x1:0,                y0:Hh*0.3,  y1:Hh*0.2, z0:-700, z1:0,  r0:-50, r1:8,  mx:0,      my:-Hh*0.16}; }
-    else      { C = {x0:W*0.55, x1:-(W*0.43 - cw/2), y0:Hh*0.25, y1:0,      z0:-700, z1:20, r0:-50, r1:14, mx:W*0.12, my:0}; }
+    if(narrow){ C = {x0:W*0.6,  x1:0,                y0:Hh*0.34, y1:Hh*0.2, z0:-700, z1:0,  r0:-50, r1:8,  mx:0,      my:-Hh*0.16}; }
+    else      { C = {x0:W*0.55, x1:-(W*0.43 - cw/2), y0:Hh*0.5,  y1:0,      z0:-700, z1:20, r0:-50, r1:14, mx:W*0.12, my:0}; }
   }
   layoutCopy(); addEventListener('resize', layoutCopy);
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(layoutCopy);
@@ -427,12 +427,14 @@ body.dev .ctl{display:flex}
     if(mark) mark.style.transform =
       'translate3d(' + (cx * 10 + p * C.mx).toFixed(2) + 'px,' + (cy * 6 + p * C.my).toFixed(2) + 'px,0)';
 
-    /* 본문 — 오른쪽 뒤에서 왼쪽 앞으로. 처음 30% 동안 떠오른다 */
+    /* 본문 — 오른쪽 뒤에서 왼쪽 앞으로. 처음 30% 동안 떠오른다.
+       가로는 먼저 빠르게(ease-out), 세로는 낮게 깔렸다가 늦게 올라온다 — 제목 아래를 지나 왼쪽에서 올라서야 글자끼리 겹치지 않는다 */
     if(copy){
+      var q = 1 - p, ex_ = 1 - q * Math.sqrt(q), ey_ = Math.pow(q, 0.6);
       copy.style.opacity = Math.min(1, p / 0.3).toFixed(3);
       copy.style.visibility = p > 0 ? 'visible' : 'hidden';
-      copy.style.transform = 'translate3d(' + (lerp(C.x0, C.x1, p) + cx * 14).toFixed(1) + 'px,' +
-        (lerp(C.y0, C.y1, p) + cy * 8).toFixed(1) + 'px,' + lerp(C.z0, C.z1, p).toFixed(1) + 'px) rotateY(' +
+      copy.style.transform = 'translate3d(' + (lerp(C.x0, C.x1, ex_) + cx * 14).toFixed(1) + 'px,' +
+        (C.y1 + (C.y0 - C.y1) * ey_ + cy * 8).toFixed(1) + 'px,' + lerp(C.z0, C.z1, p).toFixed(1) + 'px) rotateY(' +
         lerp(C.r0, C.r1, p).toFixed(2) + 'deg)';
     }
     /* 눈금자 — 현재 위치 선과 가까운 단계 표시 */

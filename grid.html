@@ -416,8 +416,11 @@ body.dev .ctl{display:flex}
     if(!copy) return;
     copy.classList.add('flat');
     var W = copy.offsetWidth, Hc = copy.offsetHeight, R2 = C.R2;
+    /* preserve-3d 가 걸린 h2/p 가 offsetParent 가 되므로 copy 까지 offset 을 누적한다 */
     CH = [].slice.call(copy.querySelectorAll('.ch')).map(function(s){
-      return {el:s, x:s.offsetLeft + s.offsetWidth/2 - W/2, y:s.offsetTop - Hc/2, w:s.offsetWidth};
+      var x = 0, y = 0, e = s;
+      while(e && e !== copy){ x += e.offsetLeft; y += e.offsetTop; e = e.offsetParent; }
+      return {el:s, x:x + s.offsetWidth/2 - W/2, y:y - Hc/2, w:s.offsetWidth};
     });
     copy.classList.remove('flat');
     CH.forEach(function(c){

@@ -131,14 +131,21 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
    오른쪽(카메라 옆, 크고 거의 옆면)에서 들어와 왼쪽 앞벽(멀고 살짝 기울어짐)에 선다.
    글자는 크게 써 두고 원근으로 줄어든다(축소는 선명하다) */
 .orbit{position:absolute;left:50%;top:50%;width:0;height:0;transform-origin:0 0;
-  will-change:transform;opacity:0;visibility:hidden}
-.copy{position:absolute;left:-410px;width:820px;backface-visibility:hidden}
+  transform-style:preserve-3d;will-change:transform;visibility:hidden}
+/* 글자를 한 자씩 원통 표면에 붙인다 — 각 글자가 제 각도(θ_i = -x_i/R2)로 축을 바라보므로 글줄이 벽을 따라 휜다.
+   .flat 은 측정용: 평면으로 흘려 놓고 각 글자의 자리를 잰 뒤 그 자리를 각도로 바꾼다.
+   조상에 opacity/overflow 가 있으면 3D 가 평면으로 눌리므로 불투명도는 글자마다 준다 */
+.copy{position:absolute;left:0;top:0;width:820px;transform-style:preserve-3d}
+.copy h2,.copy p{transform-style:preserve-3d}
+.copy .ch{position:absolute;left:0;top:0;transform-origin:0 0 0;backface-visibility:hidden;
+  white-space:pre;opacity:0;will-change:transform,opacity}
+.copy.flat .ch{position:static;transform:none!important}
 .copy h2{font-family:"Noto Sans KR",sans-serif;font-weight:900;font-size:3.5rem;
   line-height:1.3;letter-spacing:-.02em;color:#0e1014;word-break:keep-all}
 .copy p{font-family:"Noto Sans KR",sans-serif;font-weight:400;font-size:1.65rem;
   line-height:1.8;color:#5b6070;margin-top:26px;word-break:keep-all}
 @media(max-width:900px){
-  .copy{left:-320px;width:640px;text-align:center}
+  .copy{width:640px;text-align:center}
   .copy h2{font-size:2.9rem}
   .copy p{font-size:1.45rem}
 }
@@ -382,17 +389,47 @@ body.dev .ctl{display:flex}
 
   /* 본문의 궤도 — 시작각 th0(오른쪽, 카메라 옆·뒤라 화면 밖) → 끝각 th0+SPAN(왼쪽 앞벽).
      R2 는 격자 원통(780)보다 안쪽. Y 는 궤도의 높이(제목 아래). 제목은 그만큼 살짝 비켜난다 */
-  var orbit = document.getElementById('orbit'), copy = document.getElementById('copy'), C = {};
+  var orbit = document.getElementById('orbit'), copy = document.getElementById('copy'), C = {}, CH = [];
   function layoutCopy(){
     var W = innerWidth, Hh = innerHeight, narrow = W <= 900;
     if(narrow){ C = {R2:560, th0:-143, Y:Hh*0.22, mx:0,      my:-Hh*0.16}; }
     else      { C = {R2:560, th0:-123, Y:Hh*0.32, mx:W*0.12, my:0}; }
-    if(copy) copy.style.top = (-copy.offsetHeight/2) + 'px';   /* 축점 기준 세로 가운데 */
+    curveText();
   }
-  layoutCopy(); addEventListener('resize', layoutCopy);
-  if(document.fonts && document.fonts.ready) document.fonts.ready.then(layoutCopy);
+  /* 글자 하나 = span 하나. 공백은 텍스트 노드로 남겨 줄바꿈 자리를 지킨다 */
+  function splitText(){
+    if(!copy) return;
+    [].slice.call(copy.querySelectorAll('h2,p')).forEach(function(el){
+      var nodes = [].slice.call(el.childNodes), frag = document.createDocumentFragment();
+      nodes.forEach(function(n){
+        if(n.nodeType !== 3){ frag.appendChild(n); return; }          /* <br> */
+        n.textContent.split('').forEach(function(c){
+          if(c === ' '){ frag.appendChild(document.createTextNode(' ')); return; }
+          var s = document.createElement('span'); s.className = 'ch'; s.textContent = c; frag.appendChild(s);
+        });
+      });
+      el.innerHTML = ''; el.appendChild(frag);
+    });
+  }
+  /* 평면으로 재서 → 글자마다 rotateY(θ_i) translateZ(-R2) 로 원통 표면에 올린다 */
+  function curveText(){
+    if(!copy) return;
+    copy.classList.add('flat');
+    var W = copy.offsetWidth, Hc = copy.offsetHeight, R2 = C.R2;
+    CH = [].slice.call(copy.querySelectorAll('.ch')).map(function(s){
+      return {el:s, x:s.offsetLeft + s.offsetWidth/2 - W/2, y:s.offsetTop - Hc/2, w:s.offsetWidth};
+    });
+    copy.classList.remove('flat');
+    CH.forEach(function(c){
+      c.th = -c.x / R2 * 180 / Math.PI;                               /* 오른쪽 글자일수록 작은 각 */
+      c.el.style.transform = 'rotateY(' + c.th.toFixed(3) + 'deg) translateZ(' + (-R2) + 'px) translate3d(' +
+        (-c.w/2).toFixed(1) + 'px,' + c.y.toFixed(1) + 'px,0)';
+    });
+  }
+  splitText(); layoutCopy(); addEventListener('resize', layoutCopy);
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(layoutCopy);   /* 폰트 도착 후 글자 폭이 바뀐다 */
 
-  var spin = 0, vel = 0;                     /* 스크롤 회전 */
+  var spin = 0, vel = 0, lastBase = null;    /* 스크롤 회전 */
   var mx = 0, my = 0, cx = 0, cy = 0;        /* 마우스 흔들림 */
   var raf = null;
 
@@ -438,14 +475,20 @@ body.dev .ctl{display:flex}
     if(mark) mark.style.transform =
       'translate3d(' + (cx * 10 + p * C.mx).toFixed(2) + 'px,' + (cy * 6 + p * C.my).toFixed(2) + 'px,0)';
 
-    /* 본문 — 원통과 같은 각도(spin)만큼 축 둘레를 돈다. 카메라 옆을 지나는 동안(처음 8~35%) 떠오르고,
-       자리에 서면 .85 — 격자가 살짝 비치는 정도로 */
+    /* 본문 — 원통과 같은 각도(spin)만큼 축 둘레를 돈다. 글자는 각자 제 각도로 벽에 붙어 있으므로
+       궤도 전체만 돌린다. 불투명도는 글자의 절대 각도로: 오른쪽(-75°)에선 0, 왼쪽으로 올수록(-5°) .85 */
     if(orbit){
-      var op = Math.max(0, Math.min(1, (p - 0.08) / 0.27)) * 0.85;
-      orbit.style.opacity = op.toFixed(3);
-      orbit.style.visibility = op > 0 ? 'visible' : 'hidden';
+      var base = C.th0 + spin;
+      orbit.style.visibility = p > 0 ? 'visible' : 'hidden';
       orbit.style.transform = 'translate3d(' + (cx * 14).toFixed(1) + 'px,' + (C.Y + cy * 8).toFixed(1) +
-        'px,0) rotateY(' + (C.th0 + spin).toFixed(2) + 'deg) translateZ(' + (-C.R2) + 'px)';
+        'px,0) rotateY(' + base.toFixed(2) + 'deg)';
+      if(base !== lastBase){
+        lastBase = base;
+        for(var i = 0; i < CH.length; i++){
+          var t = Math.max(0, Math.min(1, (base + CH[i].th + 75) / 70));
+          CH[i].el.style.opacity = (0.85 * t * t * (3 - 2 * t)).toFixed(3);
+        }
+      }
     }
     /* 눈금자 — 현재 위치 선과 가까운 단계 표시 */
     if(cur){

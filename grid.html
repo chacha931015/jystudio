@@ -150,10 +150,13 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
 .copy.flat .c3w{display:none}
 /* 예시 영상 카드 — .card 는 평면 측정용 상자. 실제로는 세로 조각(canvas.strip)으로 잘라 조각마다 제 각도에 붙여
    둥근 사각형 마스크를 조각별로 나눠 쓴다 → 카드가 글자처럼 벽을 따라 휜다 */
-.copy .card{display:block;margin:0 auto 22px}
+.copy .card,.copy .row{display:block;margin:0 auto 22px}      /* .row = 포트폴리오 줄의 측정 상자(카드 한 장 크기) */
 /* 서비스 패널은 좁고 가운데 정렬 — 왼쪽 끝으로 뻗으면 카메라 옆(가까운 쪽)에서 너무 커지고 화면 밖으로 밀린다 */
-.copy.svc{width:760px;text-align:center}
-.copy:not(.flat) .card{visibility:hidden}
+.copy.svc,.copy.pf{width:760px;text-align:center}
+.copy:not(.flat) .card,.copy:not(.flat) .row{visibility:hidden}
+/* 포트폴리오 카드 j 의 축 — 궤도 축점에 매달아 rotateY 로만 줄을 돌린다 */
+.copy .pfcard{position:absolute;left:0;top:0;width:0;height:0;transform-origin:0 0 0;transform-style:preserve-3d}
+.copy.flat .pfcard{display:none}
 .copy .strip{position:absolute;left:0;top:0;transform-origin:0 0 0;backface-visibility:hidden;opacity:0;
   will-change:transform,opacity}
 .copy.flat .strip{display:none}
@@ -166,19 +169,22 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
 .copy .num svg{display:block}
 .copy.flat .num{display:none}
 @media(prefers-reduced-motion:reduce){.copy .num{transition:none}}
-.copy.svc h2{font-family:"Figtree",sans-serif;font-size:3.4rem;letter-spacing:-.03em;line-height:1.1}
-.copy.svc .sub{font-family:"Noto Sans KR",sans-serif;font-weight:700;font-size:1.6rem;color:#3a3f4c;margin-top:12px}
+.copy.svc h2,.copy.pf h2{font-family:"Figtree",sans-serif;font-size:3.4rem;letter-spacing:-.03em;line-height:1.1}
+.copy.svc .sub,.copy.pf .sub{font-family:"Noto Sans KR",sans-serif;font-weight:700;font-size:1.6rem;color:#3a3f4c;margin-top:12px}
 .copy.svc p{font-size:1.7rem;line-height:1.6;margin-top:8px}
 .vsrc{position:absolute;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none}
+/* 왼쪽 벽의 큰 스크린 — room 안, tube 앞 순서라 격자 뒤에 그려진다. 세로 조각으로 격자 원통(R+2)에 붙는다 */
+.tv{position:absolute;left:50%;top:50%;width:0;height:0;transform-origin:0 0 0;transform-style:preserve-3d}
+.tv canvas{position:absolute;left:0;top:0;transform-origin:0 0 0;backface-visibility:hidden;opacity:0;will-change:transform,opacity}
 .copy h2{font-family:"Noto Sans KR",sans-serif;font-weight:900;font-size:3rem;
   line-height:1.3;letter-spacing:-.02em;color:#0e1014;word-break:keep-all}
 .copy p{font-family:"Noto Sans KR",sans-serif;font-weight:400;font-size:1.45rem;
   line-height:1.75;color:#5b6070;margin-top:20px;word-break:keep-all}
 @media(max-width:900px){
   .copy{width:640px;text-align:center}
-  .copy.svc{width:560px}
-  .copy.svc h2{font-size:2.8rem}
-  .copy.svc .sub{font-size:1.35rem}
+  .copy.svc,.copy.pf{width:560px}
+  .copy.svc h2,.copy.pf h2{font-size:2.8rem}
+  .copy.svc .sub,.copy.pf .sub{font-size:1.35rem}
   .copy.svc p{font-size:1.4rem}
   .copy .card{margin:0 auto 20px}
   .copy h2{font-size:2.6rem}
@@ -187,7 +193,7 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
 
 /* 눈금자 — 오른쪽 벽에 붙은 자. 오른쪽 끝을 축으로 안쪽으로 꺾여 벽을 따라간다.
    단계(STAGES)마다 긴 눈금 + 번호, 현재 위치 선이 스크롤 진행도만큼 내려간다 */
-.ruler{position:absolute;right:28px;top:50%;width:150px;height:300px;
+.ruler{position:absolute;right:28px;top:50%;width:150px;height:400px;
   transform:translateY(-50%) rotateY(-38deg);transform-origin:100% 50%;backface-visibility:hidden;
   font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.14em;color:#8a8e99;
   opacity:0;transition:opacity 600ms cubic-bezier(.23,1,.32,1) 1300ms}
@@ -201,7 +207,7 @@ body.stage2 .ruler{opacity:1}
 .ruler .st.on{color:#0e1014}
 .ruler .st::after{content:"";position:absolute;left:100%;margin-left:8px;top:50%;width:26px;height:1px;background:#0e1014}
 .ruler .cur{position:absolute;right:0;top:-1px;width:34px;height:2px;background:#0e1014;will-change:transform}
-@media(max-height:700px){.ruler{height:150px}}
+@media(max-height:700px){.ruler{height:200px}}
 @media(max-width:900px){.ruler{right:12px;font-size:9px}}
 
 /* ================= 파트너 마퀴 (메인 사이트와 같은 연출) =================
@@ -246,7 +252,7 @@ body.dev .ctl{display:flex}
 <body>
 
 <div class="scene">
-  <div class="room" id="room"><div class="tube" id="tube"></div></div>
+  <div class="room" id="room"><div class="tv" id="tv"></div><div class="tube" id="tube"></div></div>
   <div class="wash"></div>
 
   <div class="markzone"><div class="mark" id="mark">
@@ -263,14 +269,20 @@ body.dev .ctl{display:flex}
       <p>게임을 위한 SPINE 2D 리소스 외주 전문 스튜디오. 전 제작 과정을 직접 관리하며, 일정과 수량에 따른 안정적인 납품으로 신뢰할 수 있는 파트너가 되겠습니다.</p>
     </div></div>
     <!-- 서비스 — 카드(예시 영상, 둥근 사각형 마스크)가 문구 위에. data-src 만 바꾸면 영상이 바뀐다 -->
-    <div class="orbit" data-k="1"><div class="copy svc">
-      <div class="num" data-n="01"></div>
-      <div class="card" data-src="media/1785750371689-_NIKKE_Laplace_.mp4" style="width:280px;height:398px"></div>
-      <div class="txt"><h2>Portrait illustration</h2><div class="sub">포트레이트 일러스트</div><p>대기 및 상호작용, 일러스트 애니메이션 전반</p></div>
+    <!-- 포트폴리오 — 문구 위에 같은 크기의 둥근 카드가 원통을 따라 줄지어 나오고, 문구 바로 위 것만 선명. 휠로 한 장씩.
+         왼쪽 벽의 큰 스크린(#tv, 격자 뒤)에 그 작업의 전체샷 -->
+    <div class="orbit" data-k="1"><div class="copy pf">
+      <div class="row" data-w="400" data-h="280"></div>
+      <div class="txt"><h2>Portfolio</h2><div class="sub">포트폴리오 — 휠을 굴리면 다음 작업</div></div>
     </div></div>
     <div class="orbit" data-k="2"><div class="copy svc">
+      <div class="num" data-n="01"></div>
+      <div class="card" data-src="media/1785750371689-_NIKKE_Laplace_.mp4" data-w="400" data-h="280"></div>
+      <div class="txt"><h2>Portrait illustration</h2><div class="sub">포트레이트 일러스트</div><p>대기 및 상호작용, 일러스트 애니메이션 전반</p></div>
+    </div></div>
+    <div class="orbit" data-k="3"><div class="copy svc">
       <div class="num" data-n="02"></div>
-      <div class="card" data-src="media/1785168423777-Idle.webm" style="width:460px;height:352px"></div>
+      <div class="card" data-src="media/1785168423777-Idle.webm" data-w="400" data-h="280"></div>
       <div class="txt"><h2>In-Game Character</h2><div class="sub">인게임 LD / SD 캐릭터 · UI / 연출 / 컷신</div><p>인게임 대기 및 이동 전투 등 모션 전반, 게임에 사용되는 연출 전반</p></div>
     </div></div>
     <div class="ruler" id="ruler"></div>
@@ -424,7 +436,19 @@ body.dev .ctl{display:flex}
   fitRig(); addEventListener('resize', fitRig);
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(fitRig);   /* 폰트 도착 후 글자 박스가 바뀐다 */
   /* ---------- 단계 — 스크롤(원통 회전각)으로 진행. 한 단계 = SPAN 도 ---------- */
-  var STAGES = [['01','MAIN'],['02','ABOUT'],['03','PORTRAIT'],['04','IN-GAME']];
+  var STAGES = [['01','MAIN'],['02','ABOUT'],['03','PORTFOLIO'],['04','PORTRAIT'],['05','IN-GAME']];
+  /* 포트폴리오 — 순서대로. 스크린 자막에 제목·분류. 파일은 포트폴리오 DB 에 있던 것 */
+  var PF = [
+    {src:'media/1785750371689-_NIKKE_Laplace_.mp4',  title:'NIKKE — Laplace',    cat:'Portrait Animation'},
+    {src:'media/1785750410218-_NIKKE_Viper_.mp4',    title:'NIKKE — Viper',      cat:'Portrait Animation'},
+    {src:'media/1785750359712-_NIKKE_N102_N102_.mp4', title:'NIKKE — N102',       cat:'Portrait Animation'},
+    {src:'media/1785166126489-Idle.webm',            title:'Trickcal — Idle',    cat:'SD Character'},
+    {src:'media/1785167602570-Idle.webm',            title:'Trickcal — Idle',    cat:'SD Character'},
+    {src:'media/1785168423777-Idle.webm',            title:'Trickcal — Idle',    cat:'SD Character'},
+    {src:'media/1785483415024-__skill1_2.webm',      title:'Epic Seven — Skill', cat:'LD Character'},
+    {src:'media/1785481939160-__skill1.webm',        title:'Epic Seven — Skill', cat:'LD Character'}
+  ];
+  var PF_STAGE = 2, pfIdx = 0, pfF = 0, panim = null;   /* 포트폴리오 단계 번호, 문구 위의 카드, 그 소수값(회전 중), 한 장 넘기기 애니 */
   var SPAN = 155, LAST = STAGES.length - 1;   /* 패널이 도는 각도 = 원통이 도는 각도. 전체 = LAST*SPAN */
   var ruler = document.getElementById('ruler'), cur = null, stEls = [];
   if(ruler){
@@ -439,13 +463,14 @@ body.dev .ctl{display:flex}
      R2 는 격자 원통(780)보다 안쪽. X 는 궤도 축을 왼쪽으로 조금 민 것, Y/Ys 는 궤도 높이(본문/서비스) */
   var C = {};
   var PANELS = [].slice.call(document.querySelectorAll('.deck .orbit')).map(function(o){
-    return {el:o, copy:o.querySelector('.copy'), k:+o.dataset.k, CH:[], wraps:[], strips:[], card:null, video:null, lastBase:null, on:false, ca:0, nt:false};
+    return {el:o, copy:o.querySelector('.copy'), k:+o.dataset.k, CH:[], wraps:[], strips:[], card:null, video:null, pf:null, lastBase:null, on:false, ca:0, nt:false};
   });
   function layoutCopy(){
     var W = innerWidth, Hh = innerHeight, narrow = W <= 900;
-    if(narrow){ C = {R2:560, th0:-143, X:0,       Y:Hh*0.18, Ys:Hh*0.14, mx:0,      my:-Hh*0.16}; }
-    else      { C = {R2:560, th0:-117, X:-W*0.06, Y:Hh*0.16, Ys:Hh*0.12, mx:W*0.16, my:0}; }
-    PANELS.forEach(curvePanel);
+    /* Y/Ys/Yp = 본문·서비스·포트폴리오 궤도 높이, k = 카드 축소율 */
+    if(narrow){ C = {R2:560, th0:-143, X:0,       Y:Hh*0.18, Ys:Hh*0.14, Yp:Hh*0.3,  mx:0,      my:-Hh*0.16, k:.7}; }
+    else      { C = {R2:560, th0:-117, X:-W*0.06, Y:Hh*0.16, Ys:Hh*0.12, Yp:Hh*0.34, mx:W*0.16, my:0,        k:1}; }
+    PANELS.forEach(curvePanel); buildTV();
     /* 복제본이 새로 생겼으니(불투명도 0) 다음 프레임에 각도별 불투명도를 다시 입힌다 — 폰트 도착·리사이즈 뒤에도 글이 남아 있게 */
     PANELS.forEach(function(P){ P.lastBase = null; });
     if(ready) kick();
@@ -464,9 +489,45 @@ body.dev .ctl{display:flex}
       el.innerHTML = ''; el.appendChild(frag);
     });
   }
+  /* 둥근 사각형을 세로 조각(canvas)으로 잘라 parent 에 붙인다. 조각 i 의 각도 = -(x중심)/R. 마스크는 상자 크기의
+     둥근 사각형을 조각 위치만큼 밀어 쓴다 → 조각들이 모여 하나의 둥근 판이 원통을 따라 휜다 */
+  function makeStrips(parent, cw, chh, xLeft, yTop, R){
+    var n = Math.max(8, Math.round(cw / 24)), sw = cw / n, dpr = Math.min(devicePixelRatio || 1, 2), ov = 0.7, out = [];
+    var rx = Math.round(Math.min(cw, chh) * 0.07);
+    var mask = 'url("data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="' + cw +
+      '" height="' + chh + '"><rect width="' + cw + '" height="' + chh + '" rx="' + rx + '" fill="#000"/></svg>') + '")';
+    for(var i = 0; i < n; i++){
+      var cv = document.createElement('canvas'); cv.className = 'strip';
+      cv.width = Math.ceil((sw + ov) * dpr); cv.height = Math.round(chh * dpr);
+      cv.style.width = (sw + ov).toFixed(2) + 'px'; cv.style.height = chh + 'px';
+      cv.style.webkitMaskImage = cv.style.maskImage = mask;
+      cv.style.webkitMaskSize = cv.style.maskSize = cw + 'px ' + chh + 'px';
+      cv.style.webkitMaskPosition = cv.style.maskPosition = (-i * sw).toFixed(2) + 'px 0px';
+      cv.style.webkitMaskRepeat = cv.style.maskRepeat = 'no-repeat';
+      var th = -(xLeft + i * sw + sw/2) / R * 180 / Math.PI;
+      cv.style.transform = 'rotateY(' + th.toFixed(3) + 'deg) translateZ(' + (-R) + 'px) translate3d(' +
+        (-sw/2).toFixed(2) + 'px,' + yTop.toFixed(1) + 'px,0)';
+      parent.appendChild(cv);
+      out.push({el:cv, th:th, i:i, ctx:cv.getContext('2d'), a:1, strip:true});
+    }
+    return {strips:out, w:cw, h:chh, n:n, sw:sw, ov:ov, dpr:dpr};
+  }
+  function makeVideo(src){
+    var v = document.createElement('video');
+    v.muted = true; v.loop = true; v.playsInline = true; v.preload = 'metadata'; v.className = 'vsrc';
+    v.setAttribute('aria-hidden', 'true'); v.src = src;
+    v.addEventListener('loadedmetadata', function(){ try{ v.currentTime = 0.05; }catch(e){} });   /* 멈춰 있는 카드도 첫 프레임은 있게 */
+    document.body.appendChild(v); return v;
+  }
   /* 평면으로 재서 → 글자·카드 조각마다 rotateY(θ_i) translateZ(-R2) 로 원통 표면에 올린다 */
   function curvePanel(P){
-    var copy = P.copy; copy.classList.add('flat');
+    var copy = P.copy;
+    /* 카드 크기 — 모두 같은 크기(data-w/h), 좁은 화면은 C.k 로 축소 */
+    [].slice.call(copy.querySelectorAll('.card,.row')).forEach(function(el){
+      el.style.width = Math.round(+el.getAttribute('data-w') * C.k) + 'px';
+      el.style.height = Math.round(+el.getAttribute('data-h') * C.k) + 'px';
+    });
+    copy.classList.add('flat');
     var W = copy.offsetWidth, Hc = copy.offsetHeight, R2 = C.R2;
     /* preserve-3d 가 걸린 요소가 offsetParent 가 되므로 copy 까지 offset 을 누적한다 */
     function pos(el){ var x = 0, y = 0, e = el; while(e && e !== copy){ x += e.offsetLeft; y += e.offsetTop; e = e.offsetParent; } return [x, y]; }
@@ -478,6 +539,8 @@ body.dev .ctl{display:flex}
     });
     var card = copy.querySelector('.card'), cq = card ? pos(card) : null,
         cw = card ? card.offsetWidth : 0, chh = card ? card.offsetHeight : 0;
+    var row = copy.querySelector('.row'), rq = row ? pos(row) : null,
+        rw = row ? row.offsetWidth : 0, rh = row ? row.offsetHeight : 0;
     copy.classList.remove('flat');
     /* 3D 복제본 — 글자마다 rotateY(θ_i) translateZ(-R2). 래퍼는 원본과 같은 태그·클래스라 글꼴이 그대로 상속된다 */
     (P.wraps || []).forEach(function(w){ w.parentNode.removeChild(w); }); P.wraps = []; P.CH = [];
@@ -493,28 +556,26 @@ body.dev .ctl{display:flex}
       });
       copy.appendChild(w); P.wraps.push(w);
     });
-    /* 둥근 사각형 카드 — 24px 세로 조각으로 잘라 조각마다 제 각도에. 마스크는 카드 크기의 둥근 사각형을 조각 위치만큼 밀어 쓴다 */
+    /* 예시 카드 (서비스) */
     P.strips.forEach(function(s){ s.el.parentNode.removeChild(s.el); }); P.strips = []; P.card = null;
     if(card){
-      var n = Math.max(8, Math.round(cw / 24)), sw = cw / n, dpr = Math.min(devicePixelRatio || 1, 2), ov = 0.7;
-      var mask = 'url("data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="' + cw +
-        '" height="' + chh + '"><rect width="' + cw + '" height="' + chh + '" rx="20" fill="#000"/></svg>') + '")';
-      for(var i = 0; i < n; i++){
-        var cv = document.createElement('canvas'); cv.className = 'strip';
-        cv.width = Math.ceil((sw + ov) * dpr); cv.height = Math.round(chh * dpr);
-        cv.style.width = (sw + ov).toFixed(2) + 'px'; cv.style.height = chh + 'px';
-        cv.style.webkitMaskImage = cv.style.maskImage = mask;
-        cv.style.webkitMaskSize = cv.style.maskSize = cw + 'px ' + chh + 'px';
-        cv.style.webkitMaskPosition = cv.style.maskPosition = (-i * sw).toFixed(2) + 'px 0px';
-        cv.style.webkitMaskRepeat = cv.style.maskRepeat = 'no-repeat';
-        var x = cq[0] + i * sw + sw/2 - W/2, th = -x / R2 * 180 / Math.PI;
-        cv.style.transform = 'rotateY(' + th.toFixed(3) + 'deg) translateZ(' + (-R2) + 'px) translate3d(' +
-          (-sw/2).toFixed(2) + 'px,' + (cq[1] - Hc/2).toFixed(1) + 'px,0)';
-        copy.appendChild(cv);
-        P.strips.push({el:cv, th:th, i:i, ctx:cv.getContext('2d'), a:1, strip:true});
-      }
-      P.card = {w:cw, h:chh, n:n, sw:sw, ov:ov};
+      var mk = makeStrips(copy, cw, chh, cq[0] - W/2, cq[1] - Hc/2, R2);
+      P.strips = mk.strips; P.card = mk;
       P.CH = P.CH.concat(P.strips);                                   /* 불투명도는 글자와 같은 규칙 */
+      if(!P.video) P.video = makeVideo(card.getAttribute('data-src'));
+    }
+    /* 포트폴리오 줄 — 카드 j 는 축점에 매단 pivot 안에 (문구 가운데 위가 0, 오른쪽으로 j 장). 줄은 pivot 의 rotateY 로만 돈다 */
+    if(P.pf) P.pf.cards.forEach(function(c){ c.pivot.parentNode.removeChild(c.pivot); });
+    P.pf = null;
+    if(row){
+      var cards = PF.map(function(it, j){
+        var pv = document.createElement('div'); pv.className = 'pfcard'; copy.appendChild(pv);
+        var m = makeStrips(pv, rw, rh, -rw/2, rq[1] - Hc/2, R2);
+        if(!it.video) it.video = makeVideo(it.src);
+        if(!it.lo){ it.lo = document.createElement('canvas'); it.lo.width = 48; it.lo.height = 32; }   /* 흐린 판용 저해상도 */
+        return {pivot:pv, strips:m.strips, mk:m, it:it, j:j, th:null, hidden:true};
+      });
+      P.pf = {cards:cards, pitch:(rw + 30) / R2 * 180 / Math.PI};
     }
     /* 큰 번호 — 빗금 패턴으로 채운 SVG 글자. 카드에 가려지지 않게 왼쪽으로 비켜 두고(nx), 글자 쪽으로 살짝 아래 */
     var num = copy.querySelector('.num');
@@ -531,38 +592,112 @@ body.dev .ctl{display:flex}
       var ny = card ? (cq[1] + chh + Hc) / 2 - Hc / 2 : 0;
       num.style.transform = 'translateZ(' + (-R2 - 70) + 'px) translate3d(' + (-NW/2 + nx) + 'px,' + (-NH/2 + ny).toFixed(1) + 'px,0)';
       P.CH.push({el:num, th:0, a:1, num:true});
-      if(!P.video){
-        var v = document.createElement('video');
-        v.muted = true; v.loop = true; v.playsInline = true; v.preload = 'metadata'; v.className = 'vsrc';
-        v.setAttribute('aria-hidden', 'true'); v.src = card.getAttribute('data-src');
-        document.body.appendChild(v); P.video = v;
-      }
     }
   }
   PANELS.forEach(function(P){ splitText(P.copy); });
   layoutCopy(); addEventListener('resize', layoutCopy);
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(layoutCopy);   /* 폰트 도착 후 글자 폭이 바뀐다 */
 
-  /* 카드 영상 — 보이는 패널만 재생하고, 매 프레임 조각 캔버스에 나눠 그린다(cover 로 잘라서) */
+  /* 영상을 cover 로 잘라 조각 캔버스에 나눠 그린다. src 는 영상 또는 저해상도 캔버스(흐린 판) */
+  function drawCover(strips, mk, src, sw_, sh_, alpha){
+    var sc = Math.max(mk.w / sw_, mk.h / sh_), sW = mk.w / sc, sH = mk.h / sc, sx0 = (sw_ - sW) / 2, sy0 = (sh_ - sH) / 2;
+    for(var i = 0; i < strips.length; i++){
+      var s = strips[i]; s.ctx.globalAlpha = alpha;
+      s.ctx.drawImage(src, sx0 + s.i * mk.sw / sc, sy0, (mk.sw + mk.ov) / sc, sH, 0, 0, s.el.width, s.el.height);
+    }
+  }
+  /* 보이는 패널의 카드만 매 프레임 그린다. 포트폴리오는 문구 위 카드만 선명, 멀수록 저해상도 판을 덮어 흐리게 */
   var mediaRaf = null;
   function drawCards(){
-    var any = false;
+    var any = false, now = performance.now();
     PANELS.forEach(function(P){
-      if(!P.card || !P.on) return;
-      any = true;
-      var v = P.video; if(!v || v.readyState < 2) return;
-      var vw = v.videoWidth, vh = v.videoHeight, c = P.card;
-      var sc = Math.max(c.w / vw, c.h / vh), sW = c.w / sc, sH = c.h / sc, sx0 = (vw - sW) / 2, sy0 = (vh - sH) / 2;
-      P.strips.forEach(function(s){
-        s.ctx.drawImage(v, sx0 + s.i * c.sw / sc, sy0, (c.sw + c.ov) / sc, sH, 0, 0, s.el.width, s.el.height);
-      });
+      if(!P.on) return;
+      if(P.card){
+        any = true;
+        var v = P.video; if(v && v.readyState >= 2) drawCover(P.strips, P.card, v, v.videoWidth, v.videoHeight, 1);
+      }
+      if(P.pf){
+        any = true;
+        P.pf.cards.forEach(function(c){
+          var v = c.it.video; if(!v || v.readyState < 2 || c.hidden) return;
+          var d = Math.min(1, Math.abs(c.j - pfF));
+          if(d < 1) drawCover(c.strips, c.mk, v, v.videoWidth, v.videoHeight, 1);
+          if(d > 0){
+            var lo = c.it.lo, lh = Math.max(2, Math.round(48 * v.videoHeight / v.videoWidth));
+            if(lo.height !== lh){ lo.width = 48; lo.height = lh; }
+            lo.getContext('2d').drawImage(v, 0, 0, lo.width, lo.height);
+            drawCover(c.strips, c.mk, lo, lo.width, lo.height, d);
+          }
+        });
+      }
     });
+    if(tvA > 0 || glitchUntil > now){ any = true; drawTV(now); }
     mediaRaf = any ? requestAnimationFrame(drawCards) : null;
   }
   function setOn(P, on){
     if(P.on === on) return; P.on = on;
     if(P.video){ if(on){ var pr = P.video.play(); if(pr && pr.catch) pr.catch(function(){}); } else P.video.pause(); }
+    if(!on && P.pf) P.pf.cards.forEach(function(c){ if(c.it.video && !c.it.video.paused) c.it.video.pause(); });
     if(on && !mediaRaf) mediaRaf = requestAnimationFrame(drawCards);
+  }
+
+  /* ---------- 왼쪽 벽의 큰 스크린 — 격자 원통(R+2)에 붙인 TV. 포트폴리오 단계에서 문구 위 작업의 전체샷을 튼다.
+     켜질 때와 작업이 바뀔 때 지지직(가로 띠 어긋남 + 흰 점 노이즈), 주사선, 자막 ---------- */
+  var tvEl = document.getElementById('tv'), TV = null, tvA = 0, glitchUntil = 0, tvItem = 0;
+  function buildTV(){
+    if(!tvEl) return;
+    tvEl.innerHTML = '';
+    var narrow = innerWidth <= 900, R = +cR.value + 2;
+    var w = narrow ? 620 : 1000, h = narrow ? 400 : 640, ang = narrow ? 58 : 62, y = narrow ? -90 : -130;
+    TV = makeStrips(tvEl, w, h, -w/2, y - h/2, R); TV.scan = null; TV.shown = false;
+    tvEl.style.transform = 'rotateY(' + ang + 'deg)';              /* 스크린 중심각 — 왼쪽 벽 */
+  }
+  function drawTV(now){
+    if(!TV) return;
+    var it = PF[tvItem], v = it && it.video, g = glitchUntil > now, strips = TV.strips, dpr = TV.dpr;
+    if(!TV.scan){
+      var sc = document.createElement('canvas'); sc.width = 2; sc.height = 3;
+      var x = sc.getContext('2d'); x.fillStyle = 'rgba(0,0,0,.26)'; x.fillRect(0, 0, 2, 1);
+      TV.scan = strips[0].ctx.createPattern(sc, 'repeat');
+    }
+    var ready = !!(v && v.readyState >= 2), vw = ready ? v.videoWidth : 16, vh = ready ? v.videoHeight : 9;
+    var s2 = Math.min(TV.w / vw, TV.h / vh), dw = vw * s2, dh = vh * s2, dx = (TV.w - dw) / 2, dy = (TV.h - dh) / 2;
+    var bands = 7, bh = TV.h / bands, offs = [];
+    for(var b = 0; b < bands; b++) offs.push(g && Math.random() < .7 ? (Math.random() - .5) * 70 : 0);
+    var flick = g ? 0.75 + Math.random() * .35 : 1;
+    for(var i = 0; i < strips.length; i++){
+      var s = strips[i], c = s.ctx, ox = -i * TV.sw;
+      c.setTransform(dpr, 0, 0, dpr, 0, 0); c.globalAlpha = 1;
+      c.fillStyle = '#0f1116'; c.fillRect(0, 0, TV.sw + TV.ov, TV.h);
+      if(ready){
+        c.globalAlpha = flick;
+        if(g){
+          for(b = 0; b < bands; b++){
+            c.save(); c.beginPath(); c.rect(0, b * bh, TV.sw + TV.ov, bh + 1); c.clip();
+            c.drawImage(v, dx + ox + offs[b], dy, dw, dh); c.restore();
+          }
+          c.globalAlpha = 1;
+          for(var k = 0; k < 26; k++){
+            c.fillStyle = 'rgba(255,255,255,' + (Math.random() * .45).toFixed(2) + ')';
+            c.fillRect(Math.random() * TV.sw, Math.random() * TV.h, 2 + Math.random() * 26, 1 + Math.random() * 1.5);
+          }
+        } else c.drawImage(v, dx + ox, dy, dw, dh);
+        c.globalAlpha = 1;
+      }
+      c.fillStyle = TV.scan; c.fillRect(0, 0, TV.sw + TV.ov, TV.h);    /* 주사선 */
+      if(it){                                                           /* 자막 */
+        c.fillStyle = 'rgba(255,255,255,.92)'; c.font = '600 ' + Math.round(TV.w * .022) + 'px "JetBrains Mono",monospace';
+        c.fillText(it.title, 44 + ox, TV.h - 50);
+        c.fillStyle = 'rgba(255,255,255,.55)'; c.font = '400 ' + Math.round(TV.w * .015) + 'px "JetBrains Mono",monospace';
+        c.fillText(it.cat.toUpperCase(), 44 + ox, TV.h - 50 + Math.round(TV.w * .024));
+        c.fillStyle = g ? 'rgba(255,80,80,.9)' : 'rgba(255,80,80,.75)';
+        c.beginPath(); c.arc(TV.w - 60 + ox, 44, 6, 0, Math.PI * 2); c.fill();
+        c.fillStyle = 'rgba(255,255,255,.7)'; c.font = '500 ' + Math.round(TV.w * .014) + 'px "JetBrains Mono",monospace';
+        c.fillText('ON AIR', TV.w - 44 - 64 - 24 + ox, 49);
+      }
+      s.el.style.opacity = tvA.toFixed(3);
+    }
+    TV.shown = tvA > 0;
   }
 
   /* ---------- 스크롤 = 단계 넘기기. 휠 한 번(또는 스와이프·방향키) = 정확히 한 단계, 강한 ease-in-out 으로 딱 멈춘다 ---------- */
@@ -583,10 +718,15 @@ body.dev .ctl{display:flex}
   }
   function go(dir){
     var now = performance.now();
-    if(anim || now < lockUntil) return;      /* 넘어가는 중이거나 트랙패드 관성 구간이면 무시 */
+    if(anim || panim || now < lockUntil) return;      /* 넘어가는 중이거나 트랙패드 관성 구간이면 무시 */
+    if(stage === PF_STAGE){                            /* 포트폴리오 안에서는 한 장씩 */
+      var ni = pfIdx + dir;
+      if(ni >= 0 && ni < PF.length){ panim = {from:pfF, to:ni, t0:now, dur:reduce ? 0 : 650, sw:false}; kick(); return; }
+    }
     var to = Math.max(0, Math.min(LAST, stage + dir));
     if(to === stage) return;
     target = to;
+    if(to === PF_STAGE){ pfIdx = dir > 0 ? 0 : PF.length - 1; pfF = pfIdx; tvItem = pfIdx; }   /* 들어오는 방향의 첫 장부터 */
     anim = {from:spin, to:to * SPAN, t0:now, dur:reduce ? 0 : 1000};
     kick();
   }
@@ -623,7 +763,16 @@ body.dev .ctl{display:flex}
     if(anim){
       var k = anim.dur ? Math.min(1, (now - anim.t0) / anim.dur) : 1;
       spin = anim.from + (anim.to - anim.from) * bez(k);
-      if(k >= 1){ spin = anim.to; stage = target; anim = null; lockUntil = now + 300; arrivedAt = now; }   /* 뒤따르는 관성 휠 흡수 */
+      if(k >= 1){
+        spin = anim.to; stage = target; anim = null; lockUntil = now + 300; arrivedAt = now;   /* 뒤따르는 관성 휠 흡수 */
+        if(stage === PF_STAGE) glitchUntil = now + 420;                                        /* 스크린이 켜지며 지지직 */
+      }
+    }
+    if(panim){                                                       /* 포트폴리오 한 장 넘기기 — 줄이 한 칸 돈다 */
+      var kk = panim.dur ? Math.min(1, (now - panim.t0) / panim.dur) : 1;
+      pfF = panim.from + (panim.to - panim.from) * bez(kk);
+      if(kk >= .5 && !panim.sw){ panim.sw = true; tvItem = panim.to; glitchUntil = now + 320; }   /* 반쯤 돌면 스크린이 다음 작업으로 */
+      if(kk >= 1){ pfF = panim.to; pfIdx = panim.to; panim = null; lockUntil = now + 250; }
     }
     cx += (mx - cx) * 0.055;
     cy += (my - cy) * 0.055;
@@ -642,7 +791,13 @@ body.dev .ctl{display:flex}
     /* 패널 — 원통과 같은 각도(spin)만큼 축 둘레를 돈다. 글자·카드 조각은 각자 제 각도로 벽에 붙어 있으므로 궤도만 돌린다.
        글자 불투명도는 조각의 절대 각도로: 오른쪽(-75°)에선 0 → 왼쪽으로 올수록 보이고, 왼쪽 뒤(80°~120°)로 빠지며 사라진다.
        카드는 문구가 완전히 왼쪽에 서야(단계 도착) 떠오르고(ease-out ≈ 지수 접근), 떠나기 시작하면 바로 사라진다 */
-    var settling = false;
+    var settling = !!panim || glitchUntil > now;
+    /* 스크린 — 포트폴리오 단계에 도착하면 켜지고(지수 접근), 떠나면 꺼진다 */
+    var tvT = (!anim && stage === PF_STAGE && now - arrivedAt > 150) ? 1 : 0;
+    tvA += (tvT - tvA) * (1 - Math.exp(-dt / (tvT ? 180 : 80)));
+    if(Math.abs(tvA - tvT) < 0.003) tvA = tvT; else settling = true;
+    if(tvA > 0 && !mediaRaf) mediaRaf = requestAnimationFrame(drawCards);
+    if(tvA === 0 && TV && TV.shown){ TV.strips.forEach(function(s){ s.el.style.opacity = 0; }); TV.shown = false; }
     PANELS.forEach(function(P){
       var base = C.th0 + spin - P.k * SPAN;
       var vis = spin > 0 && base > -126 && base < 200;
@@ -655,7 +810,7 @@ body.dev .ctl{display:flex}
       if(Math.abs(P.ca - ct) < 0.003) P.ca = ct; else settling = true;
       if(ctN && !ct) settling = true;                                /* 카드 지연 대기 중에도 프레임 유지 */
       if(!vis) return;
-      P.el.style.transform = 'translate3d(' + (C.X + cx * 14).toFixed(1) + 'px,' + ((P.k ? C.Ys : C.Y) + cy * 8).toFixed(1) +
+      P.el.style.transform = 'translate3d(' + (C.X + cx * 14).toFixed(1) + 'px,' + ((P.k ? (P.pf ? C.Yp : C.Ys) : C.Y) + cy * 8).toFixed(1) +
         'px,0) rotateY(' + base.toFixed(2) + 'deg)';
       if(base !== P.lastBase || P.ca !== prev || P.nt !== prevN){
         P.lastBase = base;
@@ -665,10 +820,30 @@ body.dev .ctl{display:flex}
           else c.el.style.opacity = (c.strip ? P.ca * v : 0.85 * v).toFixed(3);
         }
       }
+      /* 포트폴리오 줄 — 카드 j 는 문구 위(0)에서 오른쪽으로 j-pfF 칸. 도착하면 순서대로 촤르륵(70ms 간격), 각도 가시성은 글자와 같은 규칙.
+         문구 위 카드와 이웃만 재생, 나머지는 첫 프레임 */
+      if(P.pf){
+        var F = P.pf, stag = now - arrivedAt;
+        F.cards.forEach(function(c){
+          var th = -(c.j - pfF) * F.pitch;
+          if(th !== c.th){ c.th = th; c.pivot.style.transform = 'rotateY(' + th.toFixed(3) + 'deg)'; }
+          var ramp = P.nt ? ss(0, 1, (stag - 220 - c.j * 70) / 300) : 0, anyv = false;
+          for(var i2 = 0; i2 < c.strips.length; i2++){
+            var s = c.strips[i2], a2 = base + th + s.th, o = P.ca * ramp * ss(-75, -5, a2) * (1 - ss(80, 120, a2));
+            if(o > 0.002) anyv = true;
+            s.el.style.opacity = o.toFixed(3);
+          }
+          c.hidden = !anyv;
+          var v2 = c.it.video, want = P.on && Math.abs(c.j - pfIdx) <= 1;
+          if(v2){ if(want && v2.paused){ var pr = v2.play(); if(pr && pr.catch) pr.catch(function(){}); } else if(!want && !v2.paused) v2.pause(); }
+        });
+        if(P.nt && stag < 220 + PF.length * 70 + 320) settling = true;
+      }
     });
     /* 눈금자 — 현재 위치 선과 가까운 단계 표시 */
     if(cur){
-      cur.style.transform = 'translateY(' + (spin / (LAST * SPAN) * ruler.clientHeight).toFixed(1) + 'px)';
+      var prog = spin / SPAN + ((stage === PF_STAGE && !anim) ? pfF / PF.length : 0);
+      cur.style.transform = 'translateY(' + (prog / LAST * ruler.clientHeight).toFixed(1) + 'px)';
       var near = Math.round(spin / SPAN);
       stEls.forEach(function(el, i){ el.classList.toggle('on', i === near); });
     }

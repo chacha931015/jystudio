@@ -152,6 +152,15 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
 .copy .strip{position:absolute;left:0;top:0;transform-origin:0 0 0;backface-visibility:hidden;opacity:0;
   will-change:transform,opacity}
 .copy.flat .strip{display:none}
+/* 큰 번호 — 내용물 뒤에 회색 빗금으로. 한 장짜리 평면이라 패널 뒤쪽 현(-R2-70)에 붙여 가장자리가 글자 앞으로 나오지 않게 한다.
+   처음 설 때 빗금이 비스듬히 쓸려 들어온다(clip-path 와이프, 등장이므로 ease-out) */
+.copy .num{position:absolute;left:0;top:0;transform-origin:0 0 0;backface-visibility:hidden;opacity:0;
+  will-change:transform,opacity;clip-path:polygon(-40% 0,-10% 0,-40% 100%,-70% 100%);
+  transition:clip-path 800ms cubic-bezier(.23,1,.32,1)}
+.copy .num.in{clip-path:polygon(-40% 0,140% 0,110% 100%,80% 100%)}
+.copy .num svg{display:block}
+.copy.flat .num{display:none}
+@media(prefers-reduced-motion:reduce){.copy .num{transition:none}}
 .copy.svc h2{font-family:"Figtree",sans-serif;font-size:3.4rem;letter-spacing:-.03em;line-height:1.1}
 .copy.svc .sub{font-family:"Noto Sans KR",sans-serif;font-weight:700;font-size:1.6rem;color:#3a3f4c;margin-top:12px}
 .copy.svc p{font-size:1.7rem;line-height:1.6;margin-top:8px}
@@ -173,7 +182,7 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
 
 /* 눈금자 — 오른쪽 벽에 붙은 자. 오른쪽 끝을 축으로 안쪽으로 꺾여 벽을 따라간다.
    단계(STAGES)마다 긴 눈금 + 번호, 현재 위치 선이 스크롤 진행도만큼 내려간다 */
-.ruler{position:absolute;right:28px;top:50%;width:150px;height:400px;
+.ruler{position:absolute;right:28px;top:50%;width:150px;height:300px;
   transform:translateY(-50%) rotateY(-38deg);transform-origin:100% 50%;backface-visibility:hidden;
   font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.14em;color:#8a8e99;
   opacity:0;transition:opacity 600ms cubic-bezier(.23,1,.32,1) 1300ms}
@@ -187,7 +196,7 @@ body.stage2 .ruler{opacity:1}
 .ruler .st.on{color:#0e1014}
 .ruler .st::after{content:"";position:absolute;left:100%;margin-left:8px;top:50%;width:26px;height:1px;background:#0e1014}
 .ruler .cur{position:absolute;right:0;top:-1px;width:34px;height:2px;background:#0e1014;will-change:transform}
-@media(max-height:700px){.ruler{height:300px}}
+@media(max-height:700px){.ruler{height:150px}}
 @media(max-width:900px){.ruler{right:12px;font-size:9px}}
 
 /* ================= 파트너 마퀴 (메인 사이트와 같은 연출) =================
@@ -250,16 +259,14 @@ body.dev .ctl{display:flex}
     </div></div>
     <!-- 서비스 — 카드(예시 영상, 둥근 사각형 마스크)가 문구 위에. data-src 만 바꾸면 영상이 바뀐다 -->
     <div class="orbit" data-k="1"><div class="copy svc">
+      <div class="num" data-n="01"></div>
       <div class="card" data-src="media/1785750371689-_NIKKE_Laplace_.mp4" style="width:280px;height:398px"></div>
       <div class="txt"><h2>Portrait illustration</h2><div class="sub">포트레이트 일러스트</div><p>대기 및 상호작용, 일러스트 애니메이션 전반</p></div>
     </div></div>
     <div class="orbit" data-k="2"><div class="copy svc">
+      <div class="num" data-n="02"></div>
       <div class="card" data-src="media/1785168423777-Idle.webm" style="width:460px;height:352px"></div>
-      <div class="txt"><h2>In-Game Character</h2><div class="sub">인게임 LD / SD 캐릭터</div><p>인게임 대기 및 이동 전투 등 모션 전반</p></div>
-    </div></div>
-    <div class="orbit" data-k="3"><div class="copy svc">
-      <div class="card" data-src="media/1785483415024-__skill1_2.webm" style="width:480px;height:382px"></div>
-      <div class="txt"><h2>UI, Cutscene</h2><div class="sub">UI / 연출 / 컷신</div><p>게임에 사용되는 연출 전반</p></div>
+      <div class="txt"><h2>In-Game Character</h2><div class="sub">인게임 LD / SD 캐릭터 · UI / 연출 / 컷신</div><p>인게임 대기 및 이동 전투 등 모션 전반, 게임에 사용되는 연출 전반</p></div>
     </div></div>
     <div class="ruler" id="ruler"></div>
   </div>
@@ -412,7 +419,7 @@ body.dev .ctl{display:flex}
   fitRig(); addEventListener('resize', fitRig);
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(fitRig);   /* 폰트 도착 후 글자 박스가 바뀐다 */
   /* ---------- 단계 — 스크롤(원통 회전각)으로 진행. 한 단계 = SPAN 도 ---------- */
-  var STAGES = [['01','JY STUDIO'],['02','ABOUT'],['03','PORTRAIT'],['04','IN-GAME'],['05','UI / CUTSCENE']];
+  var STAGES = [['01','JY STUDIO'],['02','ABOUT'],['03','PORTRAIT'],['04','IN-GAME']];
   var SPAN = 155, LAST = STAGES.length - 1;   /* 패널이 도는 각도 = 원통이 도는 각도. 전체 = LAST*SPAN */
   var ruler = document.getElementById('ruler'), cur = null, stEls = [];
   if(ruler){
@@ -427,7 +434,7 @@ body.dev .ctl{display:flex}
      R2 는 격자 원통(780)보다 안쪽. X 는 궤도 축을 왼쪽으로 조금 민 것, Y/Ys 는 궤도 높이(본문/서비스) */
   var C = {};
   var PANELS = [].slice.call(document.querySelectorAll('.deck .orbit')).map(function(o){
-    return {el:o, copy:o.querySelector('.copy'), k:+o.dataset.k, CH:[], wraps:[], strips:[], card:null, video:null, lastBase:null, on:false, ca:0};
+    return {el:o, copy:o.querySelector('.copy'), k:+o.dataset.k, CH:[], wraps:[], strips:[], card:null, video:null, lastBase:null, on:false, ca:0, nt:false};
   });
   function layoutCopy(){
     var W = innerWidth, Hh = innerHeight, narrow = W <= 900;
@@ -503,6 +510,19 @@ body.dev .ctl{display:flex}
       }
       P.card = {w:cw, h:chh, n:n, sw:sw, ov:ov};
       P.CH = P.CH.concat(P.strips);                                   /* 불투명도는 글자와 같은 규칙 */
+    }
+    /* 큰 번호 — 빗금 패턴으로 채운 SVG 글자. 패널 가운데, 글자 쪽으로 살짝 아래 */
+    var num = copy.querySelector('.num');
+    if(num){
+      var NW = W, NH = 560, id = 'hatch' + P.k;
+      num.style.width = NW + 'px'; num.style.height = NH + 'px';
+      num.innerHTML = '<svg viewBox="0 0 ' + NW + ' ' + NH + '" width="' + NW + '" height="' + NH + '"><defs>' +
+        '<pattern id="' + id + '" width="11" height="11" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">' +
+        '<line x1="0" y1="0" x2="0" y2="11" stroke="#b3b8c3" stroke-width="2.2"/></pattern></defs>' +
+        '<text x="50%" y="50%" dy=".35em" text-anchor="middle" font-family="Figtree,sans-serif" font-weight="900" font-size="460" ' +
+        'letter-spacing="-.04em" fill="url(#' + id + ')" stroke="#c9cdd6" stroke-width="2">' + num.getAttribute('data-n') + '</text></svg>';
+      num.style.transform = 'translateZ(' + (-R2 - 70) + 'px) translate3d(' + (-NW/2) + 'px,' + (-NH/2 + 30) + 'px,0)';
+      P.CH.push({el:num, th:0, a:1, num:true});
       if(!P.video){
         var v = document.createElement('video');
         v.muted = true; v.loop = true; v.playsInline = true; v.preload = 'metadata'; v.className = 'vsrc';
@@ -539,7 +559,7 @@ body.dev .ctl{display:flex}
 
   /* ---------- 스크롤 = 단계 넘기기. 휠 한 번(또는 스와이프·방향키) = 정확히 한 단계, 강한 ease-in-out 으로 딱 멈춘다 ---------- */
   var spin = 0, ready = false;               /* 원통 회전각 = 단계 × SPAN */
-  var stage = 0, target = 0, anim = null, lockUntil = 0;   /* anim = {from,to,t0,dur} */
+  var stage = 0, target = 0, anim = null, lockUntil = 0, arrivedAt = 0;   /* anim = {from,to,t0,dur} */
   var mx = 0, my = 0, cx = 0, cy = 0;        /* 마우스 흔들림 */
   var raf = null, lastT = 0;
   /* cubic-bezier(.77,0,.175,1) — 화면 내 이동용 강한 ease-in-out (뉴턴법으로 x→t 를 푼다) */
@@ -595,7 +615,7 @@ body.dev .ctl{display:flex}
     if(anim){
       var k = anim.dur ? Math.min(1, (now - anim.t0) / anim.dur) : 1;
       spin = anim.from + (anim.to - anim.from) * bez(k);
-      if(k >= 1){ spin = anim.to; stage = target; anim = null; lockUntil = now + 300; }   /* 뒤따르는 관성 휠 흡수 */
+      if(k >= 1){ spin = anim.to; stage = target; anim = null; lockUntil = now + 300; arrivedAt = now; }   /* 뒤따르는 관성 휠 흡수 */
     }
     cx += (mx - cx) * 0.055;
     cy += (my - cy) * 0.055;
@@ -620,17 +640,21 @@ body.dev .ctl{display:flex}
       var vis = spin > 0 && base > -126 && base < 200;
       P.el.style.visibility = vis ? 'visible' : 'hidden';
       setOn(P, vis && base > -95 && base < 125);
-      var ct = (!anim && stage === P.k + 1) ? 1 : 0, prev = P.ca;
+      /* 도착하면 번호 빗금이 먼저 쓸려 들어오고(클래스), 220ms 뒤 카드가 떠오른다 */
+      var ctN = !anim && stage === P.k + 1, ct = (ctN && now - arrivedAt > 220) ? 1 : 0, prev = P.ca, prevN = P.nt;
+      P.nt = ctN;
       P.ca += (ct - P.ca) * (1 - Math.exp(-dt / (ct ? 140 : 60)));
       if(Math.abs(P.ca - ct) < 0.003) P.ca = ct; else settling = true;
+      if(ctN && !ct) settling = true;                                /* 카드 지연 대기 중에도 프레임 유지 */
       if(!vis) return;
       P.el.style.transform = 'translate3d(' + (C.X + cx * 14).toFixed(1) + 'px,' + ((P.k ? C.Ys : C.Y) + cy * 8).toFixed(1) +
         'px,0) rotateY(' + base.toFixed(2) + 'deg)';
-      if(base !== P.lastBase || P.ca !== prev){
+      if(base !== P.lastBase || P.ca !== prev || P.nt !== prevN){
         P.lastBase = base;
         for(var i = 0; i < P.CH.length; i++){
           var c = P.CH[i], a = base + c.th, v = ss(-75, -5, a) * (1 - ss(80, 120, a));
-          c.el.style.opacity = (c.strip ? P.ca * v : 0.85 * v).toFixed(3);
+          if(c.num){ c.el.style.opacity = (P.nt ? v : 0).toFixed(3); c.el.classList.toggle('in', !!P.nt); }
+          else c.el.style.opacity = (c.strip ? P.ca * v : 0.85 * v).toFixed(3);
         }
       }
     });

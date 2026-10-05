@@ -83,7 +83,10 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
   transition:opacity 600ms cubic-bezier(.23,1,.32,1) 420ms,
              transform 700ms cubic-bezier(.23,1,.32,1) 420ms}
 .mark.stage2 .rigpos{opacity:1;transform:translate(var(--rx),var(--ry)) scale(var(--rk))}
-.rig{position:relative;width:1300px;height:1209px;transform-origin:50% 100%}
+/* 래퍼는 0x0 점으로 두고 리그를 그 점 중심에 절대배치한다 — 1300px 레이아웃 박스가
+   글자 칸을 넓혀 좁은 화면에서 글자를 밀어내던 문제를 막는다 */
+.rigpos{position:relative;width:0;height:0}
+.rig{position:absolute;left:-650px;top:-604.5px;width:1300px;height:1209px;transform-origin:50% 100%}
 /* 숨쉬기 — 몸 전체가 아주 조금 오르내린다. 마우스 반응은 자식의 transform 이라 충돌 없음 */
 .rig-breathe{position:absolute;inset:0;animation:rigbreathe 4.6s ease-in-out infinite}
 @keyframes rigbreathe{0%,100%{translate:0 0}50%{translate:0 -6px}}
@@ -106,7 +109,10 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
 @keyframes readnod{0%,100%{rotate:0deg}40%{rotate:.9deg}70%{rotate:-.5deg}}
 .rig img.book{animation:bookbob 5.4s ease-in-out infinite}
 @keyframes bookbob{0%,100%{rotate:0deg;translate:0 0}40%{rotate:-.7deg;translate:0 2px}70%{rotate:.4deg;translate:0 -1px}}
-@media(max-width:900px){.rigpos{--rx:0;--ry:-14vw;--rk:.16}}
+@media(max-width:900px){
+  .rigpos{--rx:0;--ry:-14vw;--rk:.16}
+  .title{white-space:normal;text-wrap:balance}      /* 좁은 화면에선 첫 제목이 줄바꿈되게 */
+}
 @media(prefers-reduced-motion:reduce){
   .rigpos{transition:opacity 200ms ease}
   .mark.stage2 .rigpos{transform:translate(var(--rx),var(--ry)) scale(var(--rk))}

@@ -140,7 +140,7 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
 /* 글자를 한 자씩 원통 표면에 붙인다 — 각 글자가 제 각도(θ_i = -x_i/R2)로 축을 바라보므로 글줄이 벽을 따라 휜다.
    .flat 은 측정용: 평면으로 흘려 놓고 각 글자의 자리를 잰 뒤 그 자리를 각도로 바꾼다.
    조상에 opacity/overflow 가 있으면 3D 가 평면으로 눌리므로 불투명도는 글자마다 준다 */
-.copy{position:absolute;left:0;top:0;width:820px;transform-style:preserve-3d}
+.copy{position:absolute;left:0;top:0;width:900px;transform-style:preserve-3d}
 /* .ch = 원본 글자(평면 측정용, 3D 모드에선 숨김). .c3 = 3D 복제본 — 같은 태그의 빈 래퍼(.c3w, 축점 0x0) 안에
    절대배치한다. 원본 h2/p 안에 절대배치하면 preserve-3d 가 걸린 h2/p 가 기준 상자가 되어 그 위치만큼 밀린다 */
 .copy .ch{white-space:pre}
@@ -152,7 +152,7 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
    둥근 사각형 마스크를 조각별로 나눠 쓴다 → 카드가 글자처럼 벽을 따라 휜다 */
 .copy .card,.copy .row{display:block;margin:0 auto 22px}      /* .row = 포트폴리오 줄의 측정 상자(카드 한 장 크기) */
 /* 서비스 패널은 좁고 가운데 정렬 — 왼쪽 끝으로 뻗으면 카메라 옆(가까운 쪽)에서 너무 커지고 화면 밖으로 밀린다 */
-.copy.svc,.copy.pf{width:760px;text-align:center}
+.copy.svc,.copy.pf{width:840px;text-align:center}
 .copy:not(.flat) .card,.copy:not(.flat) .row{visibility:hidden}
 /* 포트폴리오 카드 j 의 축 — 궤도 축점에 매달아 rotateY 로만 줄을 돌린다 */
 .copy .pfcard{position:absolute;left:0;top:0;width:0;height:0;transform-origin:0 0 0;transform-style:preserve-3d}
@@ -169,9 +169,9 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
 .copy .num svg{display:block}
 .copy.flat .num{display:none}
 @media(prefers-reduced-motion:reduce){.copy .num{transition:none}}
-.copy.svc h2,.copy.pf h2{font-family:"Figtree",sans-serif;font-size:3.4rem;letter-spacing:-.03em;line-height:1.1}
-.copy.svc .sub,.copy.pf .sub{font-family:"Noto Sans KR",sans-serif;font-weight:700;font-size:1.6rem;color:#3a3f4c;margin-top:12px}
-.copy.svc p{font-size:1.7rem;line-height:1.6;margin-top:8px}
+.copy.svc h2,.copy.pf h2{font-family:"Figtree",sans-serif;font-size:3.75rem;letter-spacing:-.03em;line-height:1.1}
+.copy.svc .sub,.copy.pf .sub{font-family:"Noto Sans KR",sans-serif;font-weight:700;font-size:1.75rem;color:#3a3f4c;margin-top:12px}
+.copy.svc p{font-size:1.85rem;line-height:1.6;margin-top:8px}
 .vsrc{position:absolute;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none}
 /* 왼쪽 벽의 큰 스크린 — room 안, tube 앞 순서라 격자 뒤에 그려진다. 세로 조각으로 격자 원통(R+2)에 붙는다 */
 .tv{position:absolute;left:50%;top:50%;width:0;height:0;transform-origin:0 0 0;transform-style:preserve-3d}
@@ -179,9 +179,9 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
 /* 배경 가장자리를 흰색에 녹이는 2D 덮개 — 스크린 위, 격자 아래. 조각마다 반투명 마스크를 겹치면 이음매가 생겨서 여기서 한 번에 */
 .tvfade{position:absolute;inset:0;pointer-events:none;
   background:radial-gradient(ellipse 46% 62% at 30% 50%,transparent 32%,rgba(255,255,255,.7) 62%,#fff 86%)}
-.copy h2{font-family:"Noto Sans KR",sans-serif;font-weight:900;font-size:3rem;
+.copy h2{font-family:"Noto Sans KR",sans-serif;font-weight:900;font-size:3.3rem;
   line-height:1.3;letter-spacing:-.02em;color:#0e1014;word-break:keep-all}
-.copy p{font-family:"Noto Sans KR",sans-serif;font-weight:400;font-size:1.45rem;
+.copy p{font-family:"Noto Sans KR",sans-serif;font-weight:400;font-size:1.6rem;
   line-height:1.75;color:#5b6070;margin-top:20px;word-break:keep-all}
 @media(max-width:900px){
   .copy{width:640px;text-align:center}
@@ -471,8 +471,9 @@ body.dev .ctl{display:flex}
   function layoutCopy(){
     var W = innerWidth, Hh = innerHeight, narrow = W <= 900;
     /* Y/Ys/Yp = 본문·서비스·포트폴리오 궤도 높이, k = 카드 축소율 */
-    if(narrow){ C = {R2:560, th0:-143, X:0,       Y:Hh*0.18, Ys:Hh*0.14, Yp:Hh*0.3,  mx:0,      my:-Hh*0.16, k:.7}; }
-    else      { C = {R2:560, th0:-117, X:-W*0.06, Y:Hh*0.16, Ys:Hh*0.12, Yp:Hh*0.34, mx:W*0.16, my:0,        k:1}; }
+    /* R2 는 반드시 원근 거리(600)보다 커야 한다 — 작으면 카메라가 안쪽 원통 밖에 있게 되어 글줄·카드가 격자와 반대로 휜다 */
+    if(narrow){ C = {R2:700, th0:-143, X:0,       Y:Hh*0.18, Ys:Hh*0.14, Yp:Hh*0.3,  mx:0,      my:-Hh*0.16, k:.77}; }
+    else      { C = {R2:700, th0:-117, X:-W*0.06, Y:Hh*0.16, Ys:Hh*0.12, Yp:Hh*0.34, mx:W*0.16, my:0,        k:1.1}; }
     PANELS.forEach(curvePanel); buildTV();
     /* 복제본이 새로 생겼으니(불투명도 0) 다음 프레임에 각도별 불투명도를 다시 입힌다 — 폰트 도착·리사이즈 뒤에도 글이 남아 있게 */
     PANELS.forEach(function(P){ P.lastBase = null; });

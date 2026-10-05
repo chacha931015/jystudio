@@ -424,12 +424,12 @@ body.dev .ctl{display:flex}
      R2 는 격자 원통(780)보다 안쪽. X 는 궤도 축을 왼쪽으로 조금 민 것, Y/Ys 는 궤도 높이(본문/서비스) */
   var C = {};
   var PANELS = [].slice.call(document.querySelectorAll('.deck .orbit')).map(function(o){
-    return {el:o, copy:o.querySelector('.copy'), k:+o.dataset.k, CH:[], wraps:[], strips:[], card:null, video:null, lastBase:null, on:false};
+    return {el:o, copy:o.querySelector('.copy'), k:+o.dataset.k, CH:[], wraps:[], strips:[], card:null, video:null, lastBase:null, on:false, ca:0};
   });
   function layoutCopy(){
     var W = innerWidth, Hh = innerHeight, narrow = W <= 900;
-    if(narrow){ C = {R2:560, th0:-143, X:0,       Y:Hh*0.22, Ys:Hh*0.18, mx:0,      my:-Hh*0.16}; }
-    else      { C = {R2:560, th0:-117, X:-W*0.06, Y:Hh*0.27, Ys:Hh*0.2,  mx:W*0.12, my:0}; }
+    if(narrow){ C = {R2:560, th0:-143, X:0,       Y:Hh*0.18, Ys:Hh*0.14, mx:0,      my:-Hh*0.16}; }
+    else      { C = {R2:560, th0:-117, X:-W*0.06, Y:Hh*0.16, Ys:Hh*0.12, mx:W*0.16, my:0}; }
     PANELS.forEach(curvePanel);
     /* 복제본이 새로 생겼으니(불투명도 0) 다음 프레임에 각도별 불투명도를 다시 입힌다 — 폰트 도착·리사이즈 뒤에도 글이 남아 있게 */
     PANELS.forEach(function(P){ P.lastBase = null; });
@@ -496,7 +496,7 @@ body.dev .ctl{display:flex}
         cv.style.transform = 'rotateY(' + th.toFixed(3) + 'deg) translateZ(' + (-R2) + 'px) translate3d(' +
           (-sw/2).toFixed(2) + 'px,' + (cq[1] - Hc/2).toFixed(1) + 'px,0)';
         copy.appendChild(cv);
-        P.strips.push({el:cv, th:th, i:i, ctx:cv.getContext('2d'), a:1});
+        P.strips.push({el:cv, th:th, i:i, ctx:cv.getContext('2d'), a:1, strip:true});
       }
       P.card = {w:cw, h:chh, n:n, sw:sw, ov:ov};
       P.CH = P.CH.concat(P.strips);                                   /* 불투명도는 글자와 같은 규칙 */
@@ -534,26 +534,51 @@ body.dev .ctl{display:flex}
     if(on && !mediaRaf) mediaRaf = requestAnimationFrame(drawCards);
   }
 
-  var spin = 0, vel = 0, ready = false;      /* 스크롤 회전 */
+  /* ---------- 스크롤 = 단계 넘기기. 휠 한 번(또는 스와이프·방향키) = 정확히 한 단계, 강한 ease-in-out 으로 딱 멈춘다 ---------- */
+  var spin = 0, ready = false;               /* 원통 회전각 = 단계 × SPAN */
+  var stage = 0, target = 0, anim = null, lockUntil = 0;   /* anim = {from,to,t0,dur} */
   var mx = 0, my = 0, cx = 0, cy = 0;        /* 마우스 흔들림 */
-  var raf = null;
-
+  var raf = null, lastT = 0;
+  /* cubic-bezier(.77,0,.175,1) — 화면 내 이동용 강한 ease-in-out (뉴턴법으로 x→t 를 푼다) */
+  function bez(t){
+    var x1 = .77, x2 = .175, u = t;
+    for(var i = 0; i < 6; i++){
+      var x = 3*(1-u)*(1-u)*u*x1 + 3*(1-u)*u*u*x2 + u*u*u - t;
+      var dx = 3*(1-u)*(1-u)*x1 + 6*(1-u)*u*(x2-x1) + 3*u*u*(1-x2);
+      if(Math.abs(dx) < 1e-6) break;
+      u = Math.max(0, Math.min(1, u - x/dx));
+    }
+    return 3*(1-u)*u*u + u*u*u;              /* y1 = 0, y2 = 1 */
+  }
+  function go(dir){
+    var now = performance.now();
+    if(anim || now < lockUntil) return;      /* 넘어가는 중이거나 트랙패드 관성 구간이면 무시 */
+    var to = Math.max(0, Math.min(LAST, stage + dir));
+    if(to === stage) return;
+    target = to;
+    anim = {from:spin, to:to * SPAN, t0:now, dur:reduce ? 0 : 1000};
+    kick();
+  }
   addEventListener('wheel', function(e){
     e.preventDefault();
-    vel += e.deltaY * 0.03;
-    kick();
+    if(Math.abs(e.deltaY) < 6) return;
+    go(e.deltaY > 0 ? 1 : -1);
   }, {passive:false});
-  /* 터치 — 손가락을 끌면 같은 방향으로 */
+  /* 터치 — 위로 쓸면 다음 단계 */
   var ty = null;
   addEventListener('touchstart', function(e){ ty = e.touches[0].clientY; }, {passive:true});
-  addEventListener('touchmove', function(e){
+  addEventListener('touchend', function(e){
     if(ty === null) return;
-    var y = e.touches[0].clientY; vel += (ty - y) * 0.07; ty = y; kick();
+    var dy = ty - e.changedTouches[0].clientY; ty = null;
+    if(Math.abs(dy) > 40) go(dy > 0 ? 1 : -1);
   }, {passive:true});
-  addEventListener('touchend', function(){ ty = null; }, {passive:true});
+  addEventListener('keydown', function(e){
+    if(e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' '){ e.preventDefault(); go(1); }
+    else if(e.key === 'ArrowUp' || e.key === 'PageUp'){ e.preventDefault(); go(-1); }
+  });
 
   addEventListener('mousemove', function(e){
-    if(reduce) return;                       /* 모션 줄임: 마우스 흔들림은 빼고 스크롤 진행만 */
+    if(reduce) return;                       /* 모션 줄임: 마우스 흔들림은 빼고 단계 넘기기만 */
     mx = (e.clientX - innerWidth/2) / (innerWidth/2);
     my = (e.clientY - innerHeight/2) / (innerHeight/2);
     kick();
@@ -563,44 +588,46 @@ body.dev .ctl{display:flex}
   function ss(a, b, x){ var t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); }   /* smoothstep */
 
   function frame(){
-    spin += vel; vel *= 0.90;
-    if(Math.abs(vel) < 0.0008) vel = 0;
-    /* 원통과 패널이 같은 각도로 묶여 있으므로 마지막 단계 끝에서 둘 다 멈춘다 */
-    if(spin < 0){ spin = 0; vel = 0; } else if(spin > LAST * SPAN){ spin = LAST * SPAN; vel = 0; }
+    var now = performance.now(), dt = lastT ? Math.min(50, now - lastT) : 16; lastT = now;
+    if(anim){
+      var k = anim.dur ? Math.min(1, (now - anim.t0) / anim.dur) : 1;
+      spin = anim.from + (anim.to - anim.from) * bez(k);
+      if(k >= 1){ spin = anim.to; stage = target; anim = null; lockUntil = now + 300; }   /* 뒤따르는 관성 휠 흡수 */
+    }
     cx += (mx - cx) * 0.055;
     cy += (my - cy) * 0.055;
     var p = Math.max(0, Math.min(1, spin / SPAN));          /* 1→2 단계 진행도 (제목 연출) */
-    var p2 = Math.max(0, Math.min(1, spin / SPAN - 1));     /* 2→3 단계: 제목이 물러난다 */
 
     /* 카메라가 흔들리는 것처럼 보이게 원통을 반대로 아주 조금 기울인다 */
     tube.style.transform =
       'rotateX(' + (cy * 2.6).toFixed(3) + 'deg) rotateY(' + (spin - cx * 3.4).toFixed(3) + 'deg)';
     scene.style.setProperty('--po', (50 - cx*3).toFixed(2) + '% ' + (50 - cy*3).toFixed(2) + '%');
 
-    /* 글자는 평면 그대로 두고, 벽과 반대로 아주 조금만 밀린다. 스크롤하면 본문에 자리를 내주며 살짝 비켜나고 15% 작아지고,
-       서비스 단계로 넘어가면 위로 물러나며 사라진다 */
-    if(mark){
-      mark.style.transform =
-        'translate3d(' + (cx * 10 + p * C.mx).toFixed(2) + 'px,' + (cy * 6 + p * C.my - p2 * innerHeight * 0.08).toFixed(2) +
-        'px,0) scale(' + (1 - 0.15 * p).toFixed(4) + ')';
-      mark.style.opacity = (1 - ss(0, 0.6, p2)).toFixed(3);
-    }
+    /* 제목은 평면 그대로, 벽과 반대로 아주 조금만 밀린다. 2단계로 가며 본문에 자리를 내주고(오른쪽으로, 15% 작게) 그 뒤로는 그대로 남는다 */
+    if(mark) mark.style.transform =
+      'translate3d(' + (cx * 10 + p * C.mx).toFixed(2) + 'px,' + (cy * 6 + p * C.my).toFixed(2) + 'px,0) scale(' +
+      (1 - 0.15 * p).toFixed(4) + ')';
 
     /* 패널 — 원통과 같은 각도(spin)만큼 축 둘레를 돈다. 글자·카드 조각은 각자 제 각도로 벽에 붙어 있으므로 궤도만 돌린다.
-       불투명도는 조각의 절대 각도로: 오른쪽(-75°)에선 0 → 왼쪽으로 올수록 보이고, 왼쪽 뒤(80°~120°)로 빠지며 사라진다 */
+       글자 불투명도는 조각의 절대 각도로: 오른쪽(-75°)에선 0 → 왼쪽으로 올수록 보이고, 왼쪽 뒤(80°~120°)로 빠지며 사라진다.
+       카드는 문구가 완전히 왼쪽에 서야(단계 도착) 떠오르고(ease-out ≈ 지수 접근), 떠나기 시작하면 바로 사라진다 */
+    var settling = false;
     PANELS.forEach(function(P){
       var base = C.th0 + spin - P.k * SPAN;
       var vis = spin > 0 && base > -126 && base < 200;
       P.el.style.visibility = vis ? 'visible' : 'hidden';
       setOn(P, vis && base > -95 && base < 125);
+      var ct = (!anim && stage === P.k + 1) ? 1 : 0, prev = P.ca;
+      P.ca += (ct - P.ca) * (1 - Math.exp(-dt / (ct ? 140 : 60)));
+      if(Math.abs(P.ca - ct) < 0.003) P.ca = ct; else settling = true;
       if(!vis) return;
       P.el.style.transform = 'translate3d(' + (C.X + cx * 14).toFixed(1) + 'px,' + ((P.k ? C.Ys : C.Y) + cy * 8).toFixed(1) +
         'px,0) rotateY(' + base.toFixed(2) + 'deg)';
-      if(base !== P.lastBase){
+      if(base !== P.lastBase || P.ca !== prev){
         P.lastBase = base;
         for(var i = 0; i < P.CH.length; i++){
-          var a = base + P.CH[i].th;
-          P.CH[i].el.style.opacity = (P.CH[i].a * ss(-75, -5, a) * (1 - ss(80, 120, a))).toFixed(3);
+          var c = P.CH[i], a = base + c.th, v = ss(-75, -5, a) * (1 - ss(80, 120, a));
+          c.el.style.opacity = (c.strip ? P.ca * v : 0.85 * v).toFixed(3);
         }
       }
     });
@@ -627,8 +654,9 @@ body.dev .ctl{display:flex}
         'px,0) rotate(' + (cx * 1.2).toFixed(2) + 'deg)';
     }
 
-    var moving = vel !== 0 || Math.abs(mx-cx) > 0.0008 || Math.abs(my-cy) > 0.0008;
+    var moving = !!anim || settling || Math.abs(mx-cx) > 0.0008 || Math.abs(my-cy) > 0.0008;
     raf = moving ? requestAnimationFrame(frame) : null;
+    if(!moving) lastT = 0;
   }
   frame(); ready = true;
 })();

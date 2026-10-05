@@ -271,16 +271,16 @@ body.dev .ctl{display:flex}
     <!-- 서비스 — 카드(예시 영상, 둥근 사각형 마스크)가 문구 위에. data-src 만 바꾸면 영상이 바뀐다 -->
     <!-- 포트폴리오 — 문구 위에 같은 크기의 둥근 카드가 원통을 따라 줄지어 나오고, 문구 바로 위 것만 선명. 휠로 한 장씩.
          왼쪽 벽의 큰 스크린(#tv, 격자 뒤)에 그 작업의 전체샷 -->
-    <div class="orbit" data-k="1"><div class="copy pf">
+    <div class="orbit" data-k="3"><div class="copy pf">
       <div class="row" data-w="400" data-h="280"></div>
       <div class="txt"><h2>Portfolio</h2><div class="sub">포트폴리오 — 휠을 굴리면 다음 작업</div></div>
     </div></div>
-    <div class="orbit" data-k="2"><div class="copy svc">
+    <div class="orbit" data-k="1"><div class="copy svc">
       <div class="num" data-n="01"></div>
       <div class="card" data-src="media/1785750371689-_NIKKE_Laplace_.mp4" data-w="400" data-h="280"></div>
       <div class="txt"><h2>Portrait illustration</h2><div class="sub">포트레이트 일러스트</div><p>대기 및 상호작용, 일러스트 애니메이션 전반</p></div>
     </div></div>
-    <div class="orbit" data-k="3"><div class="copy svc">
+    <div class="orbit" data-k="2"><div class="copy svc">
       <div class="num" data-n="02"></div>
       <div class="card" data-src="media/1785168423777-Idle.webm" data-w="400" data-h="280"></div>
       <div class="txt"><h2>In-Game Character</h2><div class="sub">인게임 LD / SD 캐릭터 · UI / 연출 / 컷신</div><p>인게임 대기 및 이동 전투 등 모션 전반, 게임에 사용되는 연출 전반</p></div>
@@ -436,7 +436,7 @@ body.dev .ctl{display:flex}
   fitRig(); addEventListener('resize', fitRig);
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(fitRig);   /* 폰트 도착 후 글자 박스가 바뀐다 */
   /* ---------- 단계 — 스크롤(원통 회전각)으로 진행. 한 단계 = SPAN 도 ---------- */
-  var STAGES = [['01','MAIN'],['02','ABOUT'],['03','PORTFOLIO'],['04','PORTRAIT'],['05','IN-GAME']];
+  var STAGES = [['01','MAIN'],['02','ABOUT'],['03','PORTRAIT'],['04','IN-GAME'],['05','PORTFOLIO']];
   /* 포트폴리오 — 순서대로. 스크린 자막에 제목·분류. 파일은 포트폴리오 DB 에 있던 것 */
   var PF = [
     {src:'media/1785750371689-_NIKKE_Laplace_.mp4',  title:'NIKKE — Laplace',    cat:'Portrait Animation'},
@@ -448,7 +448,7 @@ body.dev .ctl{display:flex}
     {src:'media/1785483415024-__skill1_2.webm',      title:'Epic Seven — Skill', cat:'LD Character'},
     {src:'media/1785481939160-__skill1.webm',        title:'Epic Seven — Skill', cat:'LD Character'}
   ];
-  var PF_STAGE = 2, pfIdx = 0, pfF = 0, panim = null;   /* 포트폴리오 단계 번호, 문구 위의 카드, 그 소수값(회전 중), 한 장 넘기기 애니 */
+  var PF_STAGE = 4, pfIdx = 0, pfF = 0, panim = null;   /* 포트폴리오 단계 번호, 문구 위의 카드, 그 소수값(회전 중), 한 장 넘기기 애니 */
   var SPAN = 155, LAST = STAGES.length - 1;   /* 패널이 도는 각도 = 원통이 도는 각도. 전체 = LAST*SPAN */
   var ruler = document.getElementById('ruler'), cur = null, stEls = [];
   if(ruler){

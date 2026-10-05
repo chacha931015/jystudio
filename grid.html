@@ -424,7 +424,7 @@ body.dev .ctl{display:flex}
   fitRig(); addEventListener('resize', fitRig);
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(fitRig);   /* 폰트 도착 후 글자 박스가 바뀐다 */
   /* ---------- 단계 — 스크롤(원통 회전각)으로 진행. 한 단계 = SPAN 도 ---------- */
-  var STAGES = [['01','JY STUDIO'],['02','ABOUT'],['03','PORTRAIT'],['04','IN-GAME']];
+  var STAGES = [['01','MAIN'],['02','ABOUT'],['03','PORTRAIT'],['04','IN-GAME']];
   var SPAN = 155, LAST = STAGES.length - 1;   /* 패널이 도는 각도 = 원통이 도는 각도. 전체 = LAST*SPAN */
   var ruler = document.getElementById('ruler'), cur = null, stEls = [];
   if(ruler){

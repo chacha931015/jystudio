@@ -178,7 +178,7 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
 .tv canvas{position:absolute;left:0;top:0;transform-origin:0 0 0;backface-visibility:hidden;opacity:0;will-change:transform,opacity}
 /* 배경 가장자리를 흰색에 녹이는 2D 덮개 — 스크린 위, 격자 아래. 조각마다 반투명 마스크를 겹치면 이음매가 생겨서 여기서 한 번에 */
 .tvfade{position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(ellipse 50% 50% at 50% 50%,transparent 30%,rgba(255,255,255,.75) 60%,#fff 82%)}
+  background:radial-gradient(ellipse 46% 62% at 30% 50%,transparent 32%,rgba(255,255,255,.7) 62%,#fff 86%)}
 .copy h2{font-family:"Noto Sans KR",sans-serif;font-weight:900;font-size:3rem;
   line-height:1.3;letter-spacing:-.02em;color:#0e1014;word-break:keep-all}
 .copy p{font-family:"Noto Sans KR",sans-serif;font-weight:400;font-size:1.45rem;
@@ -654,7 +654,8 @@ body.dev .ctl{display:flex}
     tvEl.innerHTML = '';
     var narrow = innerWidth <= 900, R = +cR.value + 2;
     /* 화면 전체를 쓰는 큰 배경 — 격자 원통의 앞벽 전체(±70°)에 깔린다. 조각은 40px, 해상도 1x (어차피 가장자리가 녹는다) */
-    var w = narrow ? 1100 : 1900, h = narrow ? 900 : 1300, ang = 8, y = 0;
+    /* 왼쪽 벽(40°)에 위아래 꽉 차게 — 높이 1500 은 원근으로 줄어도 화면 높이를 넘는다 */
+    var w = narrow ? 900 : 1300, h = narrow ? 1100 : 1500, ang = narrow ? 30 : 40, y = 0;
     TV = makeStrips(tvEl, w, h, -w/2, y - h/2, R, {sw:32, dpr:1}); TV.shown = false; TV.ang = ang;
     /* 조각은 마스크 없이 불투명하게 — 가장자리 녹임은 .tvfade 가 맡는다 (조각 마스크를 겹치면 이음매·띠가 보인다) */
     TV.strips.forEach(function(s){ s.el.style.webkitMaskImage = s.el.style.maskImage = 'none'; });
@@ -689,7 +690,7 @@ body.dev .ctl{display:flex}
         } else c.drawImage(v, dx + ox, dy, dw, dh);
         c.globalAlpha = 1;
       }
-      s.el.style.opacity = tvA.toFixed(3);
+      s.el.style.opacity = (tvA * 0.45).toFixed(3);               /* 옅게 */
     }
     TV.shown = tvA > 0;
   }

@@ -638,15 +638,15 @@ body.dev .ctl{display:flex}
     /* 큰 번호 — 빗금 패턴으로 채운 SVG 글자. 카드에 가려지지 않게 왼쪽으로 비켜 두고(nx), 글자 쪽으로 살짝 아래 */
     var num = copy.querySelector('.num');
     if(num){
-      var NW = W, NH = 720, id = 'hatch' + P.k;
+      var NW = W, NH = 800, id = 'hatch' + P.k;
       num.style.width = NW + 'px'; num.style.height = NH + 'px';
       num.innerHTML = '<svg viewBox="0 0 ' + NW + ' ' + NH + '" width="' + NW + '" height="' + NH + '"><defs>' +
         '<pattern id="' + id + '" width="11" height="11" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">' +
         '<line x1="0" y1="0" x2="0" y2="11" stroke="#a3a8b4" stroke-width="2.4"/></pattern></defs>' +
-        '<text x="50%" y="50%" dy=".35em" text-anchor="middle" font-family="Figtree,sans-serif" font-weight="900" font-size="' + Math.round(400 * C.ks / 1.1) + '" ' +
+        '<text x="50%" y="50%" dy=".35em" text-anchor="middle" font-family="Figtree,sans-serif" font-weight="900" font-size="' + Math.round(620 * C.ks / 1.5) + '" ' +
         'letter-spacing="-.04em" fill="url(#' + id + ')" stroke="#c9cdd6" stroke-width="2">' + num.getAttribute('data-n') + '</text></svg>';
       /* 카드가 아니라 문구와 겹치게: 세로는 문구 블록(카드 아래 ~ 패널 끝)의 가운데, 가로는 왼쪽으로 */
-      var nx = innerWidth <= 900 ? -120 : -270;
+      var nx = innerWidth <= 900 ? -150 : -340;
       var ny = card ? (cq[1] + chh + Hc) / 2 - Hc / 2 : 0;
       num.style.transform = 'translateZ(' + (-R2 - 70) + 'px) translate3d(' + (-NW/2 + nx) + 'px,' + (-NH/2 + ny).toFixed(1) + 'px,0)';
       P.CH.push({el:num, th:0, a:1, num:true});

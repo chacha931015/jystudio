@@ -70,6 +70,41 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
              transform 700ms cubic-bezier(.23,1,.32,1) 260ms}
 .mark.stage2 .brand{opacity:1;transform:translateY(12%) scale(1)}
 
+/* ---- 글자 안의 물감 ----
+   글자를 마스크로 쓴다(background-clip:text). 바탕은 검정, 그 위에
+   왼쪽은 따뜻한 색, 오른쪽은 차가운 색 방울을 탁·탁 두 번 튀긴다.
+   한 번만 도는 인트로라 background-size 를 움직이는 비용을 감수한다. */
+.brand{
+  color:transparent;-webkit-background-clip:text;background-clip:text;
+  background-color:#0e1014;background-repeat:no-repeat;
+  background-image:
+    radial-gradient(closest-side,#ff5c29 68%,transparent 72%),
+    radial-gradient(closest-side,#ff8a3d 68%,transparent 72%),
+    radial-gradient(closest-side,#ffd23f 68%,transparent 72%),
+    radial-gradient(closest-side,#ff5c29 68%,transparent 72%),
+    radial-gradient(closest-side,#12b886 68%,transparent 72%),
+    radial-gradient(closest-side,#6c5ce7 68%,transparent 72%),
+    radial-gradient(closest-side,#4d8dff 68%,transparent 72%),
+    radial-gradient(closest-side,#12b886 68%,transparent 72%);
+  background-position:6% 50%,19% 74%,14% 20%,28% 42%, 94% 50%,81% 26%,86% 80%,72% 60%;
+  background-size:0 0,0 0,0 0,0 0, 0 0,0 0,0 0,0 0}
+.mark.splat .brand{animation:splat 1150ms linear forwards}
+@keyframes splat{
+  0%  {background-size:0 0,0 0,0 0,0 0, 0 0,0 0,0 0,0 0}
+  /* 탁 — 왼쪽. 빠르게 커졌다가 */
+  22% {background-size:34% 64%,18% 38%,12% 26%,7% 14%, 0 0,0 0,0 0,0 0}
+  34% {background-size:30% 58%,16% 34%,11% 24%,6% 12%, 0 0,0 0,0 0,0 0}
+  /* 잠깐 사이 */
+  52% {background-size:30% 58%,16% 34%,11% 24%,6% 12%, 0 0,0 0,0 0,0 0}
+  /* 탁 — 오른쪽 */
+  74% {background-size:30% 58%,16% 34%,11% 24%,6% 12%, 34% 64%,18% 38%,12% 26%,7% 14%}
+  86%,100%{background-size:30% 58%,16% 34%,11% 24%,6% 12%, 30% 58%,16% 34%,11% 24%,6% 12%}
+}
+@media(prefers-reduced-motion:reduce){
+  .mark.splat .brand{animation:none;
+    background-size:30% 58%,16% 34%,11% 24%,6% 12%, 30% 58%,16% 34%,11% 24%,6% 12%}
+}
+
 @media(prefers-reduced-motion:reduce){
   /* 움직임은 빼고, 최종 상태만 즉시 보여준다 */
   .title,.brand{transition:opacity 200ms ease}
@@ -93,7 +128,7 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
   <div class="wash"></div>
 
   <div class="markzone"><div class="mark" id="mark">
-    <h1 class="title">SPINE ANIMATION STUDIO</h1>
+    <h1 class="title">SPINE ANIMATION OUTSOURCING</h1>
     <div class="brand">JY STUDIO</div>
   </div></div>
 
@@ -152,6 +187,8 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
 
   /* 인트로: 큰 제목을 잠깐 보여준 뒤 위로 올리며 줄이고, 아래에 JY STUDIO 를 띄운다 */
   setTimeout(function(){ mark.classList.add('stage2'); }, reduce ? 0 : 1400);
+  /* JY STUDIO 가 자리 잡은 뒤 글자 안에 물감을 탁·탁 */
+  setTimeout(function(){ mark.classList.add('splat'); }, reduce ? 0 : 2500);
   var spin = 0, vel = 0;                     /* 스크롤 회전 */
   var mx = 0, my = 0, cx = 0, cy = 0;        /* 마우스 흔들림 */
   var raf = null;

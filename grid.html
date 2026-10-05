@@ -298,6 +298,7 @@ body.dev .ctl{display:flex}
     <!-- 포트폴리오 — 문구 위에 같은 크기의 둥근 카드가 원통을 따라 줄지어 나오고, 문구 바로 위 것만 선명. 휠로 한 장씩.
          왼쪽 벽의 큰 스크린(#tv, 격자 뒤)에 그 작업의 전체샷 -->
     <div class="orbit" data-k="3"><div class="copy pf">
+      <div class="num" data-n="03"></div>
       <div class="row" data-w="400" data-h="280"></div>
       <div class="txt"><h2>Portfolio</h2><div class="sub">포트폴리오 — 휠을 굴리면 다음 작업</div></div>
     </div></div>
@@ -646,7 +647,8 @@ body.dev .ctl{display:flex}
         'letter-spacing="-.04em" fill="url(#' + id + ')" stroke="#c9cdd6" stroke-width="2">' + num.getAttribute('data-n') + '</text></svg>';
       /* 카드가 아니라 문구와 겹치게: 세로는 문구 블록(카드 아래 ~ 패널 끝)의 가운데, 가로는 왼쪽으로 */
       var nx = innerWidth <= 900 ? -150 : -340;
-      var ny = card ? (cq[1] + chh + Hc) / 2 - Hc / 2 : 0;
+      var bq = card ? cq : rq, bh = card ? chh : rh;                  /* 서비스는 카드, 포트폴리오는 줄 상자 기준 */
+      var ny = (card || row) ? (bq[1] + bh + Hc) / 2 - Hc / 2 : 0;
       num.style.transform = 'translateZ(' + (-R2 - 70) + 'px) translate3d(' + (-NW/2 + nx) + 'px,' + (-NH/2 + ny).toFixed(1) + 'px,0)';
       P.CH.push({el:num, th:0, a:1, num:true});
     }

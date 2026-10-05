@@ -280,7 +280,7 @@ body.dev .ctl{display:flex}
     </div></div>
     <div class="orbit" data-k="1"><div class="copy svc">
       <div class="num" data-n="01"></div>
-      <div class="card" data-src="media/1785750371689-_NIKKE_Laplace_.mp4" data-w="400" data-h="280"></div>
+      <div class="card" data-src="media/1785750371689-_NIKKE_Laplace_.mp4" data-w="260" data-h="440"></div>   <!-- 세로형: 전신이 보이게 -->
       <div class="txt"><h2>Portrait illustration</h2><div class="sub">포트레이트 일러스트</div><p>대기 및 상호작용, 일러스트 애니메이션 전반</p></div>
     </div></div>
     <div class="orbit" data-k="2"><div class="copy svc">
@@ -442,9 +442,9 @@ body.dev .ctl{display:flex}
   var STAGES = [['01','MAIN'],['02','ABOUT'],['03','PORTRAIT'],['04','IN-GAME'],['05','PORTFOLIO']];
   /* 포트폴리오 — 순서대로. 스크린 자막에 제목·분류. 파일은 포트폴리오 DB 에 있던 것 */
   var PF = [
-    {src:'media/1785750371689-_NIKKE_Laplace_.mp4',  title:'NIKKE — Laplace',    cat:'Portrait Animation'},
-    {src:'media/1785750410218-_NIKKE_Viper_.mp4',    title:'NIKKE — Viper',      cat:'Portrait Animation'},
-    {src:'media/1785750359712-_NIKKE_N102_N102_.mp4', title:'NIKKE — N102',       cat:'Portrait Animation'},
+    {src:'media/1785750371689-_NIKKE_Laplace_.mp4',  title:'NIKKE — Laplace',    cat:'Portrait Animation', fy:.3},   /* 세로 영상: 카드엔 윗부분 */
+    {src:'media/1785750410218-_NIKKE_Viper_.mp4',    title:'NIKKE — Viper',      cat:'Portrait Animation', fy:.3},
+    {src:'media/1785750359712-_NIKKE_N102_N102_.mp4', title:'NIKKE — N102',       cat:'Portrait Animation', fy:.3},
     {src:'media/1785166126489-Idle.webm',            title:'Trickcal — Idle',    cat:'SD Character'},
     {src:'media/1785167602570-Idle.webm',            title:'Trickcal — Idle',    cat:'SD Character'},
     {src:'media/1785168423777-Idle.webm',            title:'Trickcal — Idle',    cat:'SD Character'},
@@ -603,8 +603,8 @@ body.dev .ctl{display:flex}
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(layoutCopy);   /* 폰트 도착 후 글자 폭이 바뀐다 */
 
   /* 영상을 cover 로 잘라 조각 캔버스에 나눠 그린다. src 는 영상 또는 저해상도 캔버스(흐린 판) */
-  function drawCover(strips, mk, src, sw_, sh_, alpha){
-    var sc = Math.max(mk.w / sw_, mk.h / sh_), sW = mk.w / sc, sH = mk.h / sc, sx0 = (sw_ - sW) / 2, sy0 = (sh_ - sH) / 2;
+  function drawCover(strips, mk, src, sw_, sh_, alpha, fy){
+    var sc = Math.max(mk.w / sw_, mk.h / sh_), sW = mk.w / sc, sH = mk.h / sc, sx0 = (sw_ - sW) / 2, sy0 = (sh_ - sH) * (fy == null ? 0.5 : fy);
     for(var i = 0; i < strips.length; i++){
       var s = strips[i]; s.ctx.globalAlpha = alpha;
       s.ctx.drawImage(src, sx0 + s.i * mk.sw / sc, sy0, (mk.sw + mk.ov) / sc, sH, 0, 0, s.el.width, s.el.height);
@@ -625,12 +625,12 @@ body.dev .ctl{display:flex}
         P.pf.cards.forEach(function(c){
           var v = c.it.video; if(!v || v.readyState < 2 || c.hidden) return;
           var d = Math.min(1, Math.abs(c.j - pfF));
-          if(d < 1) drawCover(c.strips, c.mk, v, v.videoWidth, v.videoHeight, 1);
+          if(d < 1) drawCover(c.strips, c.mk, v, v.videoWidth, v.videoHeight, 1, c.it.fy);
           if(d > 0){
             var lo = c.it.lo, lh = Math.max(2, Math.round(96 * v.videoHeight / v.videoWidth));
             if(lo.height !== lh){ lo.width = 96; lo.height = lh; }
             var lx = lo.getContext('2d'); lx.filter = 'blur(1.6px)'; lx.drawImage(v, 0, 0, lo.width, lo.height); lx.filter = 'none';
-            drawCover(c.strips, c.mk, lo, lo.width, lo.height, d);
+            drawCover(c.strips, c.mk, lo, lo.width, lo.height, d, c.it.fy);
           }
         });
       }

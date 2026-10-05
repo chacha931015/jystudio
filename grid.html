@@ -453,7 +453,7 @@ body.dev .ctl{display:flex}
   var ruler = document.getElementById('ruler'), cur = null, stEls = [];
   if(ruler){
     ruler.innerHTML = '<div class="tk minor"></div><div class="tk major"></div>' +
-      STAGES.map(function(s,i){ return '<div class="st" style="top:' + (i/LAST*100) + '%"><b>' + s[0] + '</b>' + s[1] + '</div>'; }).join('') +
+      STAGES.map(function(s,i){ return '<div class="st" style="top:' + (i/LAST*100) + '%">' + s[1] + '</div>'; }).join('') +   /* 눈금자엔 번호 없이 이름만 */
       '<div class="cur"></div>';
     cur = ruler.querySelector('.cur'); stEls = [].slice.call(ruler.querySelectorAll('.st'));
   }

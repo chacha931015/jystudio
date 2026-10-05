@@ -126,15 +126,22 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
    같은 --p 원근을 쓰되 원통의 회전은 받지 않는다(마스크 없음). 스크롤 진행도 p 로 JS 가 transform 을 직접 쓴다 */
 .deck{position:absolute;inset:0;z-index:4;perspective:var(--p,700px);perspective-origin:var(--po,50% 50%);
   display:grid;place-items:center;pointer-events:none}
-/* 본문 — 오른쪽 뒤(멀고 작게, 오른쪽 벽처럼 기울어진 채)에서 왼쪽 앞으로 휘어 들어와 왼쪽에 선다.
-   끝에서도 완전 정면이 아니라 왼쪽 벽을 따라 살짝 기울어져 있다 */
-.copy{grid-area:1/1;width:min(440px,32vw);opacity:0;visibility:hidden;
-  will-change:transform,opacity;backface-visibility:hidden;transform-origin:50% 50%}
-.copy h2{font-family:"Noto Sans KR",sans-serif;font-weight:900;font-size:clamp(1.35rem,2.3vw,2.1rem);
+/* 본문 — 원통 안쪽의 작은 원통(반지름 R2)에 붙어 원통과 같은 각속도로 돈다.
+   orbit = 화면 중앙의 0x0 축점. rotateY(θ) translateZ(-R2) 로 축 둘레를 돌며 항상 축을 바라본다.
+   오른쪽(카메라 옆, 크고 거의 옆면)에서 들어와 왼쪽 앞벽(멀고 살짝 기울어짐)에 선다.
+   글자는 크게 써 두고 원근으로 줄어든다(축소는 선명하다) */
+.orbit{position:absolute;left:50%;top:50%;width:0;height:0;transform-origin:0 0;
+  will-change:transform;opacity:0;visibility:hidden}
+.copy{position:absolute;left:-410px;width:820px;backface-visibility:hidden}
+.copy h2{font-family:"Noto Sans KR",sans-serif;font-weight:900;font-size:3.5rem;
   line-height:1.3;letter-spacing:-.02em;color:#0e1014;word-break:keep-all}
-.copy p{font-family:"Noto Sans KR",sans-serif;font-weight:400;font-size:clamp(.9rem,1.05vw,1rem);
-  line-height:1.8;color:#5b6070;margin-top:18px;word-break:keep-all}
-@media(max-width:900px){.copy{width:min(440px,84vw);text-align:center}}
+.copy p{font-family:"Noto Sans KR",sans-serif;font-weight:400;font-size:1.65rem;
+  line-height:1.8;color:#5b6070;margin-top:26px;word-break:keep-all}
+@media(max-width:900px){
+  .copy{left:-320px;width:640px;text-align:center}
+  .copy h2{font-size:2.9rem}
+  .copy p{font-size:1.45rem}
+}
 
 /* 눈금자 — 오른쪽 벽에 붙은 자. 오른쪽 끝을 축으로 안쪽으로 꺾여 벽을 따라간다.
    단계(STAGES)마다 긴 눈금 + 번호, 현재 위치 선이 스크롤 진행도만큼 내려간다 */
@@ -209,10 +216,10 @@ body.dev .ctl{display:flex}
   <div class="vig"></div>
 
   <div class="deck">
-    <div class="copy" id="copy">
+    <div class="orbit" id="orbit"><div class="copy" id="copy">
       <h2>대량 제작도 안정적으로,<br>퀄리티는 일관되게</h2>
       <p>게임을 위한 SPINE 2D 리소스 외주 전문 스튜디오. 전 제작 과정을 직접 관리하며, 일정과 수량에 따른 안정적인 납품으로 신뢰할 수 있는 파트너가 되겠습니다.</p>
-    </div>
+    </div></div>
     <div class="ruler" id="ruler"></div>
   </div>
 
@@ -364,7 +371,7 @@ body.dev .ctl{display:flex}
   fitRig(); addEventListener('resize', fitRig);
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(fitRig);   /* 폰트 도착 후 글자 박스가 바뀐다 */
   /* ---------- 단계 — 스크롤(원통 회전각)으로 진행. 한 단계 = SPAN 도 ---------- */
-  var STAGES = [['01','JY STUDIO'],['02','ABOUT']], SPAN = 110;
+  var STAGES = [['01','JY STUDIO'],['02','ABOUT']], SPAN = 155;   /* 본문이 도는 각도 = 원통이 도는 각도 */
   var ruler = document.getElementById('ruler'), cur = null, stEls = [];
   if(ruler){
     ruler.innerHTML = '<div class="tk minor"></div><div class="tk major"></div>' +
@@ -373,12 +380,14 @@ body.dev .ctl{display:flex}
     cur = ruler.querySelector('.cur'); stEls = [].slice.call(ruler.querySelectorAll('.st'));
   }
 
-  /* 본문의 경로 — 시작(오른쪽 뒤, 작고 기울어짐) → 끝(왼쪽, 가깝고 살짝 기울어짐). 제목은 그만큼 살짝 비켜난다 */
-  var copy = document.getElementById('copy'), C = {};
+  /* 본문의 궤도 — 시작각 th0(오른쪽, 카메라 옆·뒤라 화면 밖) → 끝각 th0+SPAN(왼쪽 앞벽).
+     R2 는 격자 원통(780)보다 안쪽. Y 는 궤도의 높이(제목 아래). 제목은 그만큼 살짝 비켜난다 */
+  var orbit = document.getElementById('orbit'), copy = document.getElementById('copy'), C = {};
   function layoutCopy(){
-    var W = innerWidth, Hh = innerHeight, narrow = W <= 900, cw = copy ? copy.offsetWidth : 0;
-    if(narrow){ C = {x0:W*0.6,  x1:0,                y0:Hh*0.34, y1:Hh*0.2, z0:-700, z1:0,  r0:-50, r1:8,  mx:0,      my:-Hh*0.16}; }
-    else      { C = {x0:W*0.55, x1:-(W*0.43 - cw/2), y0:Hh*0.5,  y1:0,      z0:-700, z1:20, r0:-50, r1:14, mx:W*0.12, my:0}; }
+    var W = innerWidth, Hh = innerHeight, narrow = W <= 900;
+    if(narrow){ C = {R2:560, th0:-143, Y:Hh*0.22, mx:0,      my:-Hh*0.16}; }
+    else      { C = {R2:560, th0:-123, Y:Hh*0.32, mx:W*0.12, my:0}; }
+    if(copy) copy.style.top = (-copy.offsetHeight/2) + 'px';   /* 축점 기준 세로 가운데 */
   }
   layoutCopy(); addEventListener('resize', layoutCopy);
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(layoutCopy);
@@ -389,7 +398,7 @@ body.dev .ctl{display:flex}
 
   addEventListener('wheel', function(e){
     e.preventDefault();
-    vel += e.deltaY * 0.022;
+    vel += e.deltaY * 0.03;
     kick();
   }, {passive:false});
   /* 터치 — 손가락을 끌면 같은 방향으로 */
@@ -397,7 +406,7 @@ body.dev .ctl{display:flex}
   addEventListener('touchstart', function(e){ ty = e.touches[0].clientY; }, {passive:true});
   addEventListener('touchmove', function(e){
     if(ty === null) return;
-    var y = e.touches[0].clientY; vel += (ty - y) * 0.05; ty = y; kick();
+    var y = e.touches[0].clientY; vel += (ty - y) * 0.07; ty = y; kick();
   }, {passive:true});
   addEventListener('touchend', function(){ ty = null; }, {passive:true});
 
@@ -414,6 +423,8 @@ body.dev .ctl{display:flex}
   function frame(){
     spin += vel; vel *= 0.90;
     if(Math.abs(vel) < 0.0008) vel = 0;
+    /* 원통과 본문이 같은 각도로 묶여 있으므로 단계 끝에서 둘 다 멈춘다 */
+    if(spin < 0){ spin = 0; vel = 0; } else if(spin > SPAN){ spin = SPAN; vel = 0; }
     cx += (mx - cx) * 0.055;
     cy += (my - cy) * 0.055;
     var p = Math.max(0, Math.min(1, spin / SPAN));   /* 1단계 → 2단계 진행도 */
@@ -427,15 +438,14 @@ body.dev .ctl{display:flex}
     if(mark) mark.style.transform =
       'translate3d(' + (cx * 10 + p * C.mx).toFixed(2) + 'px,' + (cy * 6 + p * C.my).toFixed(2) + 'px,0)';
 
-    /* 본문 — 오른쪽 뒤에서 왼쪽 앞으로. 처음 30% 동안 떠오른다.
-       가로는 먼저 빠르게(ease-out), 세로는 낮게 깔렸다가 늦게 올라온다 — 제목 아래를 지나 왼쪽에서 올라서야 글자끼리 겹치지 않는다 */
-    if(copy){
-      var q = 1 - p, ex_ = 1 - q * Math.sqrt(q), ey_ = Math.pow(q, 0.6);
-      copy.style.opacity = Math.min(1, p / 0.3).toFixed(3);
-      copy.style.visibility = p > 0 ? 'visible' : 'hidden';
-      copy.style.transform = 'translate3d(' + (lerp(C.x0, C.x1, ex_) + cx * 14).toFixed(1) + 'px,' +
-        (C.y1 + (C.y0 - C.y1) * ey_ + cy * 8).toFixed(1) + 'px,' + lerp(C.z0, C.z1, p).toFixed(1) + 'px) rotateY(' +
-        lerp(C.r0, C.r1, p).toFixed(2) + 'deg)';
+    /* 본문 — 원통과 같은 각도(spin)만큼 축 둘레를 돈다. 카메라 옆을 지나는 동안(처음 8~35%) 떠오르고,
+       자리에 서면 .85 — 격자가 살짝 비치는 정도로 */
+    if(orbit){
+      var op = Math.max(0, Math.min(1, (p - 0.08) / 0.27)) * 0.85;
+      orbit.style.opacity = op.toFixed(3);
+      orbit.style.visibility = op > 0 ? 'visible' : 'hidden';
+      orbit.style.transform = 'translate3d(' + (cx * 14).toFixed(1) + 'px,' + (C.Y + cy * 8).toFixed(1) +
+        'px,0) rotateY(' + (C.th0 + spin).toFixed(2) + 'deg) translateZ(' + (-C.R2) + 'px)';
     }
     /* 눈금자 — 현재 위치 선과 가까운 단계 표시 */
     if(cur){

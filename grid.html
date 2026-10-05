@@ -136,16 +136,28 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
    .flat 은 측정용: 평면으로 흘려 놓고 각 글자의 자리를 잰 뒤 그 자리를 각도로 바꾼다.
    조상에 opacity/overflow 가 있으면 3D 가 평면으로 눌리므로 불투명도는 글자마다 준다 */
 .copy{position:absolute;left:0;top:0;width:820px;transform-style:preserve-3d}
-.copy h2,.copy p{transform-style:preserve-3d}
+.copy h2,.copy p,.copy .sub,.copy .txt{transform-style:preserve-3d}
 .copy .ch{position:absolute;left:0;top:0;transform-origin:0 0 0;backface-visibility:hidden;
   white-space:pre;opacity:0;will-change:transform,opacity}
 .copy.flat .ch{position:static;transform:none!important}
+/* 예시 영상 카드 — .card 는 평면 측정용 상자. 실제로는 세로 조각(canvas.strip)으로 잘라 조각마다 제 각도에 붙여
+   둥근 사각형 마스크를 조각별로 나눠 쓴다 → 카드가 글자처럼 벽을 따라 휜다 */
+.copy .card{display:block;margin:0 0 22px}
+.copy:not(.flat) .card{visibility:hidden}
+.copy .strip{position:absolute;left:0;top:0;transform-origin:0 0 0;backface-visibility:hidden;opacity:0;
+  will-change:transform,opacity}
+.copy.flat .strip{display:none}
+.copy.svc h2{font-family:"Figtree",sans-serif;font-size:2.4rem;letter-spacing:-.03em;line-height:1.1}
+.copy.svc .sub{font-family:"Noto Sans KR",sans-serif;font-weight:700;font-size:1.15rem;color:#3a3f4c;margin-top:10px}
+.copy.svc p{font-size:1.2rem;line-height:1.7;margin-top:8px}
+.vsrc{position:absolute;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none}
 .copy h2{font-family:"Noto Sans KR",sans-serif;font-weight:900;font-size:3rem;
   line-height:1.3;letter-spacing:-.02em;color:#0e1014;word-break:keep-all}
 .copy p{font-family:"Noto Sans KR",sans-serif;font-weight:400;font-size:1.45rem;
   line-height:1.75;color:#5b6070;margin-top:20px;word-break:keep-all}
 @media(max-width:900px){
   .copy{width:640px;text-align:center}
+  .copy .card{margin:0 auto 20px}
   .copy h2{font-size:2.6rem}
   .copy p{font-size:1.3rem}
 }
@@ -223,9 +235,22 @@ body.dev .ctl{display:flex}
   <div class="vig"></div>
 
   <div class="deck">
-    <div class="orbit" id="orbit"><div class="copy" id="copy">
+    <div class="orbit" data-k="0"><div class="copy">
       <h2>대량 제작도 안정적으로,<br>퀄리티는 일관되게</h2>
       <p>게임을 위한 SPINE 2D 리소스 외주 전문 스튜디오. 전 제작 과정을 직접 관리하며, 일정과 수량에 따른 안정적인 납품으로 신뢰할 수 있는 파트너가 되겠습니다.</p>
+    </div></div>
+    <!-- 서비스 — 카드(예시 영상, 둥근 사각형 마스크)가 문구 위에. data-src 만 바꾸면 영상이 바뀐다 -->
+    <div class="orbit" data-k="1"><div class="copy svc">
+      <div class="card" data-src="media/1785750371689-_NIKKE_Laplace_.mp4" style="width:200px;height:284px"></div>
+      <div class="txt"><h2>Portrait illustration</h2><div class="sub">포트레이트 일러스트</div><p>대기 및 상호작용, 일러스트 애니메이션 전반</p></div>
+    </div></div>
+    <div class="orbit" data-k="2"><div class="copy svc">
+      <div class="card" data-src="media/1785168423777-Idle.webm" style="width:320px;height:245px"></div>
+      <div class="txt"><h2>In-Game Character</h2><div class="sub">인게임 LD / SD 캐릭터</div><p>인게임 대기 및 이동 전투 등 모션 전반</p></div>
+    </div></div>
+    <div class="orbit" data-k="3"><div class="copy svc">
+      <div class="card" data-src="media/1785483415024-__skill1_2.webm" style="width:340px;height:270px"></div>
+      <div class="txt"><h2>UI, Cutscene</h2><div class="sub">UI / 연출 / 컷신</div><p>게임에 사용되는 연출 전반</p></div>
     </div></div>
     <div class="ruler" id="ruler"></div>
   </div>
@@ -378,28 +403,32 @@ body.dev .ctl{display:flex}
   fitRig(); addEventListener('resize', fitRig);
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(fitRig);   /* 폰트 도착 후 글자 박스가 바뀐다 */
   /* ---------- 단계 — 스크롤(원통 회전각)으로 진행. 한 단계 = SPAN 도 ---------- */
-  var STAGES = [['01','JY STUDIO'],['02','ABOUT']], SPAN = 155;   /* 본문이 도는 각도 = 원통이 도는 각도 */
+  var STAGES = [['01','JY STUDIO'],['02','ABOUT'],['03','PORTRAIT'],['04','IN-GAME'],['05','UI / CUTSCENE']];
+  var SPAN = 155, LAST = STAGES.length - 1;   /* 패널이 도는 각도 = 원통이 도는 각도. 전체 = LAST*SPAN */
   var ruler = document.getElementById('ruler'), cur = null, stEls = [];
   if(ruler){
     ruler.innerHTML = '<div class="tk minor"></div><div class="tk major"></div>' +
-      STAGES.map(function(s,i){ return '<div class="st" style="top:' + (i/(STAGES.length-1)*100) + '%"><b>' + s[0] + '</b>' + s[1] + '</div>'; }).join('') +
+      STAGES.map(function(s,i){ return '<div class="st" style="top:' + (i/LAST*100) + '%"><b>' + s[0] + '</b>' + s[1] + '</div>'; }).join('') +
       '<div class="cur"></div>';
     cur = ruler.querySelector('.cur'); stEls = [].slice.call(ruler.querySelectorAll('.st'));
   }
 
-  /* 본문의 궤도 — 시작각 th0(오른쪽, 카메라 옆·뒤라 화면 밖) → 끝각 th0+SPAN(왼쪽 앞벽).
-     R2 는 격자 원통(780)보다 안쪽. Y 는 궤도의 높이(제목 아래). 제목은 그만큼 살짝 비켜난다 */
-  var orbit = document.getElementById('orbit'), copy = document.getElementById('copy'), C = {}, CH = [];
+  /* 패널(본문 + 서비스 3장) — 패널 k 는 th0 + spin - k*SPAN 각도에 있다.
+     th0(오른쪽, 카메라 옆·뒤라 화면 밖)에서 들어와 th0+SPAN(왼쪽 앞벽)에 서고, 다음 단계엔 왼쪽 뒤로 빠진다.
+     R2 는 격자 원통(780)보다 안쪽. X 는 궤도 축을 왼쪽으로 조금 민 것, Y/Ys 는 궤도 높이(본문/서비스) */
+  var C = {};
+  var PANELS = [].slice.call(document.querySelectorAll('.deck .orbit')).map(function(o){
+    return {el:o, copy:o.querySelector('.copy'), k:+o.dataset.k, CH:[], strips:[], card:null, video:null, lastBase:null, on:false};
+  });
   function layoutCopy(){
     var W = innerWidth, Hh = innerHeight, narrow = W <= 900;
-    if(narrow){ C = {R2:560, th0:-143, Y:Hh*0.22, mx:0,      my:-Hh*0.16}; }
-    else      { C = {R2:560, th0:-123, Y:Hh*0.27, mx:W*0.12, my:0}; }
-    curveText();
+    if(narrow){ C = {R2:560, th0:-143, X:0,       Y:Hh*0.22, Ys:Hh*0.18, mx:0,      my:-Hh*0.16}; }
+    else      { C = {R2:560, th0:-117, X:-W*0.06, Y:Hh*0.27, Ys:Hh*0.2,  mx:W*0.12, my:0}; }
+    PANELS.forEach(curvePanel);
   }
   /* 글자 하나 = span 하나. 공백은 텍스트 노드로 남겨 줄바꿈 자리를 지킨다 */
-  function splitText(){
-    if(!copy) return;
-    [].slice.call(copy.querySelectorAll('h2,p')).forEach(function(el){
+  function splitText(copy){
+    [].slice.call(copy.querySelectorAll('h2,p,.sub')).forEach(function(el){
       var nodes = [].slice.call(el.childNodes), frag = document.createDocumentFragment();
       nodes.forEach(function(n){
         if(n.nodeType !== 3){ frag.appendChild(n); return; }          /* <br> */
@@ -411,28 +440,80 @@ body.dev .ctl{display:flex}
       el.innerHTML = ''; el.appendChild(frag);
     });
   }
-  /* 평면으로 재서 → 글자마다 rotateY(θ_i) translateZ(-R2) 로 원통 표면에 올린다 */
-  function curveText(){
-    if(!copy) return;
-    copy.classList.add('flat');
+  /* 평면으로 재서 → 글자·카드 조각마다 rotateY(θ_i) translateZ(-R2) 로 원통 표면에 올린다 */
+  function curvePanel(P){
+    var copy = P.copy; copy.classList.add('flat');
     var W = copy.offsetWidth, Hc = copy.offsetHeight, R2 = C.R2;
-    /* preserve-3d 가 걸린 h2/p 가 offsetParent 가 되므로 copy 까지 offset 을 누적한다 */
-    CH = [].slice.call(copy.querySelectorAll('.ch')).map(function(s){
-      var x = 0, y = 0, e = s;
-      while(e && e !== copy){ x += e.offsetLeft; y += e.offsetTop; e = e.offsetParent; }
-      return {el:s, x:x + s.offsetWidth/2 - W/2, y:y - Hc/2, w:s.offsetWidth};
+    /* preserve-3d 가 걸린 요소가 offsetParent 가 되므로 copy 까지 offset 을 누적한다 */
+    function pos(el){ var x = 0, y = 0, e = el; while(e && e !== copy){ x += e.offsetLeft; y += e.offsetTop; e = e.offsetParent; } return [x, y]; }
+    P.CH = [].slice.call(copy.querySelectorAll('.ch')).map(function(s){
+      var q = pos(s); return {el:s, x:q[0] + s.offsetWidth/2 - W/2, y:q[1] - Hc/2, w:s.offsetWidth, a:0.85};
     });
+    var card = copy.querySelector('.card'), cq = card ? pos(card) : null,
+        cw = card ? card.offsetWidth : 0, chh = card ? card.offsetHeight : 0;
     copy.classList.remove('flat');
-    CH.forEach(function(c){
+    P.CH.forEach(function(c){
       c.th = -c.x / R2 * 180 / Math.PI;                               /* 오른쪽 글자일수록 작은 각 */
       c.el.style.transform = 'rotateY(' + c.th.toFixed(3) + 'deg) translateZ(' + (-R2) + 'px) translate3d(' +
         (-c.w/2).toFixed(1) + 'px,' + c.y.toFixed(1) + 'px,0)';
     });
+    /* 둥근 사각형 카드 — 24px 세로 조각으로 잘라 조각마다 제 각도에. 마스크는 카드 크기의 둥근 사각형을 조각 위치만큼 밀어 쓴다 */
+    P.strips.forEach(function(s){ s.el.parentNode.removeChild(s.el); }); P.strips = []; P.card = null;
+    if(card){
+      var n = Math.max(8, Math.round(cw / 24)), sw = cw / n, dpr = Math.min(devicePixelRatio || 1, 2), ov = 0.7;
+      var mask = 'url("data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="' + cw +
+        '" height="' + chh + '"><rect width="' + cw + '" height="' + chh + '" rx="20" fill="#000"/></svg>') + '")';
+      for(var i = 0; i < n; i++){
+        var cv = document.createElement('canvas'); cv.className = 'strip';
+        cv.width = Math.ceil((sw + ov) * dpr); cv.height = Math.round(chh * dpr);
+        cv.style.width = (sw + ov).toFixed(2) + 'px'; cv.style.height = chh + 'px';
+        cv.style.webkitMaskImage = cv.style.maskImage = mask;
+        cv.style.webkitMaskSize = cv.style.maskSize = cw + 'px ' + chh + 'px';
+        cv.style.webkitMaskPosition = cv.style.maskPosition = (-i * sw).toFixed(2) + 'px 0px';
+        cv.style.webkitMaskRepeat = cv.style.maskRepeat = 'no-repeat';
+        var x = cq[0] + i * sw + sw/2 - W/2, th = -x / R2 * 180 / Math.PI;
+        cv.style.transform = 'rotateY(' + th.toFixed(3) + 'deg) translateZ(' + (-R2) + 'px) translate3d(' +
+          (-sw/2).toFixed(2) + 'px,' + (cq[1] - Hc/2).toFixed(1) + 'px,0)';
+        copy.appendChild(cv);
+        P.strips.push({el:cv, th:th, i:i, ctx:cv.getContext('2d'), a:1});
+      }
+      P.card = {w:cw, h:chh, n:n, sw:sw, ov:ov};
+      P.CH = P.CH.concat(P.strips);                                   /* 불투명도는 글자와 같은 규칙 */
+      if(!P.video){
+        var v = document.createElement('video');
+        v.muted = true; v.loop = true; v.playsInline = true; v.preload = 'metadata'; v.className = 'vsrc';
+        v.setAttribute('aria-hidden', 'true'); v.src = card.getAttribute('data-src');
+        document.body.appendChild(v); P.video = v;
+      }
+    }
   }
-  splitText(); layoutCopy(); addEventListener('resize', layoutCopy);
+  PANELS.forEach(function(P){ splitText(P.copy); });
+  layoutCopy(); addEventListener('resize', layoutCopy);
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(layoutCopy);   /* 폰트 도착 후 글자 폭이 바뀐다 */
 
-  var spin = 0, vel = 0, lastBase = null;    /* 스크롤 회전 */
+  /* 카드 영상 — 보이는 패널만 재생하고, 매 프레임 조각 캔버스에 나눠 그린다(cover 로 잘라서) */
+  var mediaRaf = null;
+  function drawCards(){
+    var any = false;
+    PANELS.forEach(function(P){
+      if(!P.card || !P.on) return;
+      any = true;
+      var v = P.video; if(!v || v.readyState < 2) return;
+      var vw = v.videoWidth, vh = v.videoHeight, c = P.card;
+      var sc = Math.max(c.w / vw, c.h / vh), sW = c.w / sc, sH = c.h / sc, sx0 = (vw - sW) / 2, sy0 = (vh - sH) / 2;
+      P.strips.forEach(function(s){
+        s.ctx.drawImage(v, sx0 + s.i * c.sw / sc, sy0, (c.sw + c.ov) / sc, sH, 0, 0, s.el.width, s.el.height);
+      });
+    });
+    mediaRaf = any ? requestAnimationFrame(drawCards) : null;
+  }
+  function setOn(P, on){
+    if(P.on === on) return; P.on = on;
+    if(P.video){ if(on){ var pr = P.video.play(); if(pr && pr.catch) pr.catch(function(){}); } else P.video.pause(); }
+    if(on && !mediaRaf) mediaRaf = requestAnimationFrame(drawCards);
+  }
+
+  var spin = 0, vel = 0;                     /* 스크롤 회전 */
   var mx = 0, my = 0, cx = 0, cy = 0;        /* 마우스 흔들림 */
   var raf = null;
 
@@ -458,46 +539,54 @@ body.dev .ctl{display:flex}
   }, {passive:true});
 
   function kick(){ if(!raf) raf = requestAnimationFrame(frame); }
-  function lerp(a, b, t){ return a + (b - a) * t; }
+  function ss(a, b, x){ var t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); }   /* smoothstep */
 
   function frame(){
     spin += vel; vel *= 0.90;
     if(Math.abs(vel) < 0.0008) vel = 0;
-    /* 원통과 본문이 같은 각도로 묶여 있으므로 단계 끝에서 둘 다 멈춘다 */
-    if(spin < 0){ spin = 0; vel = 0; } else if(spin > SPAN){ spin = SPAN; vel = 0; }
+    /* 원통과 패널이 같은 각도로 묶여 있으므로 마지막 단계 끝에서 둘 다 멈춘다 */
+    if(spin < 0){ spin = 0; vel = 0; } else if(spin > LAST * SPAN){ spin = LAST * SPAN; vel = 0; }
     cx += (mx - cx) * 0.055;
     cy += (my - cy) * 0.055;
-    var p = Math.max(0, Math.min(1, spin / SPAN));   /* 1단계 → 2단계 진행도 */
+    var p = Math.max(0, Math.min(1, spin / SPAN));          /* 1→2 단계 진행도 (제목 연출) */
+    var p2 = Math.max(0, Math.min(1, spin / SPAN - 1));     /* 2→3 단계: 제목이 물러난다 */
 
     /* 카메라가 흔들리는 것처럼 보이게 원통을 반대로 아주 조금 기울인다 */
     tube.style.transform =
       'rotateX(' + (cy * 2.6).toFixed(3) + 'deg) rotateY(' + (spin - cx * 3.4).toFixed(3) + 'deg)';
     scene.style.setProperty('--po', (50 - cx*3).toFixed(2) + '% ' + (50 - cy*3).toFixed(2) + '%');
 
-    /* 글자는 평면 그대로 두고, 벽과 반대로 아주 조금만 밀린다. 스크롤하면 본문에 자리를 내주며 살짝 비켜나고 15% 작아진다 */
-    if(mark) mark.style.transform =
-      'translate3d(' + (cx * 10 + p * C.mx).toFixed(2) + 'px,' + (cy * 6 + p * C.my).toFixed(2) + 'px,0) scale(' +
-      (1 - 0.15 * p).toFixed(4) + ')';
+    /* 글자는 평면 그대로 두고, 벽과 반대로 아주 조금만 밀린다. 스크롤하면 본문에 자리를 내주며 살짝 비켜나고 15% 작아지고,
+       서비스 단계로 넘어가면 위로 물러나며 사라진다 */
+    if(mark){
+      mark.style.transform =
+        'translate3d(' + (cx * 10 + p * C.mx).toFixed(2) + 'px,' + (cy * 6 + p * C.my - p2 * innerHeight * 0.08).toFixed(2) +
+        'px,0) scale(' + (1 - 0.15 * p).toFixed(4) + ')';
+      mark.style.opacity = (1 - ss(0, 0.6, p2)).toFixed(3);
+    }
 
-    /* 본문 — 원통과 같은 각도(spin)만큼 축 둘레를 돈다. 글자는 각자 제 각도로 벽에 붙어 있으므로
-       궤도 전체만 돌린다. 불투명도는 글자의 절대 각도로: 오른쪽(-75°)에선 0, 왼쪽으로 올수록(-5°) .85 */
-    if(orbit){
-      var base = C.th0 + spin;
-      orbit.style.visibility = p > 0 ? 'visible' : 'hidden';
-      orbit.style.transform = 'translate3d(' + (cx * 14).toFixed(1) + 'px,' + (C.Y + cy * 8).toFixed(1) +
+    /* 패널 — 원통과 같은 각도(spin)만큼 축 둘레를 돈다. 글자·카드 조각은 각자 제 각도로 벽에 붙어 있으므로 궤도만 돌린다.
+       불투명도는 조각의 절대 각도로: 오른쪽(-75°)에선 0 → 왼쪽으로 올수록 보이고, 왼쪽 뒤(80°~120°)로 빠지며 사라진다 */
+    PANELS.forEach(function(P){
+      var base = C.th0 + spin - P.k * SPAN;
+      var vis = spin > 0 && base > -126 && base < 200;
+      P.el.style.visibility = vis ? 'visible' : 'hidden';
+      setOn(P, vis && base > -95 && base < 125);
+      if(!vis) return;
+      P.el.style.transform = 'translate3d(' + (C.X + cx * 14).toFixed(1) + 'px,' + ((P.k ? C.Ys : C.Y) + cy * 8).toFixed(1) +
         'px,0) rotateY(' + base.toFixed(2) + 'deg)';
-      if(base !== lastBase){
-        lastBase = base;
-        for(var i = 0; i < CH.length; i++){
-          var t = Math.max(0, Math.min(1, (base + CH[i].th + 75) / 70));
-          CH[i].el.style.opacity = (0.85 * t * t * (3 - 2 * t)).toFixed(3);
+      if(base !== P.lastBase){
+        P.lastBase = base;
+        for(var i = 0; i < P.CH.length; i++){
+          var a = base + P.CH[i].th;
+          P.CH[i].el.style.opacity = (P.CH[i].a * ss(-75, -5, a) * (1 - ss(80, 120, a))).toFixed(3);
         }
       }
-    }
+    });
     /* 눈금자 — 현재 위치 선과 가까운 단계 표시 */
     if(cur){
-      cur.style.transform = 'translateY(' + (p * ruler.clientHeight).toFixed(1) + 'px)';
-      var near = Math.round(p * (STAGES.length - 1));
+      cur.style.transform = 'translateY(' + (spin / (LAST * SPAN) * ruler.clientHeight).toFixed(1) + 'px)';
+      var near = Math.round(spin / SPAN);
       stEls.forEach(function(el, i){ el.classList.toggle('on', i === near); });
     }
 

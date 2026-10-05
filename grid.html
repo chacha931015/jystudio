@@ -526,8 +526,10 @@ body.dev .ctl{display:flex}
         '<line x1="0" y1="0" x2="0" y2="11" stroke="#a3a8b4" stroke-width="2.4"/></pattern></defs>' +
         '<text x="50%" y="50%" dy=".35em" text-anchor="middle" font-family="Figtree,sans-serif" font-weight="900" font-size="400" ' +
         'letter-spacing="-.04em" fill="url(#' + id + ')" stroke="#c9cdd6" stroke-width="2">' + num.getAttribute('data-n') + '</text></svg>';
-      var nx = innerWidth <= 900 ? -100 : -170;
-      num.style.transform = 'translateZ(' + (-R2 - 70) + 'px) translate3d(' + (-NW/2 + nx) + 'px,' + (-NH/2 + 30) + 'px,0)';
+      /* 카드가 아니라 문구와 겹치게: 세로는 문구 블록(카드 아래 ~ 패널 끝)의 가운데, 가로는 왼쪽으로 */
+      var nx = innerWidth <= 900 ? -120 : -200;
+      var ny = card ? (cq[1] + chh + Hc) / 2 - Hc / 2 : 0;
+      num.style.transform = 'translateZ(' + (-R2 - 70) + 'px) translate3d(' + (-NW/2 + nx) + 'px,' + (-NH/2 + ny).toFixed(1) + 'px,0)';
       P.CH.push({el:num, th:0, a:1, num:true});
       if(!P.video){
         var v = document.createElement('video');

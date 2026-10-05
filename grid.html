@@ -63,7 +63,8 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
   transition:transform 900ms cubic-bezier(.77,0,.175,1), color 700ms ease 200ms}
 /* 2단계: 한 단계 위로 올라가며 작아지고, 회색으로 물러나 JY STUDIO 와 구분된다.
    화면 내 이동이므로 강한 ease-in-out */
-.mark.stage2 .title{transform:translateY(-105%) scale(.3);color:#8a8e99}
+/* --tx: JY STUDIO 의 왼쪽 끝에 맞추는 가로 이동(JS 가 계산). 오른쪽에 앉는 캐릭터와 겹치지 않게 */
+.mark.stage2 .title{transform:translate(var(--tx,0px),-105%) scale(.3);color:#8a8e99}
 
 /* JY STUDIO — 아래에서 등장. 등장이므로 ease-out, scale(0) 금지 */
 .brand{font-size:clamp(3.2rem,10vw,10rem);line-height:.9;letter-spacing:-.055em;
@@ -371,6 +372,9 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
     pos.style.setProperty('--rk', rk.toFixed(4));
     pos.style.setProperty('--rx', rx.toFixed(1) + 'px');
     pos.style.setProperty('--ry', ry.toFixed(1) + 'px');
+    /* 작은 제목을 JY STUDIO 왼쪽 끝에 정렬 — 둘 다 같은 칸 가운데에 있으므로 폭 차이의 절반만큼 왼쪽으로 */
+    var tt = document.querySelector('.title');
+    if(tt) tt.style.setProperty('--tx', (narrow ? 0 : -(W - tt.offsetWidth * 0.3) / 2).toFixed(1) + 'px');
   }
   fitRig(); addEventListener('resize', fitRig);
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(fitRig);   /* 폰트 도착 후 글자 박스가 바뀐다 */

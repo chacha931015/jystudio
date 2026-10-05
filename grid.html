@@ -6,7 +6,7 @@
 <title>원통 격자 — 화이트</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@900&family=Noto+Sans+KR:wght@400;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
    세워진 원통의 안쪽에서 벽을 본다.
@@ -20,7 +20,7 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
 .scene{position:fixed;inset:0;overflow:hidden;
   background:radial-gradient(62% 58% at 50% 50%,#ffffff 0%,#f3f4f7 76%)}
 
-.room{position:absolute;inset:0;perspective:var(--p,700px);perspective-origin:50% 50%}
+.room{position:absolute;inset:0;perspective:var(--p,700px);perspective-origin:var(--po,50% 50%)}
 .tube{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d;
   will-change:transform}
 
@@ -122,6 +122,39 @@ body{background:#ffffff;overflow:hidden;font-family:"JetBrains Mono",monospace}
   .title,.brand{transition:opacity 200ms ease}
 }
 
+/* ================= 원통보다 앞에 떠 있는 3D 층: 본문 + 눈금자 =================
+   같은 --p 원근을 쓰되 원통의 회전은 받지 않는다(마스크 없음). 스크롤 진행도 p 로 JS 가 transform 을 직접 쓴다 */
+.deck{position:absolute;inset:0;z-index:4;perspective:var(--p,700px);perspective-origin:var(--po,50% 50%);
+  display:grid;place-items:center;pointer-events:none}
+/* 본문 — 오른쪽 뒤(멀고 작게, 오른쪽 벽처럼 기울어진 채)에서 왼쪽 앞으로 휘어 들어와 왼쪽에 선다.
+   끝에서도 완전 정면이 아니라 왼쪽 벽을 따라 살짝 기울어져 있다 */
+.copy{grid-area:1/1;width:min(440px,32vw);opacity:0;visibility:hidden;
+  will-change:transform,opacity;backface-visibility:hidden;transform-origin:50% 50%}
+.copy h2{font-family:"Noto Sans KR",sans-serif;font-weight:900;font-size:clamp(1.35rem,2.3vw,2.1rem);
+  line-height:1.3;letter-spacing:-.02em;color:#0e1014;word-break:keep-all}
+.copy p{font-family:"Noto Sans KR",sans-serif;font-weight:400;font-size:clamp(.9rem,1.05vw,1rem);
+  line-height:1.8;color:#5b6070;margin-top:18px;word-break:keep-all}
+@media(max-width:900px){.copy{width:min(440px,84vw);text-align:center}}
+
+/* 눈금자 — 오른쪽 벽에 붙은 자. 오른쪽 끝을 축으로 안쪽으로 꺾여 벽을 따라간다.
+   단계(STAGES)마다 긴 눈금 + 번호, 현재 위치 선이 스크롤 진행도만큼 내려간다 */
+.ruler{position:absolute;right:28px;top:50%;width:150px;height:400px;
+  transform:translateY(-50%) rotateY(-38deg);transform-origin:100% 50%;backface-visibility:hidden;
+  font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.14em;color:#8a8e99;
+  opacity:0;transition:opacity 600ms cubic-bezier(.23,1,.32,1) 1300ms}
+body.stage2 .ruler{opacity:1}
+.ruler .tk{position:absolute;right:0;top:0;bottom:-1px}
+.ruler .tk.minor{width:8px;background:repeating-linear-gradient(to bottom,rgba(14,16,20,.32) 0 1px,transparent 1px 10px)}
+.ruler .tk.major{width:16px;background:repeating-linear-gradient(to bottom,rgba(14,16,20,.6) 0 1px,transparent 1px 50px)}
+.ruler .st{position:absolute;right:34px;transform:translateY(-50%);white-space:nowrap;line-height:1;
+  display:flex;gap:9px;align-items:baseline;transition:color 200ms ease}
+.ruler .st b{font-weight:500;color:#1a1d26}
+.ruler .st.on{color:#0e1014}
+.ruler .st::after{content:"";position:absolute;left:100%;margin-left:8px;top:50%;width:26px;height:1px;background:#0e1014}
+.ruler .cur{position:absolute;right:0;top:-1px;width:34px;height:2px;background:#0e1014;will-change:transform}
+@media(max-height:700px){.ruler{height:300px}}
+@media(max-width:900px){.ruler{right:12px;font-size:9px}}
+
 /* ================= 파트너 마퀴 (메인 사이트와 같은 연출) =================
    등속 흐름이므로 linear. 호버 멈춤은 포인터 있는 기기에서만. 등장은 JY STUDIO 뒤에 ease-out */
 .partners{position:absolute;left:0;right:0;bottom:clamp(26px,6vh,60px);z-index:3;
@@ -175,6 +208,14 @@ body.dev .ctl{display:flex}
 
   <div class="vig"></div>
 
+  <div class="deck">
+    <div class="copy" id="copy">
+      <h2>대량 제작도 안정적으로,<br>퀄리티는 일관되게</h2>
+      <p>게임을 위한 SPINE 2D 리소스 외주 전문 스튜디오. 전 제작 과정을 직접 관리하며, 일정과 수량에 따른 안정적인 납품으로 신뢰할 수 있는 파트너가 되겠습니다.</p>
+    </div>
+    <div class="ruler" id="ruler"></div>
+  </div>
+
   <div class="partners">
     <div class="plabel">함께한 파트너 / Trusted by</div>
     <div class="prow"><div class="ptrack">
@@ -210,11 +251,12 @@ body.dev .ctl{display:flex}
 <script>
 (function(){
   'use strict';
-  var tube = document.getElementById('tube'), room = document.getElementById('room');
+  var tube = document.getElementById('tube'), room = document.getElementById('room'),
+      scene = document.querySelector('.scene');
   var H = 2000;                         /* 벽의 높이 */
 
   function build(N, R, P){
-    room.style.setProperty('--p', P + 'px');
+    scene.style.setProperty('--p', P + 'px');   /* room(원통)과 deck(본문·눈금자)이 같은 원근을 쓴다 */
     var stepDeg = 360 / N;
     /* 패널 하나의 폭 = 원주를 N 등분한 현의 길이. +1 은 패널 사이 실틈 제거 */
     var W = 2 * R * Math.tan(Math.PI / N) + 1;
@@ -321,6 +363,26 @@ body.dev .ctl{display:flex}
   }
   fitRig(); addEventListener('resize', fitRig);
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(fitRig);   /* 폰트 도착 후 글자 박스가 바뀐다 */
+  /* ---------- 단계 — 스크롤(원통 회전각)으로 진행. 한 단계 = SPAN 도 ---------- */
+  var STAGES = [['01','JY STUDIO'],['02','ABOUT']], SPAN = 110;
+  var ruler = document.getElementById('ruler'), cur = null, stEls = [];
+  if(ruler){
+    ruler.innerHTML = '<div class="tk minor"></div><div class="tk major"></div>' +
+      STAGES.map(function(s,i){ return '<div class="st" style="top:' + (i/(STAGES.length-1)*100) + '%"><b>' + s[0] + '</b>' + s[1] + '</div>'; }).join('') +
+      '<div class="cur"></div>';
+    cur = ruler.querySelector('.cur'); stEls = [].slice.call(ruler.querySelectorAll('.st'));
+  }
+
+  /* 본문의 경로 — 시작(오른쪽 뒤, 작고 기울어짐) → 끝(왼쪽, 가깝고 살짝 기울어짐). 제목은 그만큼 살짝 비켜난다 */
+  var copy = document.getElementById('copy'), C = {};
+  function layoutCopy(){
+    var W = innerWidth, Hh = innerHeight, narrow = W <= 900, cw = copy ? copy.offsetWidth : 0;
+    if(narrow){ C = {x0:W*0.6,  x1:0,                y0:Hh*0.3,  y1:Hh*0.2, z0:-700, z1:0,  r0:-50, r1:8,  mx:0,      my:-Hh*0.16}; }
+    else      { C = {x0:W*0.55, x1:-(W*0.43 - cw/2), y0:Hh*0.25, y1:0,      z0:-700, z1:20, r0:-50, r1:14, mx:W*0.12, my:0}; }
+  }
+  layoutCopy(); addEventListener('resize', layoutCopy);
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(layoutCopy);
+
   var spin = 0, vel = 0;                     /* 스크롤 회전 */
   var mx = 0, my = 0, cx = 0, cy = 0;        /* 마우스 흔들림 */
   var raf = null;
@@ -330,29 +392,55 @@ body.dev .ctl{display:flex}
     vel += e.deltaY * 0.022;
     kick();
   }, {passive:false});
+  /* 터치 — 손가락을 끌면 같은 방향으로 */
+  var ty = null;
+  addEventListener('touchstart', function(e){ ty = e.touches[0].clientY; }, {passive:true});
+  addEventListener('touchmove', function(e){
+    if(ty === null) return;
+    var y = e.touches[0].clientY; vel += (ty - y) * 0.05; ty = y; kick();
+  }, {passive:true});
+  addEventListener('touchend', function(){ ty = null; }, {passive:true});
 
   addEventListener('mousemove', function(e){
+    if(reduce) return;                       /* 모션 줄임: 마우스 흔들림은 빼고 스크롤 진행만 */
     mx = (e.clientX - innerWidth/2) / (innerWidth/2);
     my = (e.clientY - innerHeight/2) / (innerHeight/2);
     kick();
   }, {passive:true});
 
-  function kick(){ if(!raf && !reduce) raf = requestAnimationFrame(frame); }
+  function kick(){ if(!raf) raf = requestAnimationFrame(frame); }
+  function lerp(a, b, t){ return a + (b - a) * t; }
 
   function frame(){
     spin += vel; vel *= 0.90;
     if(Math.abs(vel) < 0.0008) vel = 0;
     cx += (mx - cx) * 0.055;
     cy += (my - cy) * 0.055;
+    var p = Math.max(0, Math.min(1, spin / SPAN));   /* 1단계 → 2단계 진행도 */
 
     /* 카메라가 흔들리는 것처럼 보이게 원통을 반대로 아주 조금 기울인다 */
     tube.style.transform =
       'rotateX(' + (cy * 2.6).toFixed(3) + 'deg) rotateY(' + (spin - cx * 3.4).toFixed(3) + 'deg)';
-    room.style.perspectiveOrigin = (50 - cx*3).toFixed(2) + '% ' + (50 - cy*3).toFixed(2) + '%';
+    scene.style.setProperty('--po', (50 - cx*3).toFixed(2) + '% ' + (50 - cy*3).toFixed(2) + '%');
 
-    /* 글자는 평면 그대로 두고, 벽과 반대로 아주 조금만 밀려 앞에 떠 있는 느낌을 준다 */
+    /* 글자는 평면 그대로 두고, 벽과 반대로 아주 조금만 밀린다. 스크롤하면 본문에 자리를 내주며 살짝 비켜난다 */
     if(mark) mark.style.transform =
-      'translate3d(' + (cx * 10).toFixed(2) + 'px,' + (cy * 6).toFixed(2) + 'px,0)';
+      'translate3d(' + (cx * 10 + p * C.mx).toFixed(2) + 'px,' + (cy * 6 + p * C.my).toFixed(2) + 'px,0)';
+
+    /* 본문 — 오른쪽 뒤에서 왼쪽 앞으로. 처음 30% 동안 떠오른다 */
+    if(copy){
+      copy.style.opacity = Math.min(1, p / 0.3).toFixed(3);
+      copy.style.visibility = p > 0 ? 'visible' : 'hidden';
+      copy.style.transform = 'translate3d(' + (lerp(C.x0, C.x1, p) + cx * 14).toFixed(1) + 'px,' +
+        (lerp(C.y0, C.y1, p) + cy * 8).toFixed(1) + 'px,' + lerp(C.z0, C.z1, p).toFixed(1) + 'px) rotateY(' +
+        lerp(C.r0, C.r1, p).toFixed(2) + 'deg)';
+    }
+    /* 눈금자 — 현재 위치 선과 가까운 단계 표시 */
+    if(cur){
+      cur.style.transform = 'translateY(' + (p * ruler.clientHeight).toFixed(1) + 'px)';
+      var near = Math.round(p * (STAGES.length - 1));
+      stEls.forEach(function(el, i){ el.classList.toggle('on', i === near); });
+    }
 
     /* 리그 — 값은 1300px 캔버스 기준. 표시 배율(약 0.3)을 곱하면 화면에서는 1/3 로 줄어들므로
        눈 ±16px(화면 ±5px), 머리 1.6°, 앞발 2.2°, 책 1.5° 정도여야 눈에 띈다 */

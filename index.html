@@ -1753,6 +1753,9 @@ document.querySelectorAll('.port.yt').forEach(p=>{
     /* ---------- 3-2) 서비스 항목 DB 연동 ---------- */
     try{ loadServicesFromDB(); }catch(e){}
 
+    /* ---------- 3-3) 대문 문구 DB 연동 (관리자 앱 "대문 문구" 탭) ---------- */
+    try{ loadSiteCopyFromDB(); }catch(e){}
+
     /* ---------- 4) 문의 폼 → DB에도 저장 ---------- */
     try{ hookContactForm(); }catch(e){}
   }
@@ -2010,6 +2013,20 @@ document.querySelectorAll('.port.yt').forEach(p=>{
 
   /* ================= 서비스 항목 DB 연동 =================
      관리자 앱 "서비스 항목" 탭 내용이 있으면 Services 섹션을 다시 그림 */
+  /* site_copy 에 행이 있으면 번역 사전(I18N)의 해당 키를 덮어쓰고 현재 언어로 다시 그린다 */
+  function loadSiteCopyFromDB(){
+    sb.from('site_copy').select('key,ko,en,ja,zh')
+      .then(function(res){
+        var rows=res.data;
+        if(res.error || !rows || rows.length===0 || typeof I18N==='undefined') return;
+        rows.forEach(function(r){
+          var d=I18N[r.key]||(I18N[r.key]={});
+          ['ko','en','ja','zh'].forEach(function(l){ if(r[l]) d[l]=r[l]; });
+        });
+        if(typeof setLang==='function') setLang(document.documentElement.lang||'ko');
+      });
+  }
+
   function loadServicesFromDB(){
     sb.from('services').select('*').order('sort_order',{ascending:true}).order('created_at',{ascending:true})
       .then(function(res){

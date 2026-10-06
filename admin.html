@@ -794,7 +794,7 @@ html.tauri .center{margin-top:14vh}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
-const APP_VERSION = '1.12.0';
+const APP_VERSION = '1.12.1';
 
 /* 데스크톱 앱 자동 배포: 사이트에 새 버전이 올라가 있으면 그걸 사용 */
 if(window.__TAURI__ && location.protocol !== 'https:'){
@@ -992,7 +992,7 @@ function enterApp(session, isAuto){
 document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click', ()=>{
   const tab = b.dataset.tab;
   document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('on', x.dataset.tab===tab));
-  ['dash','chat','portfolio','team','svc','staff','ledger','docs','notices'].forEach(t=>$('tab-'+t).style.display = tab===t ? 'block':'none');
+  ['dash','chat','portfolio','team','svc','copy','staff','ledger','docs','notices'].forEach(t=>$('tab-'+t).style.display = tab===t ? 'block':'none');
 }));
 function gotoTab(name){ document.querySelector(`.side-nav [data-tab="${name}"]`)?.click(); }
 

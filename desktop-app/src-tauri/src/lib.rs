@@ -26,7 +26,23 @@ fn round_window(window: &tauri::Window) {
 pub fn run() {
   tauri::Builder::default()
     .plugin(tauri_plugin_opener::init())
+    .plugin(tauri_plugin_updater::Builder::new().build())
     .setup(|app| {
+      // 자동 업데이트 — 시작할 때 https://jystudio98.com/app/latest.json 을 확인해서 새 버전이면
+      // 받아서 설치(진행 막대만 잠깐 뜸)하고 다시 켠다. 오프라인이거나 실패하면 그냥 지금 버전으로 계속
+      {
+        let handle = app.handle().clone();
+        tauri::async_runtime::spawn(async move {
+          use tauri_plugin_updater::UpdaterExt;
+          if let Ok(updater) = handle.updater() {
+            if let Ok(Some(update)) = updater.check().await {
+              if update.download_and_install(|_, _| {}, || {}).await.is_ok() {
+                handle.restart();
+              }
+            }
+          }
+        });
+      }
       if cfg!(debug_assertions) {
         app.handle().plugin(
           tauri_plugin_log::Builder::default()

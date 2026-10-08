@@ -491,7 +491,23 @@ footer p{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);letter-
 .reveal{opacity:0;transform:translateY(26px);transition:.7s cubic-bezier(.2,.7,.2,1)}
 .reveal.in{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+html.copy-wait [data-i18n^="hero."],html.copy-wait [data-i18n^="pillar"]{visibility:hidden}
 </style>
+<script src="supabase-config.js"></script>
+<script>
+/* 대문 문구(관리자 앱 "대문 문구" 탭) — 받기 전엔 숨겨서 HTML 의 옛 문구가 먼저 보였다가 바뀌지 않게 한다.
+   지난 방문 때 받은 문구가 있으면 즉시 쓰고, DB 는 SDK 를 기다리지 않고 REST 로 바로 요청. 2.5초 넘으면 그냥 보인다 */
+(function(){
+  var d=document.documentElement; d.classList.add('copy-wait');
+  try{ window.__jyCopy=JSON.parse(localStorage.getItem('jy_site_copy')||'null'); }catch(e){}
+  var U=window.JY_SUPABASE_URL, K=window.JY_SUPABASE_ANON_KEY;
+  window.__jyCopyP=(U&&K&&window.fetch)
+    ? fetch(U+'/rest/v1/site_copy?select=key,ko,en,ja,zh',{headers:{apikey:K,Authorization:'Bearer '+K},cache:'no-store'})
+        .then(function(r){return r.ok?r.json():null;}).catch(function(){return null;})
+    : Promise.resolve(null);
+  setTimeout(function(){ d.classList.remove('copy-wait'); },2500);
+})();
+</script>
 </head>
 <body>
 <div class="grid-overlay"></div>
@@ -1194,6 +1210,21 @@ const I18N={
   "f.send":{ko:"문의 보내기 / Send →",en:"Send →",ja:"送信 →",zh:"发送咨询 →"},
   "partner.label":{ko:"협력사",en:"Partner",ja:"協力会社",zh:"合作公司"}
 };
+(function(){
+  function merge(rows){ (rows||[]).forEach(function(r){ var d=I18N[r.key]||(I18N[r.key]={}); ['ko','en','ja','zh'].forEach(function(l){ if(r[l]) d[l]=r[l]; }); }); }
+  function paint(){
+    var lang=document.documentElement.lang||'ko';
+    document.querySelectorAll('[data-i18n^="hero."],[data-i18n^="pillar"]').forEach(function(el){
+      var k=el.getAttribute('data-i18n'); if(I18N[k]&&I18N[k][lang]) el.textContent=I18N[k][lang];
+    });
+    document.documentElement.classList.remove('copy-wait');
+  }
+  if(window.__jyCopy&&window.__jyCopy.length){ merge(window.__jyCopy); paint(); }
+  (window.__jyCopyP||Promise.resolve(null)).then(function(rows){
+    if(rows&&rows.length){ merge(rows); try{ localStorage.setItem('jy_site_copy',JSON.stringify(rows)); }catch(e){} }
+    paint();
+  });
+})();
 /* ===== 자동 번역 (사전에 없는 콘텐츠) =====
    포트폴리오 · 팀 경력 · 서비스 항목은 관리자 앱에서 한국어로만 저장되므로
    위 I18N 사전으로는 바꿀 수 없다. 한국어가 아닌 언어를 고르면 그 자리에서
@@ -1754,7 +1785,6 @@ document.querySelectorAll('.port.yt').forEach(p=>{
     try{ loadServicesFromDB(); }catch(e){}
 
     /* ---------- 3-3) 대문 문구 DB 연동 (관리자 앱 "대문 문구" 탭) ---------- */
-    try{ loadSiteCopyFromDB(); }catch(e){}
 
     /* ---------- 4) 문의 폼 → DB에도 저장 ---------- */
     try{ hookContactForm(); }catch(e){}

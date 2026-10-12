@@ -435,7 +435,13 @@ html.tauri .center{margin-top:14vh}
     <!-- ========== 대문 문구 ========== -->
     <div id="tab-copy" style="display:none">
       <div class="large-title">대문 문구</div>
-      <div class="sub-title">홈페이지 첫 화면의 문구입니다. 한국어만 고치면 저장할 때 영어·일본어·중국어는 자동 번역됩니다.</div>
+      <div class="sub-title">홈페이지 첫 화면의 문구입니다. 위에서 언어를 골라 각각 직접 입력하고, 한 번에 저장합니다.</div>
+      <div id="cpLangs" style="display:inline-flex;gap:4px;padding:3px;border-radius:10px;background:rgba(255,255,255,.06);margin:4px 0 16px">
+        <button class="btn sm primary" data-cplang="ko">한국어</button>
+        <button class="btn sm" data-cplang="en">English</button>
+        <button class="btn sm" data-cplang="ja">日本語</button>
+        <button class="btn sm" data-cplang="zh">中文</button>
+      </div>
       <div class="field"><label>상단 라벨 (영문 그대로 쓰입니다)</label><input id="cp-hero.eyebrow" placeholder="Spine 2D Animation Outsourcing"></div>
       <div class="grid2">
         <div class="field"><label>제목 1줄</label><input id="cp-hero.h1a" placeholder="대량 제작도 안정적으로,"></div>
@@ -455,7 +461,6 @@ html.tauri .center{margin-top:14vh}
         <div class="field"><label>포인트 03 제목</label><input id="cp-pillar3.t" placeholder="안정적인 일정 대응"></div>
         <div class="field"><label>포인트 03 설명</label><input id="cp-pillar3.d" placeholder="주어진 기간과 물량에 맞춘 체계적인 운영"></div>
       </div>
-      <label class="muted" style="display:inline-flex;gap:8px;align-items:center;font-size:.85rem;margin:6px 0 10px;width:auto"><input type="checkbox" id="cpAutoTr" checked style="width:auto;margin:0"> 저장할 때 영어·일본어·중국어도 자동 번역</label>
       <div class="err" id="cpErr"></div>
       <div class="actions">
         <a class="btn" href="https://jystudio98.com/" target="_blank" rel="noopener">홈페이지 보기</a>
@@ -794,7 +799,7 @@ html.tauri .center{margin-top:14vh}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
-const APP_VERSION = '1.13.0';
+const APP_VERSION = '1.13.1';
 
 /* 데스크톱 앱 자동 배포: 사이트에 새 버전이 올라가 있으면 그걸 사용 */
 if(window.__TAURI__ && location.protocol !== 'https:'){
@@ -1505,44 +1510,29 @@ async function delSv(id){ if(!confirm('이 서비스 항목을 삭제할까요?'
    대문 문구 (홈페이지 첫 화면) — site_copy, key 별 ko/en/ja/zh. 키는 index.html 의 data-i18n 과 같다
    ============================================================ */
 const COPY_KEYS = ['hero.eyebrow','hero.h1a','hero.h1b','hero.leadb','hero.lead','pillar1.t','pillar1.d','pillar2.t','pillar2.d','pillar3.t','pillar3.d'];
+/* 언어별로 직접 입력 — 자동 번역 없음. COPY[key][lang] 에 들고 있다가 언어를 바꾸면 입력칸만 갈아 끼운다 */
+let COPY = {}, cpLang = 'ko';
+function cpStash(){ COPY_KEYS.forEach(k=>{ (COPY[k]=COPY[k]||{})[cpLang] = ($('cp-'+k).value||'').trim(); }); }
+function cpPaint(){ COPY_KEYS.forEach(k=>{ $('cp-'+k).value = (COPY[k]&&COPY[k][cpLang])||''; }); }
+document.querySelectorAll('[data-cplang]').forEach(b=>b.addEventListener('click', ()=>{
+  cpStash(); cpLang = b.dataset.cplang; cpPaint();
+  document.querySelectorAll('[data-cplang]').forEach(x=>x.classList.toggle('primary', x===b));
+}));
 async function loadCopy(){
   const { data, error } = await sb.from('site_copy').select('key,ko,en,ja,zh');
   if(error){ $('cpErr').textContent = '불러오기 오류: '+error.message+' (supabase-update-7.sql 실행 여부 확인)'; return; }
-  $('cpErr').textContent='';
-  (data||[]).forEach(r=>{ const el=$('cp-'+r.key); if(el) el.value = r.ko||''; COPY_LOADED[r.key]=r.ko||''; });
+  $('cpErr').textContent=''; COPY = {};
+  (data||[]).forEach(r=>{ COPY[r.key] = {ko:r.ko||'', en:r.en||'', ja:r.ja||'', zh:r.zh||''}; });
+  cpPaint();
 }
-let COPY_LOADED = {};                                                  /* 불러온 한국어 — 바뀐 칸만 다시 번역 */
 $('cpSave').addEventListener('click', async ()=>{
-  $('cpErr').textContent=''; const auto=$('cpAutoTr').checked, btn=$('cpSave'); btn.disabled=true;
-  /* 1) 한국어부터 바로 저장 — 번역이 늦거나 막혀도 홈페이지 한국어는 즉시 바뀐다 */
-  const rows=[], changed=[];
-  for(const k of COPY_KEYS){
-    const ko=($('cp-'+k).value||'').trim(); if(!ko) continue;
-    rows.push({key:k, ko, updated_at:new Date().toISOString()});
-    if(ko!==COPY_LOADED[k]) changed.push(k);
-  }
-  btn.textContent='저장 중…';
+  $('cpErr').textContent=''; cpStash();
+  const rows = COPY_KEYS.filter(k=>COPY[k]&&COPY[k].ko).map(k=>({key:k, ko:COPY[k].ko, en:COPY[k].en||null, ja:COPY[k].ja||null, zh:COPY[k].zh||null, updated_at:new Date().toISOString()}));
+  const btn=$('cpSave'); btn.disabled=true; btn.textContent='저장 중…';
   const { error } = await sb.from('site_copy').upsert(rows,{onConflict:'key'});
-  if(error){ btn.textContent='저장'; btn.disabled=false; $('cpErr').textContent='저장 실패: '+error.message; return; }
-  rows.forEach(r=>COPY_LOADED[r.key]=r.ko);
-  toast('저장되었습니다. 홈페이지에 바로 반영됩니다');
-  /* 2) 바뀐 칸만 영·일·중 번역 — 동시에, 건당 6초 제한. 실패한 언어는 이전 번역 유지 */
-  if(auto && changed.length){
-    btn.textContent='번역 중…';
-    const withTimeout = (p)=>Promise.race([p, new Promise(r=>setTimeout(()=>r(null),6000))]);
-    const tr = await Promise.all(changed.map(async k=>{
-      const ko=$('cp-'+k).value.trim(), row={key:k};
-      if(!/[가-힣]/.test(ko)){ row.en=row.ja=row.zh=ko; return row; }
-      const [en,ja,zh] = await Promise.all(['en','ja','zh-CN'].map(t=>withTimeout(jyTranslate(ko,t))));
-      if(en&&en.text) row.en=en.text; if(ja&&ja.text) row.ja=ja.text; if(zh&&zh.text) row.zh=zh.text;
-      return row;
-    }));
-    const upd = tr.filter(r=>r.en||r.ja||r.zh);
-    let bad = changed.length - upd.length;
-    for(const r of upd){ const { error:e2 } = await sb.from('site_copy').update(r).eq('key', r.key); if(e2) bad++; }
-    if(bad) $('cpErr').textContent='한국어는 저장됨. 일부 외국어 번역은 실패했습니다(이전 번역 유지).';
-  }
   btn.textContent='저장'; btn.disabled=false;
+  if(error){ $('cpErr').textContent='저장 실패: '+error.message; return; }
+  toast('저장되었습니다. 홈페이지에 바로 반영됩니다');
 });
 
 /* ============================================================

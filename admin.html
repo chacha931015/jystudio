@@ -320,7 +320,7 @@ html.tauri .center{margin-top:14vh}
       <button class="nav-item" data-tab="portfolio"><span class="ico"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2.5"/><circle cx="9" cy="10" r="1.5"/><path d="M5 17l4.5-4.2 3.2 3 3-2.6 3.8 3.8"/></svg></span>포트폴리오</button>
       <button class="nav-item" data-tab="team"><span class="ico"><svg viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c.6-3 2.8-4.7 5.5-4.7s4.9 1.7 5.5 4.7M17 11.8a2.6 2.6 0 1 0-1.5-4.9M16 14.3c2.4.2 4 1.8 4.5 4.4"/></svg></span>팀 경력</button>
       <button class="nav-item" data-tab="svc"><span class="ico"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7.5" height="7.5" rx="2"/><rect x="13" y="3.5" width="7.5" height="7.5" rx="2"/><rect x="3.5" y="13" width="7.5" height="7.5" rx="2"/><rect x="13" y="13" width="7.5" height="7.5" rx="2"/></svg></span>서비스 항목</button>
-      <button class="nav-item" data-tab="copy"><span class="ico"><svg viewBox="0 0 24 24"><path d="M5 6.5h14M5 12h9M5 17.5h11"/></svg></span>대문 문구</button>
+      <button class="nav-item" data-tab="copy"><span class="ico"><svg viewBox="0 0 24 24"><path d="M5 6.5h14M5 12h9M5 17.5h11"/></svg></span>홈페이지 문구</button>
       <button class="nav-item" data-tab="notices"><span class="ico"><svg viewBox="0 0 24 24"><path d="M4 10v4h3l7 4.5v-13L7 10H4z" stroke-linejoin="round"/><path d="M17.5 9.5a4.2 4.2 0 0 1 0 5"/></svg></span>공지</button>
       <div class="nav-group">내부 관리</div>
       <button class="nav-item" data-tab="staff"><span class="ico"><svg viewBox="0 0 24 24"><rect x="4" y="4.5" width="16" height="15" rx="2.5"/><path d="M4 9.5h16M9.5 9.5v10"/></svg></span>직원 관리</button>
@@ -434,35 +434,20 @@ html.tauri .center{margin-top:14vh}
 
     <!-- ========== 대문 문구 ========== -->
     <div id="tab-copy" style="display:none">
-      <div class="large-title">대문 문구</div>
-      <div class="sub-title">홈페이지 첫 화면의 문구입니다. 위에서 언어를 골라 각각 직접 입력하고, 한 번에 저장합니다.</div>
-      <div id="cpLangs" style="display:inline-flex;gap:4px;padding:3px;border-radius:10px;background:rgba(255,255,255,.06);margin:4px 0 16px">
-        <button class="btn sm primary" data-cplang="ko">한국어</button>
-        <button class="btn sm" data-cplang="en">English</button>
-        <button class="btn sm" data-cplang="ja">日本語</button>
-        <button class="btn sm" data-cplang="zh">中文</button>
+      <div class="large-title">홈페이지 문구</div>
+      <div class="sub-title">홈페이지에 보이는 모든 글입니다(포트폴리오·팀 경력·서비스 카드는 각 탭에서). 언어를 골라 직접 입력하고 한 번에 저장합니다. 줄을 바꾸면 홈페이지에서도 줄이 바뀝니다.</div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:4px 0 16px">
+        <div id="cpLangs" style="display:inline-flex;gap:4px;padding:3px;border-radius:10px;background:rgba(255,255,255,.06)">
+          <button class="btn sm primary" data-cplang="ko">한국어</button>
+          <button class="btn sm" data-cplang="en">English</button>
+          <button class="btn sm" data-cplang="ja">日本語</button>
+          <button class="btn sm" data-cplang="zh">中文</button>
+        </div>
+        <span class="muted" id="cpInfo" style="font-size:.8rem"></span>
       </div>
-      <div class="field"><label>상단 라벨 (영문 그대로 쓰입니다)</label><input id="cp-hero.eyebrow" placeholder="Spine 2D Animation Outsourcing"></div>
-      <div class="grid2">
-        <div class="field"><label>제목 1줄</label><input id="cp-hero.h1a" placeholder="대량 제작도 안정적으로,"></div>
-        <div class="field"><label>제목 2줄</label><input id="cp-hero.h1b" placeholder="퀄리티는 일관되게"></div>
-      </div>
-      <div class="field"><label>소개 — 굵은 첫 문장</label><input id="cp-hero.leadb" placeholder="게임을 위한 SPINE 2D 리소스 외주 전문 스튜디오."></div>
-      <div class="field"><label>소개 — 본문</label><textarea id="cp-hero.lead" style="min-height:80px" placeholder="전 제작 과정을 직접 관리하며…"></textarea></div>
-      <div class="grid2">
-        <div class="field"><label>포인트 01 제목</label><input id="cp-pillar1.t" placeholder="대량 수주 대응"></div>
-        <div class="field"><label>포인트 01 설명</label><input id="cp-pillar1.d" placeholder="프로젝트 규모에 맞춘 유연한 제작"></div>
-      </div>
-      <div class="grid2">
-        <div class="field"><label>포인트 02 제목</label><input id="cp-pillar2.t" placeholder="일관된 품질 관리"></div>
-        <div class="field"><label>포인트 02 설명</label><input id="cp-pillar2.d" placeholder="전 과정을 직접 관리하는 제작 시스템"></div>
-      </div>
-      <div class="grid2">
-        <div class="field"><label>포인트 03 제목</label><input id="cp-pillar3.t" placeholder="안정적인 일정 대응"></div>
-        <div class="field"><label>포인트 03 설명</label><input id="cp-pillar3.d" placeholder="주어진 기간과 물량에 맞춘 체계적인 운영"></div>
-      </div>
+      <div id="cpFields"><div class="empty">불러오는 중…</div></div>
       <div class="err" id="cpErr"></div>
-      <div class="actions">
+      <div class="actions" style="position:sticky;bottom:0;padding:12px 0;background:var(--bg,#1e1e20)">
         <a class="btn" href="https://jystudio98.com/" target="_blank" rel="noopener">홈페이지 보기</a>
         <button class="btn primary" id="cpSave">저장</button>
       </div>
@@ -549,7 +534,7 @@ html.tauri .center{margin-top:14vh}
   <button data-tab="portfolio"><span class="ico"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2.5"/><circle cx="9" cy="10" r="1.5"/><path d="M5 17l4.5-4.2 3.2 3 3-2.6 3.8 3.8"/></svg></span>포트폴리오</button>
   <button data-tab="team"><span class="ico"><svg viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c.6-3 2.8-4.7 5.5-4.7s4.9 1.7 5.5 4.7M17 11.8a2.6 2.6 0 1 0-1.5-4.9M16 14.3c2.4.2 4 1.8 4.5 4.4"/></svg></span>팀</button>
   <button data-tab="svc"><span class="ico"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7.5" height="7.5" rx="2"/><rect x="13" y="3.5" width="7.5" height="7.5" rx="2"/><rect x="3.5" y="13" width="7.5" height="7.5" rx="2"/><rect x="13" y="13" width="7.5" height="7.5" rx="2"/></svg></span>서비스</button>
-  <button data-tab="copy"><span class="ico"><svg viewBox="0 0 24 24"><path d="M5 6.5h14M5 12h9M5 17.5h11"/></svg></span>대문 문구</button>
+  <button data-tab="copy"><span class="ico"><svg viewBox="0 0 24 24"><path d="M5 6.5h14M5 12h9M5 17.5h11"/></svg></span>홈페이지 문구</button>
   <button data-tab="staff"><span class="ico"><svg viewBox="0 0 24 24"><rect x="4" y="4.5" width="16" height="15" rx="2.5"/><path d="M4 9.5h16M9.5 9.5v10"/></svg></span>직원</button>
   <button data-tab="ledger"><span class="ico"><svg viewBox="0 0 24 24"><rect x="4" y="3.5" width="16" height="17" rx="2.5"/><path d="M8 8.5h8M8 12.5h8M8 16.5h4.5"/></svg></span>장부</button>
   <button data-tab="docs"><span class="ico"><svg viewBox="0 0 24 24"><path d="M6.5 3.5h6.5L18.5 9v10.5a1.5 1.5 0 0 1-1.5 1.5H7a1.5 1.5 0 0 1-1.5-1.5v-14a1.5 1.5 0 0 1 1.5-1.5z" stroke-linejoin="round"/><path d="M13 3.5V9h5.5M9 13.5h6M9 17h6"/></svg></span>계약서</button>
@@ -799,7 +784,7 @@ html.tauri .center{margin-top:14vh}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
-const APP_VERSION = '1.13.1';
+const APP_VERSION = '1.14.0';
 
 /* 데스크톱 앱 자동 배포: 사이트에 새 버전이 올라가 있으면 그걸 사용 */
 if(window.__TAURI__ && location.protocol !== 'https:'){
@@ -1507,31 +1492,64 @@ async function delSv(id){ if(!confirm('이 서비스 항목을 삭제할까요?'
 }
 
 /* ============================================================
-   대문 문구 (홈페이지 첫 화면) — site_copy, key 별 ko/en/ja/zh. 키는 index.html 의 data-i18n 과 같다
+   홈페이지 문구 — site_copy(key, ko/en/ja/zh). 키 목록과 기본 문구는 라이브 index.html 의
+   번역 사전(I18N)에서 읽는다 → 홈페이지에 글이 새로 생기면 여기도 자동으로 생긴다
    ============================================================ */
-const COPY_KEYS = ['hero.eyebrow','hero.h1a','hero.h1b','hero.leadb','hero.lead','pillar1.t','pillar1.d','pillar2.t','pillar2.d','pillar3.t','pillar3.d'];
-/* 언어별로 직접 입력 — 자동 번역 없음. COPY[key][lang] 에 들고 있다가 언어를 바꾸면 입력칸만 갈아 끼운다 */
-let COPY = {}, cpLang = 'ko';
-function cpStash(){ COPY_KEYS.forEach(k=>{ (COPY[k]=COPY[k]||{})[cpLang] = ($('cp-'+k).value||'').trim(); }); }
-function cpPaint(){ COPY_KEYS.forEach(k=>{ $('cp-'+k).value = (COPY[k]&&COPY[k][cpLang])||''; }); }
+const CP_SECTIONS = [['header','상단 메뉴'],['hero','첫 화면(대문)'],['clients','파트너'],['services','서비스'],['career','팀 경력'],
+                     ['work','포트폴리오'],['process','작업 진행'],['contact','문의'],['footer','하단 정보']];
+let CP_DEF = {}, CP_KEYS = [], COPY = {}, CP_DB = new Set(), cpLang = 'ko';
+async function cpReadSite(){
+  const html = await fetch('https://jystudio98.com/index.html?ts=' + Date.now(), { cache:'no-store' }).then(r=>r.text());
+  const s = html.indexOf('const I18N=') + 'const I18N='.length, e = html.indexOf('\n};', s) + 2;
+  CP_DEF = JSON.parse(html.slice(s, e).replace(/([{,]\s*)(ko|en|ja|zh):/g, '$1"$2":'));
+  /* 홈페이지에 실제로 쓰이는 키만, 나오는 순서대로, 구역별로 */
+  const doc = new DOMParser().parseFromString(html, 'text/html'), seen = new Set(), groups = {};
+  doc.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k = el.getAttribute('data-i18n'); if(seen.has(k) || !CP_DEF[k]) return; seen.add(k);
+    const sec = el.closest('header') ? 'header' : el.closest('footer') ? 'footer' : (el.closest('section[id]')||{}).id || 'hero';
+    (groups[sec] = groups[sec] || []).push(k);
+  });
+  CP_KEYS = [];
+  const order = CP_SECTIONS.map(x=>x[0]).concat(Object.keys(groups).filter(s=>!CP_SECTIONS.some(x=>x[0]===s)));
+  return order.filter(s=>groups[s]).map(s=>{ CP_KEYS.push(...groups[s]); return [s, groups[s]]; });
+}
+function cpVal(k, l){ return (COPY[k] && COPY[k][l] != null) ? COPY[k][l] : ((CP_DEF[k]||{})[l] || ''); }
+function cpStash(){ CP_KEYS.forEach(k=>{ const el = document.getElementById('cp-'+k); if(el) (COPY[k] = COPY[k] || {})[cpLang] = el.value.replace(/\s+$/,''); }); }
+function cpPaint(){ CP_KEYS.forEach(k=>{ const el = document.getElementById('cp-'+k); if(el) el.value = cpVal(k, cpLang); }); }
 document.querySelectorAll('[data-cplang]').forEach(b=>b.addEventListener('click', ()=>{
   cpStash(); cpLang = b.dataset.cplang; cpPaint();
   document.querySelectorAll('[data-cplang]').forEach(x=>x.classList.toggle('primary', x===b));
 }));
 async function loadCopy(){
+  $('cpErr').textContent = '';
+  let groups;
+  try{ groups = await cpReadSite(); }catch(e){ $('cpFields').innerHTML = '<div class="empty">홈페이지 문구 목록을 읽지 못했습니다. 인터넷 연결을 확인하세요.</div>'; return; }
   const { data, error } = await sb.from('site_copy').select('key,ko,en,ja,zh');
-  if(error){ $('cpErr').textContent = '불러오기 오류: '+error.message+' (supabase-update-7.sql 실행 여부 확인)'; return; }
-  $('cpErr').textContent=''; COPY = {};
-  (data||[]).forEach(r=>{ COPY[r.key] = {ko:r.ko||'', en:r.en||'', ja:r.ja||'', zh:r.zh||''}; });
+  if(error){ $('cpErr').textContent = '불러오기 오류: '+error.message; return; }
+  COPY = {}; CP_DB = new Set();
+  (data||[]).forEach(r=>{ CP_DB.add(r.key); COPY[r.key] = {}; ['ko','en','ja','zh'].forEach(l=>{ if(r[l] != null && r[l] !== '') COPY[r.key][l] = r[l]; }); });
+  const title = Object.fromEntries(CP_SECTIONS);
+  $('cpFields').innerHTML = groups.map(([sec, keys])=>`
+    <div class="section-head" style="margin:22px 0 10px"><b>${esc(title[sec]||sec)}</b></div>
+    ${keys.map(k=>{
+      const ko = (CP_DEF[k]||{}).ko || '', long = ko.length > 38 || ko.includes('\n');
+      return `<div class="field"><label>${esc(ko.replace(/\n/g,' ').slice(0,46))}${ko.length>46?'…':''} <span class="muted" style="font-weight:400">· ${esc(k)}</span></label>`
+        + (long ? `<textarea id="cp-${esc(k)}" style="min-height:70px"></textarea>` : `<input id="cp-${esc(k)}">`) + '</div>';
+    }).join('')}`).join('');
+  $('cpInfo').textContent = `${CP_KEYS.length}개 문구`;
   cpPaint();
 }
 $('cpSave').addEventListener('click', async ()=>{
-  $('cpErr').textContent=''; cpStash();
-  const rows = COPY_KEYS.filter(k=>COPY[k]&&COPY[k].ko).map(k=>({key:k, ko:COPY[k].ko, en:COPY[k].en||null, ja:COPY[k].ja||null, zh:COPY[k].zh||null, updated_at:new Date().toISOString()}));
-  const btn=$('cpSave'); btn.disabled=true; btn.textContent='저장 중…';
-  const { error } = await sb.from('site_copy').upsert(rows,{onConflict:'key'});
-  btn.textContent='저장'; btn.disabled=false;
-  if(error){ $('cpErr').textContent='저장 실패: '+error.message; return; }
+  $('cpErr').textContent = ''; cpStash();
+  /* 기본값과 달라진 문구 + 이미 DB 에 있던 문구만 저장 (나머지는 홈페이지 기본값 그대로) */
+  const rows = CP_KEYS.filter(k=>CP_DB.has(k) || ['ko','en','ja','zh'].some(l=>cpVal(k,l) !== ((CP_DEF[k]||{})[l]||'')))
+    .map(k=>({ key:k, ko:cpVal(k,'ko')||null, en:cpVal(k,'en')||null, ja:cpVal(k,'ja')||null, zh:cpVal(k,'zh')||null, updated_at:new Date().toISOString() }));
+  if(!rows.length){ toast('바뀐 문구가 없습니다'); return; }
+  const btn = $('cpSave'); btn.disabled = true; btn.textContent = '저장 중…';
+  const { error } = await sb.from('site_copy').upsert(rows, { onConflict:'key' });
+  btn.textContent = '저장'; btn.disabled = false;
+  if(error){ $('cpErr').textContent = '저장 실패: '+error.message; return; }
+  rows.forEach(r=>CP_DB.add(r.key));
   toast('저장되었습니다. 홈페이지에 바로 반영됩니다');
 });
 

@@ -491,7 +491,7 @@ footer p{font-family:var(--mono);font-size:.76rem;color:var(--ink-faint);letter-
 .reveal{opacity:0;transform:translateY(26px);transition:.7s cubic-bezier(.2,.7,.2,1)}
 .reveal.in{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
-html.copy-wait [data-i18n^="hero."],html.copy-wait [data-i18n^="pillar"]{visibility:hidden}
+html.copy-wait [data-i18n]{visibility:hidden}
 </style>
 <script src="supabase-config.js"></script>
 <script>
@@ -670,7 +670,7 @@ html.copy-wait [data-i18n^="hero."],html.copy-wait [data-i18n^="pillar"]{visibil
     <div class="sec-head reveal">
       <div>
         <div class="sec-tag"><span class="num">01</span> / <span data-i18n="tag.services">WHAT WE DO</span></div>
-        <h2>Services<span class="kr" data-i18n="h2.services">외주 서비스 항목</span></h2>
+        <h2><span data-i18n="h2en.services">Services</span><span class="kr" data-i18n="h2.services">외주 서비스 항목</span></h2>
       </div>
     </div>
     <div class="svc-grid" id="svcGrid">
@@ -701,7 +701,7 @@ html.copy-wait [data-i18n^="hero."],html.copy-wait [data-i18n^="pillar"]{visibil
     <div class="sec-head reveal">
       <div>
         <div class="sec-tag"><span class="num">02</span> / <span data-i18n="tag.career">TEAM TRACK RECORD</span></div>
-        <h2>Career<span class="kr" data-i18n="h2.career">팀 경력</span></h2>
+        <h2><span data-i18n="h2en.career">Career</span><span class="kr" data-i18n="h2.career">팀 경력</span></h2>
       </div>
     </div>
     <div class="team-reveal reveal" id="teamReveal">
@@ -856,7 +856,7 @@ html.copy-wait [data-i18n^="hero."],html.copy-wait [data-i18n^="pillar"]{visibil
     <div class="sec-head reveal">
       <div>
         <div class="sec-tag"><span class="num">03</span> / <span data-i18n="tag.work">SELECTED WORK</span></div>
-        <h2>Portfolio<span class="kr" data-i18n="h2.work">작업물 / 포트폴리오</span></h2>
+        <h2><span data-i18n="h2en.work">Portfolio</span><span class="kr" data-i18n="h2.work">작업물 / 포트폴리오</span></h2>
       </div>
     </div>
     <div class="port-grid" id="portGrid">
@@ -1084,14 +1084,14 @@ html.copy-wait [data-i18n^="hero."],html.copy-wait [data-i18n^="pillar"]{visibil
     <div class="sec-head reveal">
       <div>
         <div class="sec-tag"><span class="num">04</span> / <span data-i18n="tag.process">HOW IT WORKS</span></div>
-        <h2>Process<span class="kr" data-i18n="h2.process">작업 진행 방식</span></h2>
+        <h2><span data-i18n="h2en.process">Process</span><span class="kr" data-i18n="h2.process">작업 진행 방식</span></h2>
       </div>
     </div>
     <div class="proc reveal">
-      <div class="proc-step"><div class="n">01</div><h4>Brief</h4><div class="kr" data-i18n="proc1">요구사항 / 레퍼런스 정리</div></div>
-      <div class="proc-step"><div class="n">02</div><h4>Quote</h4><div class="kr" data-i18n="proc2">견적 · 일정 확정</div></div>
-      <div class="proc-step"><div class="n">03</div><h4>Animate</h4><div class="kr" data-i18n="proc3">리깅 → 애니메이션 작업</div></div>
-      <div class="proc-step"><div class="n">04</div><h4>Deliver</h4><div class="kr" data-i18n="proc4">JSON · Atlas 파일 전달</div></div>
+      <div class="proc-step"><div class="n">01</div><h4 data-i18n="proc1.t">Brief</h4><div class="kr" data-i18n="proc1">요구사항 / 레퍼런스 정리</div></div>
+      <div class="proc-step"><div class="n">02</div><h4 data-i18n="proc2.t">Quote</h4><div class="kr" data-i18n="proc2">견적 · 일정 확정</div></div>
+      <div class="proc-step"><div class="n">03</div><h4 data-i18n="proc3.t">Animate</h4><div class="kr" data-i18n="proc3">리깅 → 애니메이션 작업</div></div>
+      <div class="proc-step"><div class="n">04</div><h4 data-i18n="proc4.t">Deliver</h4><div class="kr" data-i18n="proc4">JSON · Atlas 파일 전달</div></div>
     </div>
   </div>
 </section>
@@ -1101,18 +1101,18 @@ html.copy-wait [data-i18n^="hero."],html.copy-wait [data-i18n^="pillar"]{visibil
     <div class="contact-box reveal">
       <div>
         <div class="sec-tag"><span class="num">05</span> / <span data-i18n="tag.contact">LET'S TALK</span></div>
-        <h2 style="margin-top:14px">Contact<span class="kr" data-i18n="h2.contact">문의하기</span></h2>
+        <h2 style="margin-top:14px"><span data-i18n="h2en.contact">Contact</span><span class="kr" data-i18n="h2.contact">문의하기</span></h2>
         <p class="lead" data-i18n="contact.lead">프로젝트 내용과 일정을 이메일로 보내주시면 확인 후 빠르게 회신드립니다.</p>
         <div class="contact-meta">
-          <div class="row"><span>EMAIL</span><a href="mailto:labkanata@naver.com">labkanata@naver.com</a></div>
-          <div class="row"><span>TEL</span><a href="tel:01033304414">010-3330-4414</a></div>
-          <div class="row"><span>HOURS</span>Mon–Fri · 10:00–19:00 KST</div>
+          <div class="row"><span data-i18n="info.emailLabel">EMAIL</span><a href="mailto:labkanata@naver.com" data-i18n="info.email">labkanata@naver.com</a></div>
+          <div class="row"><span data-i18n="info.telLabel">TEL</span><a href="tel:01033304414" data-i18n="info.tel">010-3330-4414</a></div>
+          <div class="row"><span data-i18n="info.hoursLabel">HOURS</span><span data-i18n="info.hours">Mon–Fri · 10:00–19:00 KST</span></div>
         </div>
       </div>
       <div style="display:flex;flex-direction:column;justify-content:center;gap:16px">
         <p style="color:var(--ink-dim);font-size:.95rem;line-height:1.75" data-i18n="contact.note">작업 범위·분량·희망 일정을 간단히 적어 보내주시면<br>검토 후 견적과 일정을 회신드립니다.</p>
         <a class="btn btn-primary" style="width:100%;justify-content:center" href="mailto:labkanata@naver.com?subject=%5BJY%20STUDIO%5D%20%EC%99%B8%EC%A3%BC%20%EB%AC%B8%EC%9D%98"><span data-i18n="contact.cta">이메일로 문의하기</span> →</a>
-        <p style="color:var(--ink-faint);font-size:.78rem">Mon–Fri · 10:00–19:00 KST</p>
+        <p style="color:var(--ink-faint);font-size:.78rem" data-i18n="info.hours">Mon–Fri · 10:00–19:00 KST</p>
       </div>
     </div>
   </div>
@@ -1122,16 +1122,16 @@ html.copy-wait [data-i18n^="hero."],html.copy-wait [data-i18n^="pillar"]{visibil
   <div class="wrap">
     <div class="logo"><span class="jy">JY</span><span class="st">STUDIO</span></div>
     <div class="biz">
-      상호명 JY 스튜디오<span class="sep">|</span>대표자명 박태형<span class="sep">|</span>사업자등록번호 534-71-01348<br>
-      대표번호 <a href="tel:01033304414">010-3330-4414</a><span class="sep">|</span>이메일 <a href="mailto:labkanata@naver.com">labkanata@naver.com</a><br>
-      주소 전라북도 정읍시 소성면 기린리 141-1
+      <span data-i18n="biz.name">상호명 JY 스튜디오</span><span class="sep">|</span><span data-i18n="biz.ceo">대표자명 박태형</span><span class="sep">|</span><span data-i18n="biz.reg">사업자등록번호 534-71-01348</span><br>
+      <span data-i18n="biz.telLabel">대표번호</span> <a href="tel:01033304414" data-i18n="info.tel">010-3330-4414</a><span class="sep">|</span><span data-i18n="biz.emailLabel">이메일</span> <a href="mailto:labkanata@naver.com" data-i18n="info.email">labkanata@naver.com</a><br>
+      <span data-i18n="biz.addr">주소 전라북도 정읍시 소성면 기린리 141-1</span>
     </div>
-    <div class="biz-note">본 이메일은 고객의 문의 용도로만 활용되며, 무단으로 수집할 경우 정보통신법에 의해 처벌됨을 유념해주시기 바랍니다.</div>
+    <div class="biz-note" data-i18n="biz.note">본 이메일은 고객의 문의 용도로만 활용되며, 무단으로 수집할 경우 정보통신법에 의해 처벌됨을 유념해주시기 바랍니다.</div>
     <div class="partner">
       <span class="partner-label" data-i18n="partner.label">협력사 / Partner</span>
       <a href="https://www.studiomyo.com/" target="_blank" rel="noopener">STUDIO MYO ↗</a>
     </div>
-    <p>© 2026 JY STUDIO — SPINE 2D ANIMATION</p>
+    <p data-i18n="biz.copy">© 2026 JY STUDIO — SPINE 2D ANIMATION</p>
   </div>
 </footer>
 
@@ -1197,7 +1197,7 @@ const I18N={
   "proc4":{ko:"JSON · Atlas 파일 전달",en:"Deliver JSON & Atlas",ja:"JSON・Atlasファイル納品",zh:"交付 JSON · Atlas 文件"},
   "tag.contact":{ko:"LET'S TALK",en:"LET'S TALK",ja:"お問い合わせ",zh:"联系洽谈"},
   "h2.contact":{ko:"문의하기",en:"Contact",ja:"お問い合わせ",zh:"联系我们"},
-  "contact.note":{ko:"작업 범위·분량·희망 일정을 간단히 적어 보내주시면 검토 후 견적과 일정을 회신드립니다.",en:"Send us the scope, volume, and target schedule and we will reply with a quote and timeline.",ja:"作業範囲・物量・希望スケジュールをお送りください。確認後、お見積もりと日程をご返信します。",zh:"请告知工作范围、体量与期望排期，我们将回复报价与时间表。"},
+  "contact.note":{ko:"작업 범위·분량·희망 일정을 간단히 적어 보내주시면\n검토 후 견적과 일정을 회신드립니다.",en:"Send us the scope, volume, and target schedule and we will reply with a quote and timeline.",ja:"作業範囲・物量・希望スケジュールをお送りください。確認後、お見積もりと日程をご返信します。",zh:"请告知工作范围、体量与期望排期，我们将回复报价与时间表。"},
   "contact.cta":{ko:"이메일로 문의하기",en:"Email us",ja:"メールで問い合わせ",zh:"发邮件咨询"},
   "contact.lead":{ko:"프로젝트 내용과 일정을 이메일로 보내주시면 확인 후 빠르게 회신드립니다.",
     en:"Use the live chat button at the bottom right for the fastest reply. If we are away, we will reply by email.",
@@ -1208,20 +1208,52 @@ const I18N={
   "f.type":{ko:"Project Type / 작업 종류",en:"Project Type",ja:"プロジェクト種別",zh:"项目类型"},
   "f.details":{ko:"Details / 상세 내용",en:"Details",ja:"詳細",zh:"详细内容"},
   "f.send":{ko:"문의 보내기 / Send →",en:"Send →",ja:"送信 →",zh:"发送咨询 →"},
-  "partner.label":{ko:"협력사",en:"Partner",ja:"協力会社",zh:"合作公司"}
+  "partner.label":{ko:"협력사",en:"Partner",ja:"協力会社",zh:"合作公司"},
+  "h2en.services":{ko:"Services",en:"Services",ja:"Services",zh:"Services"},
+  "h2en.career":{ko:"Career",en:"Career",ja:"Career",zh:"Career"},
+  "h2en.work":{ko:"Portfolio",en:"Portfolio",ja:"Portfolio",zh:"Portfolio"},
+  "h2en.process":{ko:"Process",en:"Process",ja:"Process",zh:"Process"},
+  "h2en.contact":{ko:"Contact",en:"Contact",ja:"Contact",zh:"Contact"},
+  "proc1.t":{ko:"Brief",en:"Brief",ja:"Brief",zh:"Brief"},
+  "proc2.t":{ko:"Quote",en:"Quote",ja:"Quote",zh:"Quote"},
+  "proc3.t":{ko:"Animate",en:"Animate",ja:"Animate",zh:"Animate"},
+  "proc4.t":{ko:"Deliver",en:"Deliver",ja:"Deliver",zh:"Deliver"},
+  "info.emailLabel":{ko:"EMAIL",en:"EMAIL",ja:"EMAIL",zh:"EMAIL"},
+  "info.email":{ko:"labkanata@naver.com",en:"labkanata@naver.com",ja:"labkanata@naver.com",zh:"labkanata@naver.com"},
+  "info.telLabel":{ko:"TEL",en:"TEL",ja:"TEL",zh:"TEL"},
+  "info.tel":{ko:"010-3330-4414",en:"010-3330-4414",ja:"010-3330-4414",zh:"010-3330-4414"},
+  "info.hoursLabel":{ko:"HOURS",en:"HOURS",ja:"HOURS",zh:"HOURS"},
+  "info.hours":{ko:"Mon–Fri · 10:00–19:00 KST",en:"Mon–Fri · 10:00–19:00 KST",ja:"Mon–Fri · 10:00–19:00 KST",zh:"Mon–Fri · 10:00–19:00 KST"},
+  "biz.name":{ko:"상호명 JY 스튜디오",en:"상호명 JY 스튜디오",ja:"상호명 JY 스튜디오",zh:"상호명 JY 스튜디오"},
+  "biz.ceo":{ko:"대표자명 박태형",en:"대표자명 박태형",ja:"대표자명 박태형",zh:"대표자명 박태형"},
+  "biz.reg":{ko:"사업자등록번호 534-71-01348",en:"사업자등록번호 534-71-01348",ja:"사업자등록번호 534-71-01348",zh:"사업자등록번호 534-71-01348"},
+  "biz.telLabel":{ko:"대표번호",en:"대표번호",ja:"대표번호",zh:"대표번호"},
+  "biz.emailLabel":{ko:"이메일",en:"이메일",ja:"이메일",zh:"이메일"},
+  "biz.addr":{ko:"주소 전라북도 정읍시 소성면 기린리 141-1",en:"주소 전라북도 정읍시 소성면 기린리 141-1",ja:"주소 전라북도 정읍시 소성면 기린리 141-1",zh:"주소 전라북도 정읍시 소성면 기린리 141-1"},
+  "biz.note":{ko:"본 이메일은 고객의 문의 용도로만 활용되며, 무단으로 수집할 경우 정보통신법에 의해 처벌됨을 유념해주시기 바랍니다.",en:"본 이메일은 고객의 문의 용도로만 활용되며, 무단으로 수집할 경우 정보통신법에 의해 처벌됨을 유념해주시기 바랍니다.",ja:"본 이메일은 고객의 문의 용도로만 활용되며, 무단으로 수집할 경우 정보통신법에 의해 처벌됨을 유념해주시기 바랍니다.",zh:"본 이메일은 고객의 문의 용도로만 활용되며, 무단으로 수집할 경우 정보통신법에 의해 처벌됨을 유념해주시기 바랍니다."},
+  "biz.copy":{ko:"© 2026 JY STUDIO — SPINE 2D ANIMATION",en:"© 2026 JY STUDIO — SPINE 2D ANIMATION",ja:"© 2026 JY STUDIO — SPINE 2D ANIMATION",zh:"© 2026 JY STUDIO — SPINE 2D ANIMATION"}
 };
 (function(){
   function merge(rows){ (rows||[]).forEach(function(r){ var d=I18N[r.key]||(I18N[r.key]={}); ['ko','en','ja','zh'].forEach(function(l){ if(r[l]) d[l]=r[l]; }); }); }
-  function paint(){
-    var lang=document.documentElement.lang||'ko';
-    document.querySelectorAll('[data-i18n^="hero."],[data-i18n^="pillar"]').forEach(function(el){
-      var k=el.getAttribute('data-i18n'); if(I18N[k]&&I18N[k][lang]) el.textContent=I18N[k][lang];
+  /* 홈페이지의 모든 문구(data-i18n)를 현재 언어로 — 관리자 앱 "홈페이지 문구" 탭에서 고친 값이 사전에 합쳐져 있다 */
+  function setText(el,v){
+    if(v.indexOf('\n')<0){ el.textContent=v; return; }
+    el.textContent=''; v.split('\n').forEach(function(line,i){ if(i) el.appendChild(document.createElement('br')); el.appendChild(document.createTextNode(line)); });
+  }
+  function paint(lang){
+    lang=lang||document.documentElement.lang||'ko';
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var k=el.getAttribute('data-i18n'); if(I18N[k]&&I18N[k][lang]) setText(el,I18N[k][lang]);
     });
+    var em=(I18N['info.email']||{})[lang], tel=(I18N['info.tel']||{})[lang];
+    if(em) document.querySelectorAll('a[href^="mailto:"]').forEach(function(a){ a.href=a.getAttribute('href').replace(/^mailto:[^?]*/,'mailto:'+em); });
+    if(tel) document.querySelectorAll('a[href^="tel:"]').forEach(function(a){ a.href='tel:'+tel.replace(/[^0-9+]/g,''); });
     document.documentElement.classList.remove('copy-wait');
   }
+  window.jyPaintCopy=paint;
   if(window.__jyCopy&&window.__jyCopy.length){ merge(window.__jyCopy); paint(); }
   (window.__jyCopyP||Promise.resolve(null)).then(function(rows){
-    if(rows&&rows.length){ merge(rows); try{ localStorage.setItem('jy_site_copy',JSON.stringify(rows)); }catch(e){} }
+    if(rows){ merge(rows); try{ localStorage.setItem('jy_site_copy',JSON.stringify(rows)); }catch(e){} }
     paint();
   });
 })();
@@ -1303,10 +1335,7 @@ window.jyApplyAutoTr=applyAutoTr;
 
 function setLang(lang){
   document.documentElement.lang=lang;
-  document.querySelectorAll('[data-i18n]').forEach(el=>{
-    const k=el.getAttribute('data-i18n');
-    if(I18N[k]&&I18N[k][lang]) el.textContent=I18N[k][lang];
-  });
+  window.jyPaintCopy(lang);
   document.querySelectorAll('#langSwitch button').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));
   if(window.hsRefreshCaption) window.hsRefreshCaption();
   if(window.teamBtnRefreshLabel) window.teamBtnRefreshLabel();
